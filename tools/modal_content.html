@@ -1,0 +1,1822 @@
+id="workoutPlayerModal" class="theme-surface absolute inset-0 bg-[#08090C] z-50 flex flex-col p-4 hidden">
+          <!-- Top Bar -->
+          <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#CCFF00] pulse-live"></span>
+                <span class="text-[10px] bg-[#CCFF00] text-black font-black px-2 py-0.5 rounded">جلسه تمرینی زنده</span>
+              </div>
+              <h3 id="activeWorkoutTitle" class="theme-text-primary text-sm font-black text-white mt-1">برنامه شماره ۲: سینه و بازو</h3>
+            </div>
+            <button onclick="closeWorkoutPlayer()" class="text-gray-400 hover:text-white p-1">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Session Live Metrics Bar -->
+          <div class="grid grid-cols-2 gap-2 my-3">
+            <div class="theme-card bg-[#141722] p-2.5 rounded-xl border border-[#252B3A] text-center">
+              <div class="theme-text-muted text-[10px] text-gray-400">زمان سپری‌شده</div>
+              <div id="sessionTimerDisplay" class="theme-text-primary text-sm font-black text-white font-mono mt-0.5">۰۰:۱۲:۴۵</div>
+            </div>
+            <div class="theme-card bg-[#141722] p-2.5 rounded-xl border border-[#252B3A] text-center">
+              <div class="theme-text-muted text-[10px] text-gray-400">حجم وزنه جابجا شده</div>
+              <div id="sessionTonnageDisplay" class="text-sm font-black text-[#CCFF00] font-mono mt-0.5">۲,۴۵۰ kg</div>
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-y-auto space-y-3.5 phone-screen">
+            <!-- Warmup Protocol (Dynamic) -->
+            <div id="activeWorkoutWarmupBox" class="theme-card-sub bg-[#0E1118] border border-zinc-800 rounded-xl p-3 space-y-2">
+              <div class="text-xs font-bold text-gray-300 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#CCFF00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+                  <span>پروتکل گرم‌کردن اختصاصی آرمین:</span>
+                </div>
+                <span id="activeWorkoutWarmupTag" class="text-[9px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded font-bold">زانو و مچ پا</span>
+              </div>
+              <div id="activeWorkoutWarmupList" class="space-y-1 text-xs text-gray-400">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="accent-[#CCFF00]">
+                  <span>۱۰ دقیقه تردمیل برای افزایش ضربان قلب</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="accent-[#CCFF00]">
+                  <span>۵ دقیقه گرم کردن و چرخش مفاصل</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Horizontal Exercise Selector Navigation Strip -->
+            <div>
+              <div class="flex justify-between items-center mb-1.5 text-xs">
+                <span class="text-gray-400 text-[11px] font-bold">فهرست حرکات جلسه:</span>
+                <span id="exerciseProgressBadge" class="text-[10px] text-[#CCFF00] font-black bg-[#CCFF00]/15 px-2 py-0.5 rounded">حرکت ۱ از ۶</span>
+              </div>
+              <div id="exerciseTabsStrip" class="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                <!-- Dynamically Populated Exercise Chips -->
+              </div>
+            </div>
+
+            <!-- Current Active Exercise Card (Dynamic Container) -->
+            <div id="activeExerciseCard" class="theme-card bg-[#141722] border-2 border-[#252B3A] rounded-2xl p-4 space-y-3 transition-all shadow-lg">
+              <!-- Dynamically Populated by renderActiveExercise() -->
+            </div>
+
+            <!-- Exercise Navigation: Prev / Next Buttons -->
+            <div class="flex justify-between items-center gap-2">
+              <button onclick="prevWorkoutExercise()" id="btnPrevExercise" class="flex-1 py-2 rounded-xl bg-[#1D2230] hover:bg-[#252B3A] text-gray-300 hover:text-white text-xs font-bold transition flex items-center justify-center gap-1.5 border border-[#2B354C] active:scale-95">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <span>حرکت قبلی</span>
+              </button>
+              <button onclick="nextWorkoutExercise()" id="btnNextExercise" class="flex-1 py-2 rounded-xl bg-[#1D2230] hover:bg-[#CCFF00] hover:text-black text-gray-300 font-black text-xs transition flex items-center justify-center gap-1.5 border border-[#2B354C] active:scale-95">
+                <span>حرکت بعدی</span>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+            </div>
+
+            <!-- CHRONOGRAPH REST TIMER DISPLAY -->
+            <div class="theme-card bg-[#141722] border border-[#252B3A] rounded-2xl p-4 flex flex-col items-center justify-center">
+              <div class="theme-text-muted flex items-center gap-1.5 text-xs text-gray-400">
+                <svg class="w-4 h-4 text-[#CCFF00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <circle cx="12" cy="13" r="8"/>
+                  <path d="M12 9v4l2 2M12 2v3M10 2h4"/>
+                </svg>
+                <span>کرنومتر و تایمر استراحت (کنترل کاملاً دستی)</span>
+              </div>
+              
+              <div id="stopwatchDisplay" class="text-4xl font-black text-[#CCFF00] my-2.5 tracking-widest font-mono">
+                ۰۲:۰۰
+              </div>
+
+              <!-- Main Control Buttons -->
+              <div class="flex items-center gap-2 mb-3">
+                <button onclick="startTimerManual()" id="btnTimerPlay" class="px-4 py-2 bg-[#CCFF00] hover:bg-[#b8e600] text-black font-black text-xs rounded-xl flex items-center gap-1.5 transition active:scale-95">
+                  <svg class="w-3.5 h-3.5 fill-black" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span>شروع تایمر</span>
+                </button>
+
+                <button onclick="pauseTimerManual()" id="btnTimerPause" class="theme-card-sub px-3.5 py-2 bg-[#202534] hover:bg-[#2B3346] text-gray-200 font-bold text-xs rounded-xl flex items-center gap-1.5 transition active:scale-95">
+                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                  <span>توقف</span>
+                </button>
+
+                <button onclick="resetTimerManual()" class="theme-card-sub px-3 py-2 bg-[#202534] hover:bg-[#2B3346] text-gray-300 font-bold text-xs rounded-xl flex items-center gap-1 transition active:scale-95" title="صفر کردن">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                </button>
+              </div>
+
+              <!-- Duration Preset Selectors -->
+              <div class="flex items-center gap-1.5 text-xs">
+                <span class="theme-text-muted text-[10px] text-gray-400 ml-1">تنظیم زمان:</span>
+                <button onclick="setTimerDuration(30)" class="theme-card-sub px-2.5 py-1 bg-[#0E1118] border border-zinc-700 hover:border-[#CCFF00] rounded-lg text-gray-300 font-bold text-[11px] transition">۳۰s</button>
+                <button onclick="setTimerDuration(60)" class="theme-card-sub px-2.5 py-1 bg-[#0E1118] border border-zinc-700 hover:border-[#CCFF00] rounded-lg text-gray-300 font-bold text-[11px] transition">۶۰s</button>
+                <button onclick="setTimerDuration(90)" class="theme-card-sub px-2.5 py-1 bg-[#0E1118] border border-zinc-700 hover:border-[#CCFF00] rounded-lg text-gray-300 font-bold text-[11px] transition">۹۰s</button>
+                <button onclick="setTimerDuration(120)" class="theme-card-sub px-2.5 py-1 bg-[#0E1118] border border-zinc-700 hover:border-[#CCFF00] rounded-lg text-gray-300 font-bold text-[11px] transition">۱۲۰s</button>
+                <button onclick="addSecondsToTimer(15)" class="px-2 py-1 bg-[#171B26] border border-zinc-700 text-[#CCFF00] rounded-lg font-bold text-[11px]">+۱۵s</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Finish Session Button -->
+          <button onclick="finishWorkoutSession()" class="w-full mt-3 py-3 rounded-xl bg-[#CCFF00] text-black font-black text-xs shadow-md active:scale-95 transition">
+            اتمام جلسه تمرین و ثبت رکوردها (+۵ سکه)
+          </button>
+        </div>
+
+        <!-- ================= FULLSCREEN MODAL: VISUAL FOOD SCANNER ================= -->
+        <div id="foodScannerModal" class="theme-surface absolute inset-0 bg-[#08090C] z-50 flex flex-col p-4 hidden">
+          <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m14.31 8 5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16 3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"/></svg>
+              </div>
+              <div>
+                <h3 class="theme-text-primary text-sm font-black text-white">اسکنر تصویری وعده غذایی</h3>
+                <span class="text-[10px] text-cyan-400">تحلیل هوشمند با Gemini 1.5 Flash Vision</span>
+              </div>
+            </div>
+            <button onclick="closeFoodScannerModal()" class="text-gray-400 hover:text-white p-1">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div class="flex-1 overflow-y-auto py-3 space-y-3 phone-screen">
+            <!-- Camera / Upload Zone -->
+            <div class="theme-card-sub border-2 border-dashed border-[#252B3A] hover:border-[#CCFF00] rounded-2xl p-4 text-center cursor-pointer transition bg-[#0E1118]" onclick="document.getElementById('realMealFileInput').click()">
+              <input type="file" id="realMealFileInput" accept="image/*" class="hidden" onchange="handleRealImageUpload(event)">
+              <div class="w-12 h-12 rounded-full bg-[#141722] text-[#CCFF00] flex items-center justify-center mx-auto mb-2 border border-zinc-700">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m14.31 8 5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16 3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"/></svg>
+              </div>
+              <div class="theme-text-primary text-xs font-bold text-white">برای انتخاب یا گرفتن عکس از غذا کلیک کنید</div>
+              <div class="theme-text-muted text-[10px] text-gray-400 mt-1">حجم کم مصرف توکن: ~۲۶۰ توکن برای کل وعده</div>
+            </div>
+
+            <!-- Cabbage Pacman Animated Mascot Loader -->
+            <div id="scanCabbageLoader" class="hidden p-4 rounded-2xl bg-[#090C12] border border-[#CCFF00]/40 space-y-3">
+              <div class="relative w-full h-24 bg-[#050811] rounded-2xl border border-zinc-800 overflow-hidden shadow-inner flex items-center justify-center" dir="ltr">
+                <!-- Cabbage Character on Left -->
+                <div class="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 cabbage-chew-bob w-14 h-14 pointer-events-none">
+                  <svg viewBox="0 0 100 100" class="w-full h-full" fill="none">
+                    <circle cx="50" cy="54" r="38" fill="#15803d" />
+                    <path d="M 20 40 Q 50 15 80 40" stroke="#86efac" stroke-width="3" fill="none" opacity="0.6" />
+                    <circle cx="50" cy="54" r="35" fill="#22c55e" />
+                    <rect x="18" y="26" width="64" height="12" rx="6" fill="#dc2626" />
+                    <rect x="42" y="28" width="16" height="8" rx="2" fill="#ffffff" />
+                    <text x="50" y="34.5" fill="#dc2626" font-size="6.5" font-weight="900" text-anchor="middle" dominant-baseline="middle">GYM</text>
+                    <circle cx="38" cy="48" r="4.5" fill="#0f172a" /><circle cx="40" cy="46" r="1.8" fill="#ffffff" />
+                    <circle cx="60" cy="48" r="4.5" fill="#0f172a" /><circle cx="62" cy="46" r="1.8" fill="#ffffff" />
+                    <ellipse cx="28" cy="56" rx="4" ry="2.5" fill="#f472b6" opacity="0.85" />
+                    <ellipse cx="70" cy="56" rx="4" ry="2.5" fill="#f472b6" opacity="0.85" />
+                    <g class="mouth-chomp-right">
+                      <path d="M 48 64 Q 66 50 84 64 Q 66 78 48 64 Z" fill="#881337" />
+                      <ellipse cx="64" cy="67" rx="6" ry="3.5" fill="#fb7185" />
+                      <rect x="60" y="54" width="10" height="3" rx="1" fill="#ffffff" />
+                    </g>
+                  </svg>
+                </div>
+                <!-- Crumbs at mouth -->
+                <div class="absolute left-[52px] top-[55%] -translate-y-1/2 pointer-events-none z-30">
+                  <div class="w-2 h-2 rounded-full bg-amber-400 crumb-sparkle blur-[0.5px]"></div>
+                  <div class="w-1.5 h-1.5 rounded-full bg-[#CCFF00] crumb-sparkle blur-[0.5px] mt-0.5 ml-0.5"></div>
+                </div>
+                <!-- Dumbbell conveyor -->
+                <div class="absolute left-[55px] right-2 top-0 bottom-0 pointer-events-none">
+                  <div class="conveyor-eat-1 w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M2 9h2v6H2zm3-2h3v10H5zm4 4h6v2H9zm7-4h3v10h-3zm4 2h2v6h-2z"/></svg>
+                  </div>
+                  <div class="conveyor-eat-2 w-6 h-6 rounded-lg bg-[#CCFF00]/20 text-[#CCFF00] border border-[#CCFF00]/40 flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M2 9h2v6H2zm3-2h3v10H5zm4 4h6v2H9zm7-4h3v10h-3zm4 2h2v6h-2z"/></svg>
+                  </div>
+                  <div class="conveyor-eat-3 w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center text-xs font-bold text-[#CCFF00]">
+                کلم ورزشی در حال بلعیدن و هضم دمبل‌ها...
+              </div>
+            </div>
+
+            <!-- Pre-defined Iranian Fitness Foods Quick Select -->
+            <div class="space-y-1.5">
+              <span class="theme-text-muted text-[11px] font-bold text-gray-400 block">غذاهای ورزشی متداول (انتخاب فوری):</span>
+              <div class="flex flex-wrap gap-1.5 text-xs">
+                <button onclick="simulateScan('چلو جوجه‌کباب با کته', 620, 48, 70, 16, '۱۵۰ گرم فیله مرغ + ۱۰ قاشق کته زعفرانی')" class="theme-card-sub px-2.5 py-1.5 bg-[#141722] hover:bg-[#1D2230] text-gray-300 rounded-xl border border-zinc-700">
+                  چلو جوجه با کته
+                </button>
+                <button onclick="simulateScan('شیک پروتئین وی و کراتین', 210, 32, 6, 2.5, '۱ اسکوپ Whey ایزوله + ۵ گرم کراتین')" class="theme-card-sub px-2.5 py-1.5 bg-[#141722] hover:bg-[#1D2230] text-gray-300 rounded-xl border border-zinc-700">
+                  شیک وی + کراتین
+                </button>
+                <button onclick="simulateScan('تست پروتئینی با بادام‌زمینی', 340, 18, 28, 16, '۲ عدد تست پروتئینی + ۲ قاشق کره بادام‌زمینی')" class="theme-card-sub px-2.5 py-1.5 bg-[#141722] hover:bg-[#1D2230] text-gray-300 rounded-xl border border-zinc-700">
+                  تست پروتئینی و کره
+                </button>
+                <button onclick="simulateScan('استیک با سیب‌زمینی پخته', 580, 52, 45, 14, '۲۰۰ گرم گوشت گوساله بدون چربی + سیب‌زمینی تنوری')" class="theme-card-sub px-2.5 py-1.5 bg-[#141722] hover:bg-[#1D2230] text-gray-300 rounded-xl border border-zinc-700">
+                  استیک با سیب‌زمینی
+                </button>
+              </div>
+            </div>
+
+            <!-- Scan Result Review Box -->
+            <div id="scanResultBox" class="theme-card hidden bg-[#10141E] border border-cyan-500/30 rounded-2xl p-4 space-y-3">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 id="scanFoodName" class="theme-text-primary text-sm font-black text-white">چلو جوجه‌کباب با کته</h4>
+                  <p id="scanFoodDesc" class="theme-text-muted text-[10px] text-gray-400 mt-0.5">شناسایی هوشمند رژیم ۵۳۳</p>
+                </div>
+                <span id="scanFoodCalories" class="text-sm font-black text-[#CCFF00]">۶۲۰ kcal</span>
+              </div>
+
+              <!-- Nutrients 4-Box -->
+              <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                <div class="theme-card-sub bg-[#0E1118] p-2 rounded-xl border border-zinc-800">
+                  <div class="theme-text-muted text-[10px] text-gray-400">پروتئین</div>
+                  <div id="scanFoodProtein" class="font-bold text-cyan-400">۴۸g</div>
+                </div>
+                <div class="theme-card-sub bg-[#0E1118] p-2 rounded-xl border border-zinc-800">
+                  <div class="theme-text-muted text-[10px] text-gray-400">کربوهیدرات</div>
+                  <div id="scanFoodCarbs" class="font-bold text-[#FFB800]">۷۰g</div>
+                </div>
+                <div class="theme-card-sub bg-[#0E1118] p-2 rounded-xl border border-zinc-800">
+                  <div class="theme-text-muted text-[10px] text-gray-400">چربی</div>
+                  <div id="scanFoodFat" class="font-bold text-orange-400">۱۶g</div>
+                </div>
+              </div>
+
+              <button onclick="commitScanResult()" class="w-full py-2.5 bg-[#CCFF00] hover:bg-[#b8e600] text-black font-black text-xs rounded-xl active:scale-95 transition">
+                تأیید و ثبت در دفترچه کالری روزانه
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= BOTTOM NAVIGATION BAR (PHASE 11 COHESIVE ICONS) ================= -->
+        <nav class="theme-bottom-nav absolute bottom-0 left-0 right-0 h-16 bg-[#0E1118]/95 backdrop-blur-md border-t border-zinc-800/80 flex items-center justify-around px-2 z-40">
+          <!-- Nav 1: Dashboard -->
+          <button onclick="switchTab('dashboard')" id="navDashboard" class="nav-item group flex flex-col items-center justify-center flex-1 py-1 focus:outline-none select-none transition-all">
+            <div class="nav-pill w-14 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-[#CCFF00]/18 text-[#CCFF00] shadow-[0_0_14px_rgba(204,255,0,0.3)]">
+              <!-- Athletic Home Base -->
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5L12 3l9 7.5v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9z"/>
+                <path d="M9 21v-6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6" stroke="#CCFF00" stroke-width="2.2"/>
+              </svg>
+            </div>
+            <span class="nav-label text-[10px] font-black text-[#CCFF00] mt-1 tracking-tight transition-colors">داشبورد</span>
+          </button>
+
+          <!-- Nav 2: Workouts -->
+          <button onclick="switchTab('workout')" id="navWorkout" class="nav-item group flex flex-col items-center justify-center flex-1 py-1 focus:outline-none select-none transition-all">
+            <div class="nav-pill w-14 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-transparent text-gray-400 group-hover:text-gray-200">
+              <!-- 3D Athletic Dumbbell -->
+              <svg class="w-5 h-5" viewBox="0 0 100 100" fill="none">
+                <line x1="25" y1="75" x2="75" y2="25" stroke="currentColor" stroke-width="10" stroke-linecap="round" />
+                <line x1="16" y1="64" x2="34" y2="82" stroke="currentColor" stroke-width="9" stroke-linecap="round" />
+                <line x1="66" y1="18" x2="84" y2="36" stroke="currentColor" stroke-width="9" stroke-linecap="round" />
+                <circle cx="50" cy="50" r="7" fill="#CCFF00" />
+              </svg>
+            </div>
+            <span class="nav-label text-[10px] font-medium text-gray-400 mt-1 tracking-tight transition-colors">تمرینات</span>
+          </button>
+
+          <!-- Nav 3: Nutrition -->
+          <button onclick="switchTab('nutrition')" id="navNutrition" class="nav-item group flex flex-col items-center justify-center flex-1 py-1 focus:outline-none select-none transition-all">
+            <div class="nav-pill w-14 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-transparent text-gray-400 group-hover:text-gray-200">
+              <!-- Emoji Nutrition Apple -->
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 7c-2.5-2-6-1.5-7 1.5-1.5 4.5.5 10 7 12 6.5-2 8.5-7.5 7-12-1-3-4.5-3.5-7-1.5z"/>
+                <path d="M12 7V4c1.5-1 3-1 4 0" stroke="#CCFF00" stroke-width="2.2"/>
+              </svg>
+            </div>
+            <span class="nav-label text-[10px] font-medium text-gray-400 mt-1 tracking-tight transition-colors">تغذیه</span>
+          </button>
+
+          <!-- Nav 4: Marketplace -->
+          <button onclick="switchTab('marketplace')" id="navMarketplace" class="nav-item group flex flex-col items-center justify-center flex-1 py-1 focus:outline-none select-none transition-all">
+            <div class="nav-pill w-14 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-transparent text-gray-400 group-hover:text-gray-200">
+              <!-- Realistic Gym & Athletic Club Facility Icon -->
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Gym Roof Pediment Gable -->
+                <path d="M2 9.5L12 3.5L22 9.5H2Z" fill="currentColor" fill-opacity="0.14" stroke="currentColor"/>
+                <!-- Mini Barbell Emblem in Roof Gable -->
+                <line x1="9" y1="7" x2="15" y2="7" stroke="#CCFF00" stroke-width="1.8"/>
+                <circle cx="8.5" cy="7" r="1.1" fill="#CCFF00"/>
+                <circle cx="15.5" cy="7" r="1.1" fill="#CCFF00"/>
+                <!-- 4 Athletic Gym Columns / Pillars -->
+                <line x1="5" y1="10" x2="5" y2="17.5" stroke="currentColor" stroke-width="1.8"/>
+                <line x1="9.6" y1="10" x2="9.6" y2="17.5" stroke="currentColor" stroke-width="1.8"/>
+                <line x1="14.4" y1="10" x2="14.4" y2="17.5" stroke="currentColor" stroke-width="1.8"/>
+                <line x1="19" y1="10" x2="19" y2="17.5" stroke="currentColor" stroke-width="1.8"/>
+                <!-- Foundation Steps (Podium) -->
+                <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="1.8"/>
+                <line x1="1.5" y1="21" x2="22.5" y2="21" stroke="#CCFF00" stroke-width="2"/>
+              </svg>
+            </div>
+            <span class="nav-label text-[10px] font-medium text-gray-400 mt-1 tracking-tight transition-colors">باشگاه</span>
+          </button>
+
+          <!-- Nav 5: Profile -->
+          <button onclick="switchTab('profile')" id="navProfile" class="nav-item group flex flex-col items-center justify-center flex-1 py-1 focus:outline-none select-none transition-all">
+            <div class="nav-pill w-14 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-transparent text-gray-400 group-hover:text-gray-200">
+              <!-- Athletic User Avatar -->
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+                <circle cx="12" cy="7" r="1.5" fill="#CCFF00"/>
+              </svg>
+            </div>
+            <span class="nav-label text-[10px] font-medium text-gray-400 mt-1 tracking-tight transition-colors">پروفایل</span>
+          </button>
+        </nav>
+
+        <!-- Android Gesture Bar -->
+        <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-zinc-600 rounded-full z-40 pointer-events-none opacity-40"></div>
+
+              <!-- Secret Foldable Easter Egg Modal -->
+        <div id="foldableEasterEggModal" class="hidden absolute inset-0 bg-black/80 backdrop-blur-md z-[120] flex items-center justify-center p-4 transition-all">
+          <canvas id="eggConfettiCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+          <div class="bg-[#0F141F] border-2 border-[#CCFF00] rounded-3xl p-5 max-w-[340px] w-full text-center shadow-2xl relative space-y-3 z-10" style="box-shadow: 0 0 35px rgba(204,255,0,0.35);">
+            <div class="flex justify-between items-center pb-2 border-b border-zinc-800">
+              <span class="bg-[#CCFF00] text-black font-black text-[10px] px-2 py-0.5 rounded">GYMBRO FOLD</span>
+              <button onclick="closeFoldEasterEgg()" class="text-gray-400 hover:text-white p-1 text-sm font-bold">✕</button>
+            </div>
+            <div class="flex justify-center gap-4 text-3xl py-1">
+              <span class="inline-block animate-bounce">😎</span>
+              <span class="inline-block animate-pulse">💪</span>
+              <span class="inline-block animate-bounce">😂</span>
+            </div>
+            <h3 class="text-base font-black text-white leading-snug">وای ببین کی داره شوآف میکنه! 😂</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">گوشی تاشو باز کردی که تمرین کنی یا پُز بدی؟! 😎</p>
+            <button onclick="closeFoldEasterEgg()" class="w-full py-2.5 bg-[#CCFF00] hover:bg-[#b8e600] text-black font-extrabold text-xs rounded-xl shadow-lg transition active:scale-95">
+              فهمیدم، بریم سر تمرین! 💪
+            </button>
+            <div class="w-full h-1 bg-[#CCFF00]/20 rounded-full overflow-hidden mt-2">
+              <div id="eggCountdownFill" class="h-full bg-[#CCFF00] w-full transition-all duration-[6000ms] ease-linear"></div>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- /phoneScreen -->
+    </div> <!-- /Bezel -->
+  </main>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    // Web Audio Synthesizer
+    let actx = null;
+    function playTone(freq, type = 'sine', duration = 0.08, volume = 0.08) {
+      try {
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioClass) return;
+        if (!actx) actx = new AudioClass();
+        if (actx.state === 'suspended') actx.resume();
+
+        const osc = actx.createOscillator();
+        const gain = actx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, actx.currentTime);
+        gain.gain.setValueAtTime(volume, actx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(actx.destination);
+        osc.start();
+        osc.stop(actx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function soundClick() { playTone(600, 'sine', 0.05, 0.07); }
+    function soundWaterDrop() { 
+      playTone(550, 'sine', 0.06, 0.09);
+      setTimeout(() => playTone(880, 'sine', 0.08, 0.08), 50);
+    }
+    function soundSuccess() {
+      playTone(523.25, 'sine', 0.1, 0.1);
+      setTimeout(() => playTone(659.25, 'sine', 0.15, 0.1), 80);
+    }
+    function soundChomp() { playTone(320, 'triangle', 0.04, 0.06); }
+
+    // Theme Toggle Logic
+    let isLightMode = false;
+    function togglePhoneTheme() {
+      soundClick();
+      const screen = document.getElementById('phoneScreen');
+      const text = document.getElementById('themeToggleText');
+      isLightMode = !isLightMode;
+      if (isLightMode) {
+        screen.classList.add('light-theme');
+        text.textContent = 'حالت شب (Dark)';
+      } else {
+        screen.classList.remove('light-theme');
+        text.textContent = 'حالت روز (Light)';
+      }
+    }
+
+    // Pull-to-refresh Visual Effect
+    function triggerPullToRefresh() {
+      const spinner = document.getElementById('refreshSpinner');
+      spinner.classList.add('animate-spin');
+      soundClick();
+      setTimeout(() => {
+        spinner.classList.remove('animate-spin');
+        soundSuccess();
+      }, 700);
+    }
+
+    // 1RM Calculator Logic
+    function openOneRmModal() {
+      soundClick();
+      document.getElementById('oneRmModal').classList.remove('hidden');
+      calculateOneRmUI();
+    }
+    function closeOneRmModal() {
+      document.getElementById('oneRmModal').classList.add('hidden');
+    }
+    function calculateOneRmUI() {
+      const weight = parseFloat(document.getElementById('oneRmWeightInput').value) || 0;
+      const reps = parseFloat(document.getElementById('oneRmRepsInput').value) || 1;
+      if (reps >= 37) return;
+
+      const oneRm = Math.round(weight / (1.0278 - (0.0278 * reps)));
+      document.getElementById('oneRmResultValue').textContent = `${oneRm} kg`;
+      document.getElementById('pct95').textContent = `${Math.round(oneRm * 0.95)} kg`;
+      document.getElementById('pct85').textContent = `${Math.round(oneRm * 0.85)} kg`;
+      document.getElementById('pct75').textContent = `${Math.round(oneRm * 0.75)} kg`;
+      document.getElementById('pct65').textContent = `${Math.round(oneRm * 0.65)} kg`;
+    }
+
+    // Water Tracker Logic
+    let waterConsumed = 2400;
+    function addWaterGlass() {
+      soundWaterDrop();
+      waterConsumed = Math.min(4500, waterConsumed + 250);
+      document.getElementById('waterText').textContent = `${waterConsumed.toLocaleString('fa-IR')} ml`;
+      const pct = Math.min(100, Math.round((waterConsumed / 3500) * 100));
+      document.getElementById('waterProgressBar').style.width = `${pct}%`;
+      document.getElementById('waterPctBadge').textContent = `${pct}٪`;
+    }
+
+    // Mascot Modal Logic
+    let chompInterval = null;
+    function openMascotModal() {
+      soundClick();
+      const modal = document.getElementById('cabbageMascotModal');
+      modal.classList.remove('hidden');
+      modal.querySelectorAll('.conveyor-eat-1, .conveyor-eat-2, .conveyor-eat-3, .conveyor-eat-4').forEach(el => {
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = '';
+      });
+      chompInterval = setInterval(soundChomp, 380);
+    }
+    function closeMascotModal() {
+      if (chompInterval) {
+        clearInterval(chompInterval);
+        chompInterval = null;
+      }
+      document.getElementById('cabbageMascotModal').classList.add('hidden');
+    }
+    
+    // Real-time clock for Redmi Note 15 Pro
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clockDisplay').textContent = `${h}:${m}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Tab Navigation
+    const pages = {
+      dashboard: document.getElementById('pageDashboard'),
+      workout: document.getElementById('pageWorkout'),
+      nutrition: document.getElementById('pageNutrition'),
+      marketplace: document.getElementById('pageMarketplace'),
+      profile: document.getElementById('pageProfile')
+    };
+
+    const navs = {
+      dashboard: document.getElementById('navDashboard'),
+      workout: document.getElementById('navWorkout'),
+      nutrition: document.getElementById('navNutrition'),
+      marketplace: document.getElementById('navMarketplace'),
+      profile: document.getElementById('navProfile')
+    };
+
+    function switchTab(tabKey) {
+      soundClick();
+      Object.keys(pages).forEach(k => {
+        pages[k].classList.add('hidden');
+        pages[k].classList.remove('block');
+        
+        const btn = navs[k];
+        if (btn) {
+          const pill = btn.querySelector('.nav-pill');
+          const label = btn.querySelector('.nav-label');
+          if (pill) {
+            pill.classList.remove('bg-[#CCFF00]/18', 'text-[#CCFF00]', 'shadow-[0_0_12px_rgba(204,255,0,0.25)]');
+            pill.classList.add('bg-transparent', 'text-gray-400');
+          }
+          if (label) {
+            label.classList.remove('text-[#CCFF00]', 'font-black');
+            label.classList.add('text-gray-400', 'font-medium');
+          }
+        }
+      });
+
+      pages[tabKey].classList.remove('hidden');
+      pages[tabKey].classList.add('block');
+      
+      const activeBtn = navs[tabKey];
+      if (activeBtn) {
+        const activePill = activeBtn.querySelector('.nav-pill');
+        const activeLabel = activeBtn.querySelector('.nav-label');
+        if (activePill) {
+          activePill.classList.remove('bg-transparent', 'text-gray-400');
+          activePill.classList.add('bg-[#CCFF00]/18', 'text-[#CCFF00]', 'shadow-[0_0_12px_rgba(204,255,0,0.25)]');
+        }
+        if (activeLabel) {
+          activeLabel.classList.remove('text-gray-400', 'font-medium');
+          activeLabel.classList.add('text-[#CCFF00]', 'font-black');
+        }
+      }
+    }
+
+    // Dynamic Island State & Controls
+    let islandExpanded = false;
+    function toggleIslandExpansion() {
+      const island = document.getElementById('dynamicIsland');
+      islandExpanded = !islandExpanded;
+      if (islandExpanded) {
+        island.classList.add('expanded');
+      } else {
+        island.classList.remove('expanded');
+      }
+    }
+
+    function updateIslandState(text, isTimerActive) {
+      const islandText = document.getElementById('islandText');
+      const island = document.getElementById('dynamicIsland');
+      const dot = document.getElementById('islandLiveDot');
+      
+      islandText.innerHTML = text;
+      if (isTimerActive) {
+        island.classList.add('expanded');
+        dot.classList.add('bg-[#CCFF00]', 'pulse-live');
+      } else {
+        island.classList.remove('expanded');
+        dot.classList.remove('pulse-live');
+      }
+    }
+
+    // Home Workout Fallback Conversion
+    function triggerHomeConversion() {
+      alert("برنامه روز ۲ (سینه و بازو) به تمرینات بدون وزنه در خانه تبدیل شد.\n\nحرکات: شنا سوئدی، شنا پاهای بالا، دیپ لبه تخت، جلو بازو با حوله و پلنک.");
+      switchTab('workout');
+    }
+
+    // ============================================================================
+    // COMPLETE DYNAMIC WORKOUT ENGINE (PLANS 1, 2, 3 & 4)
+    // ============================================================================
+    const WORKOUT_PLANS = {
+      1: {
+        title: "برنامه شماره ۱: پا و شکم (Legs & Core)",
+        warmupTag: "پا، زانو و کور",
+        warmupItems: [
+          "۱۰ دقیقه تردمیل شیبدار برای جریان خون پاها",
+          "۵ دقیقه چرخش فعال مفاصل مچ پا و زانوها",
+          "۲ ست اسکوات وزن بدن برای روانکاری مفاصل"
+        ],
+        exercises: [
+          {
+            id: "d1_e1",
+            name: "اسکوات هالتر استاندارد (Barbell Squat)",
+            muscle: "چهارسر ران و گلوت",
+            equipment: "هالتر المپیکی",
+            restSec: 120,
+            sets: [
+              { num: 1, text: "۷۰kg × ۱۰ تکرار", weight: 70, reps: 10, done: true },
+              { num: 2, text: "۸۰kg × ۱۰ تکرار", weight: 80, reps: 10, done: false },
+              { num: 3, text: "۹۰kg × ۱۰ تکرار", weight: 90, reps: 10, done: false }
+            ]
+          },
+          {
+            id: "d1_e2",
+            name: "پرس پا دستگاه شیبدار (Leg Press)",
+            muscle: "چهارسر و باسن",
+            equipment: "دستگاه پرس پا",
+            restSec: 90,
+            sets: [
+              { num: 1, text: "۱۲۰kg × ۱۰ تکرار", weight: 120, reps: 10, done: false },
+              { num: 2, text: "۱۴۰kg × ۱۰ تکرار", weight: 140, reps: 10, done: false },
+              { num: 3, text: "۱۶۰kg × ۱۰ تکرار", weight: 160, reps: 10, done: false }
+            ]
+          },
+          {
+            id: "d1_e3",
+            name: "ددلیفت رومانیایی دمبل (Romanian Deadlift)",
+            muscle: "همسترینگ و فیله کمر",
+            equipment: "دمبل سنگین",
+            restSec: 90,
+            sets: [
+              { num: 1, text: "۲۵kg × ۸ تکرار", weight: 25, reps: 8, done: false },
+              { num: 2, text: "۳۰kg × ۸ تکرار", weight: 30, reps: 8, done: false },
+              { num: 3, text: "۳۰kg × ۸ تکرار", weight: 30, reps: 8, done: false }
+            ]
+          },
+          {
+            id: "d1_e4",
+            name: "سوپرست جلوپا + پشت‌پا دستگاه",
+            muscle: "تفکیک کامل عضلات ران",
+            equipment: "دستگاه سیم‌کش",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "۴۵kg × ۱۵ تکرار (سوپر)", weight: 45, reps: 15, done: false },
+              { num: 2, text: "۵۰kg × ۱۵ تکرار (سوپر)", weight: 50, reps: 15, done: false },
+              { num: 3, text: "۵۵kg × ۱۵ تکرار (سوپر)", weight: 55, reps: 15, done: false }
+            ]
+          },
+          {
+            id: "d1_e5",
+            name: "ساق پا هاگ دستگاه (Calf Raise)",
+            muscle: "دوقلو و نعلی ساق",
+            equipment: "دستگاه هاگ",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "۴۰kg × ۲۰ تکرار", weight: 40, reps: 20, done: false },
+              { num: 2, text: "۵۰kg × ۲۰ تکرار", weight: 50, reps: 20, done: false },
+              { num: 3, text: "۵۰kg × ۲۰ تکرار", weight: 50, reps: 20, done: false }
+            ]
+          },
+          {
+            id: "d1_e6",
+            name: "سوپرست پلنک و شکم شیب (Core Blast)",
+            muscle: "راست و مورب شکمی",
+            equipment: "وزن بدن و میز شیبدار",
+            restSec: 45,
+            sets: [
+              { num: 1, text: "۶۰ ثانیه پلنک + ۲۰ تکرار شکم", weight: 0, reps: 20, done: false },
+              { num: 2, text: "۶۰ ثانیه پلنک + ۲۰ تکرار شکم", weight: 0, reps: 20, done: false },
+              { num: 3, text: "۶۰ ثانیه پلنک + ۲۰ تکرار شکم", weight: 0, reps: 20, done: false }
+            ]
+          }
+        ]
+      },
+
+      2: {
+        title: "برنامه شماره ۲: سینه، بازو و فیله کمر (Chest & Arms)",
+        warmupTag: "سینه و روتاتور کاف",
+        warmupItems: [
+          "۵ دقیقه چرخش کش پیلاتس برای روتاتور کاف شانه",
+          "۵ دقیقه شیب ملایم تردمیل برای گردش خون",
+          "۲ ست شنا سوئدی سبک با کنترل فاز منفی"
+        ],
+        exercises: [
+          {
+            id: "d2_e1",
+            name: "پرس سینه هالتر هرمی (Bench Press)",
+            muscle: "سینه میانی و قدامی",
+            equipment: "هالتر تخت",
+            restSec: 120,
+            sets: [
+              { num: 1, text: "۷۰kg × ۱۲ تکرار", weight: 70, reps: 12, done: true },
+              { num: 2, text: "۸۰kg × ۱۰ تکرار", weight: 80, reps: 10, done: false },
+              { num: 3, text: "۸۵kg × ۸ تکرار", weight: 85, reps: 8, done: false },
+              { num: 4, text: "۹۰kg × ۶ تکرار (سنگین‌ترین)", weight: 90, reps: 6, done: false }
+            ]
+          },
+          {
+            id: "d2_e2",
+            name: "قفسه بالاسینه کراس‌اور (Cable Fly)",
+            muscle: "بالاسینه و تفکیک خط وسط",
+            equipment: "سیم‌کش دوبل",
+            restSec: 75,
+            sets: [
+              { num: 1, text: "۱۵kg × ۱۰ تکرار", weight: 15, reps: 10, done: false },
+              { num: 2, text: "۱۷.۵kg × ۱۰ تکرار", weight: 17.5, reps: 10, done: false },
+              { num: 3, text: "۲۰kg × ۱۰ تکرار", weight: 20, reps: 10, done: false }
+            ]
+          },
+          {
+            id: "d2_e3",
+            name: "سوپرست بالاسینه دمبل + شنا سوئدی",
+            muscle: "پمپ خون و استرس متابولیک سینه",
+            equipment: "دمبل و وزن بدن",
+            restSec: 90,
+            sets: [
+              { num: 1, text: "۲۲kg × ۱۰ + ۱۲ شنا", weight: 22, reps: 10, done: false },
+              { num: 2, text: "۲۴kg × ۱۰ + ۱۰ شنا", weight: 24, reps: 10, done: false },
+              { num: 3, text: "۲۶kg × ۱۰ + ۱۰ شنا", weight: 26, reps: 10, done: false }
+            ]
+          },
+          {
+            id: "d2_e4",
+            name: "پرس سینه دستگاه ماتریکس (Chest Press)",
+            muscle: "تمرکز انقباض ایزوله سینه",
+            equipment: "دستگاه ماتریکس",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "۵۰kg × ۱۰ تکرار", weight: 50, reps: 10, done: false },
+              { num: 2, text: "۶۰kg × ۱۰ تکرار", weight: 60, reps: 10, done: false },
+              { num: 3, text: "۶۵kg × ۱۰ تکرار", weight: 65, reps: 10, done: false }
+            ]
+          },
+          {
+            id: "d2_e5",
+            name: "سوپرست بازو (جلو بازو دمبل + دیپ پارالل)",
+            muscle: "دوسر و سه‌سر بازو",
+            equipment: "دمبل و پارالل",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "۱۴kg × ۱۲ + ۱۲ دیپ", weight: 14, reps: 12, done: false },
+              { num: 2, text: "۱۶kg × ۱۲ + ۱۲ دیپ", weight: 16, reps: 12, done: false },
+              { num: 3, text: "۱۶kg × ۱۲ + ۱۰ دیپ", weight: 16, reps: 12, done: false }
+            ]
+          },
+          {
+            id: "d2_e6",
+            name: "فیله کمر با صفحه وزنه (Hyperextensions)",
+            muscle: "راست‌کننده ستون فقرات و سرینی",
+            equipment: "میز فیله + وزنه",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "۱۰kg × ۱۵ تکرار", weight: 10, reps: 15, done: false },
+              { num: 2, text: "۱۰kg × ۱۵ تکرار", weight: 10, reps: 15, done: false },
+              { num: 3, text: "۱۵kg × ۱۵ تکرار", weight: 15, reps: 15, done: false }
+            ]
+          }
+        ]
+      },
+
+      3: {
+        title: "برنامه شماره ۳: پشت، زیربغل، سرشانه و کول (Back & Shoulders)",
+        warmupTag: "کتف، شانه و لت",
+        warmupItems: [
+          "۵ دقیقه آویزان شدن پویا از بارفیکس و چرخش اسکاپولا",
+          "۵ دقیقه کش پیلاتس نشر جانب و فیس پول سبک",
+          "۲ ست لت سیم‌کش خیلی سبک برای درگیری عصب و عضله"
+        ],
+        exercises: [
+          {
+            id: "d3_e1",
+            name: "بارفیکس مچ برعکس (Chin-ups)",
+            muscle: "زیربغل، پهنای لت و جلوبازو",
+            equipment: "میله بارفیکس",
+            restSec: 90,
+            sets: [
+              { num: 1, text: "وزن بدن (۷۳kg) × ۸ تکرار", weight: 73, reps: 8, done: true },
+              { num: 2, text: "وزن بدن (۷۳kg) × ۸ تکرار", weight: 73, reps: 8, done: false },
+              { num: 3, text: "وزن بدن (۷۳kg) × ۸ تکرار", weight: 73, reps: 8, done: false }
+            ]
+          },
+          {
+            id: "d3_e2",
+            name: "زیربغل قایقی میله V (Seated Cable Row)",
+            muscle: "ضخامت لت و زیربغل میانی",
+            equipment: "سیم‌کش قایقی",
+            restSec: 75,
+            sets: [
+              { num: 1, text: "۵۰kg × ۱۰ تکرار", weight: 50, reps: 10, done: false },
+              { num: 2, text: "۶۰kg × ۱۰ تکرار", weight: 60, reps: 10, done: false },
+              { num: 3, text: "۶۵kg × ۱۰ تکرار", weight: 65, reps: 10, done: false }
+            ]
+          },
+          {
+            id: "d3_e3",
+            name: "سوپرست سیم‌کش جلو + تی‌بار سنگین",
+            muscle: "پهنا و ضخامت کامل عضلات پشت",
+            equipment: "دستگاه لت و هالتر T",
+            restSec: 90,
+            sets: [
+              { num: 1, text: "۵۵kg × ۱۰ + ۴۰kg × ۱۰", weight: 55, reps: 10, done: false },
+              { num: 2, text: "۶۰kg × ۱۰ + ۴۵kg × ۱۰", weight: 60, reps: 10, done: false },
+              { num: 3, text: "۶۵kg × ۱۰ + ۵۰kg × ۱۰", weight: 65, reps: 10, done: false }
+            ]
+          },
+          {
+            id: "d3_e4",
+            name: "پرس سرشانه هالتر نظامی (Military Press)",
+            muscle: "دلتوئید قدامی و میانی",
+            equipment: "هالتر ایستاده",
+            restSec: 90,
+            sets: [
+              { num: 1, text: "۴۰kg × ۱۰ تکرار", weight: 40, reps: 10, done: false },
+              { num: 2, text: "۴۵kg × ۱۰ تکرار", weight: 45, reps: 10, done: false },
+              { num: 3, text: "۵۰kg × ۱۰ تکرار", weight: 50, reps: 10, done: false }
+            ]
+          },
+          {
+            id: "d3_e5",
+            name: "سوپرست پرس دمبل آرنولدی + نشر جانب",
+            muscle: "تفکیک کامل عضلات سرشانه",
+            equipment: "دمبل",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "۱۶kg × ۱۲ + ۸kg × ۱۲", weight: 16, reps: 12, done: false },
+              { num: 2, text: "۱۸kg × ۱۲ + ۹kg × ۱۲", weight: 18, reps: 12, done: false },
+              { num: 3, text: "۱۸kg × ۱۲ + ۱۰kg × ۱۲", weight: 18, reps: 12, done: false }
+            ]
+          },
+          {
+            id: "d3_e6",
+            name: "فلای معکوس دمبل + شراگز هالتر سنگین",
+            muscle: "سرشانه خلفی و کول (تراپزیوس)",
+            equipment: "دمبل و هالتر",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "۱۰kg × ۱۵ + ۷۰kg × ۱۵", weight: 70, reps: 15, done: false },
+              { num: 2, text: "۱۲kg × ۱۵ + ۸۰kg × ۱۵", weight: 80, reps: 15, done: false },
+              { num: 3, text: "۱۲kg × ۱۵ + ۹۰kg × ۱۵", weight: 90, reps: 15, done: false }
+            ]
+          }
+        ]
+      },
+
+      4: {
+        title: "برنامه تمرین خانگی بدون وزنه (Home Workout)",
+        warmupTag: "پروانه و کشش پویا",
+        warmupItems: [
+          "۵ دقیقه پروانه سبک برای گرم‌کردن عمومی",
+          "۵ دقیقه کشش دست، پا و مفاصل مچ",
+          "۲ ست پلانک سبک ۲۰ ثانیه‌ای"
+        ],
+        exercises: [
+          {
+            id: "d4_e1",
+            name: "شنا سوئدی استاندارد (Push-ups)",
+            muscle: "سینه و پشت‌بازو",
+            equipment: "وزن بدن",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: true },
+              { num: 2, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: false },
+              { num: 3, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: false }
+            ]
+          },
+          {
+            id: "d4_e2",
+            name: "شنا پاهای بالا روی صندلی (Decline Push-ups)",
+            muscle: "بالاسینه",
+            equipment: "وزن بدن + صندلی",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "وزن بدن × ۱۲ تکرار", weight: 0, reps: 12, done: false },
+              { num: 2, text: "وزن بدن × ۱۲ تکرار", weight: 0, reps: 12, done: false },
+              { num: 3, text: "وزن بدن × ۱۲ تکرار", weight: 0, reps: 12, done: false }
+            ]
+          },
+          {
+            id: "d4_e3",
+            name: "اسکوات بلغاری تک‌پا (Bulgarian Split Squat)",
+            muscle: "چهارسر ران و گلوت",
+            equipment: "وزن بدن",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "وزن بدن × ۱۵ تکرار هر پا", weight: 0, reps: 15, done: false },
+              { num: 2, text: "وزن بدن × ۱۵ تکرار هر پا", weight: 0, reps: 15, done: false },
+              { num: 3, text: "وزن بدن × ۱۵ تکرار هر پا", weight: 0, reps: 15, done: false }
+            ]
+          },
+          {
+            id: "d4_e4",
+            name: "دیپ لبه صندلی (Chair Dips)",
+            muscle: "پشت‌بازو",
+            equipment: "صندلی یا لبه تخت",
+            restSec: 60,
+            sets: [
+              { num: 1, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: false },
+              { num: 2, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: false },
+              { num: 3, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: false }
+            ]
+          },
+          {
+            id: "d4_e5",
+            name: "سوپرمن با حوله کشیده (Superman Extension)",
+            muscle: "فیله کمر و عضلات پشت",
+            equipment: "حوله ورزشی",
+            restSec: 45,
+            sets: [
+              { num: 1, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: false },
+              { num: 2, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: false },
+              { num: 3, text: "وزن بدن × ۱۵ تکرار", weight: 0, reps: 15, done: false }
+            ]
+          },
+          {
+            id: "d4_e6",
+            name: "پلنک ایستا (Plank)",
+            muscle: "عضلات کور و شکم",
+            equipment: "وزن بدن",
+            restSec: 45,
+            sets: [
+              { num: 1, text: "۶۰ ثانیه نگهداری", weight: 0, reps: 60, done: false },
+              { num: 2, text: "۶۰ ثانیه نگهداری", weight: 0, reps: 60, done: false },
+              { num: 3, text: "۶۰ ثانیه نگهداری", weight: 0, reps: 60, done: false }
+            ]
+          }
+        ]
+      }
+    };
+
+    let activePlanId = 2;
+    let activeExerciseIndex = 0;
+    let sessionSecondsElapsed = 765;
+    let sessionTimerInterval = null;
+
+    function openWorkoutSessionModal(dayNumber) {
+      soundClick();
+      activePlanId = dayNumber || 2;
+      activeExerciseIndex = 0;
+
+      const plan = WORKOUT_PLANS[activePlanId] || WORKOUT_PLANS[2];
+
+      // Update Title
+      const titleEl = document.getElementById('activeWorkoutTitle');
+      if (titleEl) titleEl.textContent = plan.title;
+
+      // Update Warmup Protocol
+      const tagEl = document.getElementById('activeWorkoutWarmupTag');
+      if (tagEl) tagEl.textContent = plan.warmupTag;
+
+      const warmupListEl = document.getElementById('activeWorkoutWarmupList');
+      if (warmupListEl) {
+        warmupListEl.innerHTML = plan.warmupItems.map(item => `
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked class="accent-[#CCFF00]">
+            <span>${item}</span>
+          </label>
+        `).join('');
+      }
+
+      // Render Exercise Strip & Active Card
+      renderExerciseTabs();
+      renderActiveExercise();
+      recalcSessionTonnage();
+
+      // Start live elapsed timer
+      if (!sessionTimerInterval) {
+        sessionTimerInterval = setInterval(() => {
+          sessionSecondsElapsed++;
+          const m = String(Math.floor(sessionSecondsElapsed / 60)).padStart(2, '0');
+          const s = String(sessionSecondsElapsed % 60).padStart(2, '0');
+          const disp = document.getElementById('sessionTimerDisplay');
+          if (disp) disp.textContent = `۰۰:${m}:${s}`;
+        }, 1000);
+      }
+
+      document.getElementById('workoutPlayerModal').classList.remove('hidden');
+      updateIslandState('<span class="text-[#CCFF00]">جلسه فعال</span>', true);
+    }
+
+    function closeWorkoutPlayer() {
+      pauseTimerManual();
+      if (sessionTimerInterval) {
+        clearInterval(sessionTimerInterval);
+        sessionTimerInterval = null;
+      }
+      document.getElementById('workoutPlayerModal').classList.add('hidden');
+      updateIslandState('<span>GymBro</span>', false);
+    }
+
+    function renderExerciseTabs() {
+      const plan = WORKOUT_PLANS[activePlanId] || WORKOUT_PLANS[2];
+      const strip = document.getElementById('exerciseTabsStrip');
+      if (!strip) return;
+
+      strip.innerHTML = plan.exercises.map((ex, idx) => {
+        const isActive = idx === activeExerciseIndex;
+        const allDone = ex.sets.every(s => s.done);
+        return `
+          <button onclick="selectWorkoutExercise(${idx})" class="whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+            isActive
+              ? 'bg-[#CCFF00] text-black border-[#CCFF00] shadow-md'
+              : allDone
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                : 'bg-[#141722] text-gray-300 border-[#252B3A] hover:border-gray-500'
+          }">
+            <span>${idx + 1}. ${ex.name.split(' (')[0]}</span>
+            ${allDone ? '<span class="text-[10px]">✓</span>' : ''}
+          </button>
+        `;
+      }).join('');
+
+      const badge = document.getElementById('exerciseProgressBadge');
+      if (badge) {
+        badge.textContent = `حرکت ${activeExerciseIndex + 1} از ${plan.exercises.length}`;
+      }
+    }
+
+    function selectWorkoutExercise(index) {
+      soundClick();
+      const plan = WORKOUT_PLANS[activePlanId] || WORKOUT_PLANS[2];
+      if (index < 0 || index >= plan.exercises.length) return;
+      activeExerciseIndex = index;
+      renderExerciseTabs();
+      renderActiveExercise();
+    }
+
+    function nextWorkoutExercise() {
+      const plan = WORKOUT_PLANS[activePlanId] || WORKOUT_PLANS[2];
+      if (activeExerciseIndex < plan.exercises.length - 1) {
+        selectWorkoutExercise(activeExerciseIndex + 1);
+      }
+    }
+
+    function prevWorkoutExercise() {
+      if (activeExerciseIndex > 0) {
+        selectWorkoutExercise(activeExerciseIndex - 1);
+      }
+    }
+
+    function renderActiveExercise() {
+      const plan = WORKOUT_PLANS[activePlanId] || WORKOUT_PLANS[2];
+      const ex = plan.exercises[activeExerciseIndex];
+      const container = document.getElementById('activeExerciseCard');
+      if (!container || !ex) return;
+
+      container.innerHTML = `
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-[#CCFF00] text-black font-black text-xs flex items-center justify-center">${activeExerciseIndex + 1}</span>
+              <h4 class="theme-text-primary text-sm font-black text-white">${ex.name}</h4>
+            </div>
+            <div class="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400">
+              <span class="text-gray-300 font-bold">${ex.muscle}</span>
+              <span>•</span>
+              <span>${ex.equipment}</span>
+              <span>•</span>
+              <span class="bg-[#CCFF00]/15 text-[#CCFF00] px-1.5 py-0.5 rounded font-bold">هدف استراحت: ${ex.restSec} ثانیه</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sets Table -->
+        <div class="space-y-2 text-xs pt-1">
+          ${ex.sets.map((set, setIdx) => `
+            <div onclick="toggleSetCheck(${activeExerciseIndex}, ${setIdx})" class="theme-card-sub flex justify-between items-center bg-[#0E1118] hover:bg-[#161B26] p-2.5 rounded-xl border border-zinc-800 transition cursor-pointer select-none">
+              <div class="text-gray-300 flex items-center gap-2">
+                <span class="font-bold text-white">ست ${set.num}:</span>
+                <span class="${set.done ? 'line-through text-gray-500' : 'text-gray-200'}">${set.text}</span>
+              </div>
+              <input type="checkbox" ${set.done ? 'checked' : ''} onclick="event.stopPropagation(); toggleSetCheck(${activeExerciseIndex}, ${setIdx})" class="w-5 h-5 accent-[#CCFF00] cursor-pointer">
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      // Set Chronograph rest timer to this exercise's restSec
+      timerTargetSeconds = ex.restSec || 90;
+      resetTimerManual();
+
+      // Update Prev / Next Buttons State
+      const prevBtn = document.getElementById('btnPrevExercise');
+      const nextBtn = document.getElementById('btnNextExercise');
+      if (prevBtn) {
+        prevBtn.disabled = activeExerciseIndex === 0;
+        prevBtn.style.opacity = activeExerciseIndex === 0 ? "0.4" : "1";
+      }
+      if (nextBtn) {
+        nextBtn.disabled = activeExerciseIndex === plan.exercises.length - 1;
+        nextBtn.style.opacity = activeExerciseIndex === plan.exercises.length - 1 ? "0.4" : "1";
+      }
+    }
+
+    function toggleSetCheck(exIdx, setIdx) {
+      soundClick();
+      const plan = WORKOUT_PLANS[activePlanId] || WORKOUT_PLANS[2];
+      const set = plan.exercises[exIdx].sets[setIdx];
+      set.done = !set.done;
+
+      if (set.done) {
+        soundSuccess();
+        // Prompt to start rest timer
+        startTimerManual();
+      }
+
+      renderExerciseTabs();
+      renderActiveExercise();
+      recalcSessionTonnage();
+    }
+
+    function recalcSessionTonnage() {
+      const plan = WORKOUT_PLANS[activePlanId] || WORKOUT_PLANS[2];
+      let totalKg = 0;
+      let totalSetsDone = 0;
+
+      plan.exercises.forEach(ex => {
+        ex.sets.forEach(set => {
+          if (set.done) {
+            totalSetsDone++;
+            totalKg += (set.weight || 0) * (set.reps || 1);
+          }
+        });
+      });
+
+      const tonnageDisp = document.getElementById('sessionTonnageDisplay');
+      if (tonnageDisp) {
+        tonnageDisp.textContent = `${totalKg.toLocaleString('fa-IR')} kg`;
+      }
+      return { totalKg, totalSetsDone };
+    }
+
+    
+// URL query parameter support for direct modal testing e.g. ?openWorkout=3
+window.addEventListener('DOMContentLoaded', () => {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('openWorkout')) {
+            const day = parseInt(params.get('openWorkout')) || 3;
+            switchTab('workout');
+            setTimeout(() => { openWorkoutSessionModal(day); }, 350);
+        }
+    } catch(e) { console.error(e); }
+});
+
+function finishWorkoutSession() {
+      const { totalKg, totalSetsDone } = recalcSessionTonnage();
+
+      if (totalSetsDone === 0) {
+        const confirmExit = confirm("هیچ ستی به عنوان انجام شده تیک نخورده است. آیا مایلید جلسه را بدون ثبت تناژ پایان دهید؟");
+        if (!confirmExit) return;
+        closeWorkoutPlayer();
+        return;
+      }
+
+      closeWorkoutPlayer();
+      soundSuccess();
+
+      // Show Celebration Modal with accurate stats
+      document.getElementById('celebrationTonnageText').textContent = `${totalKg.toLocaleString('fa-IR')} کیلوگرم`;
+      document.getElementById('celebrationSetsText').textContent = `${totalSetsDone} ست`;
+      document.getElementById('workoutCelebrationModal').classList.remove('hidden');
+
+      const coinsDisplay = document.getElementById('dashboardCoinsText');
+      if (coinsDisplay) coinsDisplay.textContent = '۱۵۰ سکه';
+    }
+
+    function closeFoodScannerModal() {
+      document.getElementById('foodScannerModal').classList.add('hidden');
+    }
+
+    let pendingScan = null;
+    let currentCalories = 580;
+    let currentProtein = 38;
+    let currentCarbs = 65;
+    let currentFat = 18;
+
+    function simulateScan(foodName, calories, protein, carbs, fat, desc) {
+      pendingScan = { foodName, calories, protein, carbs, fat, desc };
+
+      const loader = document.getElementById('scanCabbageLoader');
+      const resultBox = document.getElementById('scanResultBox');
+      
+      if (loader) {
+        loader.classList.remove('hidden');
+        loader.querySelectorAll('.conveyor-eat-1, .conveyor-eat-2, .conveyor-eat-3, .conveyor-eat-4').forEach(el => {
+          el.style.animation = 'none';
+          void el.offsetWidth;
+          el.style.animation = '';
+        });
+      }
+      if (resultBox) resultBox.classList.add('hidden');
+      
+      soundChomp();
+      let chompCount = 0;
+      const chompTimer = setInterval(() => {
+        soundChomp();
+        chompCount++;
+        if (chompCount >= 3) clearInterval(chompTimer);
+      }, 350);
+
+      setTimeout(() => {
+        if (loader) loader.classList.add('hidden');
+        if (resultBox) resultBox.classList.remove('hidden');
+
+        document.getElementById('scanFoodName').textContent = foodName;
+        document.getElementById('scanFoodCalories').textContent = `${calories} kcal`;
+        document.getElementById('scanFoodProtein').textContent = `${protein}g`;
+        document.getElementById('scanFoodCarbs').textContent = `${carbs}g`;
+        document.getElementById('scanFoodFat').textContent = `${fat}g`;
+        document.getElementById('scanFoodDesc').textContent = `شناسایی هوشمند رژیم ۵۳۳: ${desc} • پروتئین باکیفیت جهت رشد عضلانی.`;
+
+        soundSuccess();
+      }, 1200);
+    }
+
+    function handleRealImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const apiKey = document.getElementById('geminiApiKeyInput').value.trim();
+      if (apiKey) {
+        alert("تصویر دریافت شد. ارسال به Google AI Studio (Gemini 1.5 Flash Vision)...");
+        setTimeout(() => {
+          simulateScan("وعده ورزشی ایرانی (شناسایی از روی تصویر)", 540, 44, 58, 12, "آنالیز زنده با Google Gemini Vision");
+        }, 1200);
+      } else {
+        simulateScan("وعده ورزشی شناسایی‌شده با دوربین", 510, 42, 50, 11, "آنالیز دقیق موتور غذایی ورزشی ایران");
+      }
+    }
+
+    function commitScanResult() {
+      if (!pendingScan) return;
+
+      currentCalories += pendingScan.calories;
+      currentProtein += pendingScan.protein;
+      currentCarbs += pendingScan.carbs;
+      currentFat += pendingScan.fat;
+
+      document.getElementById('consumedCaloriesText').textContent = currentCalories;
+      const rem = Math.max(0, 2250 - currentCalories);
+      document.getElementById('remainingCaloriesBadge').textContent = `${rem} باقی‌مانده`;
+      const pct = Math.min(100, Math.round((currentCalories / 2250) * 100));
+      document.getElementById('calorieProgressBar').style.width = `${pct}%`;
+
+      document.getElementById('macroProteinText').textContent = `${currentProtein} / 160g`;
+      document.getElementById('macroCarbsText').textContent = `${currentCarbs} / 220g`;
+      document.getElementById('macroFatText').textContent = `${currentFat} / 55g`;
+
+      const container = document.getElementById('additionalMealsContainer');
+      const item = document.createElement('div');
+      item.className = "theme-card bg-[#141722] border border-[#252B3A] rounded-xl p-3.5 space-y-1";
+      item.innerHTML = `
+        <div class="flex justify-between items-center">
+          <span class="theme-text-primary text-xs font-bold text-white">${pendingScan.foodName} (اسکن‌شده)</span>
+          <span class="text-xs text-[#CCFF00] font-black">${pendingScan.calories} kcal</span>
+        </div>
+        <p class="theme-text-muted text-[11px] text-gray-400">پروتئین: ${pendingScan.protein}g • کربوهیدرات: ${pendingScan.carbs}g • چربی: ${pendingScan.fat}g</p>
+      `;
+      container.appendChild(item);
+
+      closeFoodScannerModal();
+      document.getElementById('scanResultBox').classList.add('hidden');
+      soundSuccess();
+      alert(`وعده «${pendingScan.foodName}» به کالری‌شمار امروز اضافه شد.`);
+    }
+
+    // Marketplace Sub-Tab Switching
+    function switchMarketSubTab(subTabKey) {
+      soundClick();
+      const btnGyms = document.getElementById('subTabGyms');
+      const btnTrainers = document.getElementById('subTabTrainers');
+      const btnBookings = document.getElementById('subTabBookings');
+
+      const contentGyms = document.getElementById('subTabContentGyms');
+      const contentTrainers = document.getElementById('subTabContentTrainers');
+      const contentBookings = document.getElementById('subTabContentBookings');
+
+      [btnGyms, btnTrainers, btnBookings].forEach(b => {
+        b.className = "flex-1 py-1.5 rounded-lg text-gray-400 hover:text-white transition";
+      });
+
+      contentGyms.classList.add('hidden');
+      contentTrainers.classList.add('hidden');
+      contentBookings.classList.add('hidden');
+
+      if (subTabKey === 'gyms') {
+        btnGyms.className = "flex-1 py-1.5 rounded-lg bg-[#CCFF00] text-black transition font-bold";
+        contentGyms.classList.remove('hidden');
+      } else if (subTabKey === 'trainers') {
+        btnTrainers.className = "flex-1 py-1.5 rounded-lg bg-[#CCFF00] text-black transition font-bold";
+        contentTrainers.classList.remove('hidden');
+      } else {
+        btnBookings.className = "flex-1 py-1.5 rounded-lg bg-[#CCFF00] text-black transition font-bold";
+        contentBookings.classList.remove('hidden');
+      }
+    }
+
+    // Trainer Booking Action (Double-Tap Prevention + SnackBar)
+    let isBooking = false;
+    function bookTrainerSession(trainerName, price) {
+      if (isBooking) return;
+      isBooking = true;
+      soundClick();
+
+      setTimeout(() => {
+        isBooking = false;
+        soundSuccess();
+
+        // Inject active booking
+        const emptyView = document.getElementById('emptyBookingsView');
+        const activeList = document.getElementById('activeBookingsList');
+        emptyView.classList.add('hidden');
+        activeList.classList.remove('hidden');
+
+        const bookingItem = document.createElement('div');
+        bookingItem.id = `booking_${Date.now()}`;
+        bookingItem.className = "theme-card bg-[#141722] border border-[#252B3A] rounded-2xl p-4 space-y-2";
+        bookingItem.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <h4 class="theme-text-primary text-sm font-bold text-white">جلسه با ${trainerName}</h4>
+              <p class="theme-text-muted text-[10px] text-gray-400">زمان: فردا، ساعت ۱۷:۰۰ • نوع: حضوری در باشگاه</p>
+            </div>
+            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 font-bold px-2 py-0.5 rounded border border-cyan-500/30 flex items-center gap-1">
+              <svg class="w-3 h-3 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>تایید شده (در نوبت)</span>
+            </span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="theme-text-muted text-gray-400">مبلغ پرداختی: ${price} (۱۰٪ سهم پلتفرم)</span>
+            <button onclick="cancelBooking('${bookingItem.id}')" class="text-red-400 hover:text-red-300 text-[11px] font-bold">لغو نوبت</button>
+          </div>
+        `;
+        activeList.prepend(bookingItem);
+        switchMarketSubTab('bookings');
+        alert(`نوبت جلسه با ${trainerName} با موفقیت ثبت شد.`);
+      }, 500);
+    }
+
+    
+    // ==========================================
+    // PRIVATE COACH & GYM BOOKING HELPERS
+    // ==========================================
+    function toggleCoachPrivateNotes() {
+      soundClick();
+      const panel = document.getElementById('coachPrivateNotesPanel');
+      if (panel) {
+        panel.classList.toggle('hidden');
+      }
+    }
+
+    function bookGymSession(gymName, fee) {
+      soundClick();
+      const emptyView = document.getElementById('emptyBookingsView');
+      const activeList = document.getElementById('activeBookingsList');
+      if (emptyView) emptyView.classList.add('hidden');
+      if (activeList) activeList.classList.remove('hidden');
+
+      const bookingItem = document.createElement('div');
+      bookingItem.id = `gym_booking_${Date.now()}`;
+      bookingItem.className = "theme-card bg-[#141722] border border-[#252B3A] rounded-2xl p-4 space-y-2 shadow-md";
+      bookingItem.innerHTML = `
+        <div class="flex justify-between items-start">
+          <div>
+            <h4 class="theme-text-primary text-sm font-bold text-white">عضویت سانس VIP در ${gymName}</h4>
+            <p class="theme-text-muted text-[10px] text-gray-400">تاریخ شروع: از فردا • دسترسی نامحدود به بدنسازی و استخر</p>
+          </div>
+          <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+            <svg class="w-3 h-3 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>فعال شد</span>
+          </span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="theme-text-muted text-gray-400">مبلغ عضویت: ${fee} (تخفیف ۵٪ لحاظ شد)</span>
+          <button onclick="cancelBooking('${bookingItem.id}')" class="text-red-400 hover:text-red-300 text-[11px] font-bold">لغو اشتراک</button>
+        </div>
+      `;
+      if (activeList) activeList.prepend(bookingItem);
+      switchMarketSubTab('bookings');
+      alert(`درخواست عضویت در ${gymName} با موفقیت ثبت شد.`);
+    }
+
+    function openCoachChatModal(coachName) {
+      soundClick();
+      alert(`اتصال به چت اختصاصی و امن با ${coachName}...\nمربی در ساعات کاری (۱۰ الی ۲۲) در دسترس است.`);
+    }
+
+    function cancelBooking(elementId) {
+      const confirmCancel = confirm("آیا از لغو این نوبت رزرو اطمینان دارید؟");
+      if (!confirmCancel) return;
+      const el = document.getElementById(elementId);
+      if (el) el.remove();
+      soundClick();
+
+      const activeList = document.getElementById('activeBookingsList');
+      if (activeList.children.length === 0) {
+        activeList.classList.add('hidden');
+        document.getElementById('emptyBookingsView').classList.remove('hidden');
+      }
+      alert("نوبت با موفقیت لغو شد و هزینه عودت داده شد.");
+    }
+
+    // AI Coach Modal & Chat Actions (AUDIT.md Batch 4)
+    function openAiCoachModal() {
+      soundClick();
+      document.getElementById('aiCoachModal').classList.remove('hidden');
+    }
+
+    function closeAiCoachModal() {
+      document.getElementById('aiCoachModal').classList.add('hidden');
+    }
+
+    function clearAiCoachHistory() {
+      const confirmClear = confirm("آیا مایلید تمام پیام‌های قبلی گفتگو با مربی پاک شوند؟");
+      if (!confirmClear) return;
+      const list = document.getElementById('aiChatMessagesList');
+      list.innerHTML = `
+        <div class="theme-card bg-[#141722] border border-[#252B3A] rounded-2xl p-6 text-center space-y-3">
+          <div class="w-12 h-12 rounded-full bg-[#CCFF00]/15 text-[#CCFF00] flex items-center justify-center mx-auto border border-[#CCFF00]/30">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h4 class="theme-text-primary text-sm font-bold text-white">گفتگو با مربی هوشمند ورزشی</h4>
+          <p class="theme-text-muted text-xs text-gray-400">سؤالات تمرینی، آنالیز غذایی یا تنظیمات برنامه بدنسازی خود را بپرسید.</p>
+          <button onclick="sendQuickPrompt('برنامه تمرینی امروز من چیه؟')" class="px-4 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-xl active:scale-95 transition">
+            برنامه تمرینی امروز من چیه؟
+          </button>
+        </div>
+      `;
+      soundClick();
+    }
+
+    function sendQuickPrompt(promptText) {
+      document.getElementById('aiChatInput').value = promptText;
+      sendAiMessage();
+    }
+
+    function sendAiMessage() {
+      const input = document.getElementById('aiChatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      soundClick();
+      input.value = '';
+
+      const list = document.getElementById('aiChatMessagesList');
+      // Append user bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = "flex items-start justify-end gap-2.5";
+      userBubble.innerHTML = `
+        <div class="max-w-[80%] bg-[#CCFF00]/18 border border-[#CCFF00]/40 rounded-2xl p-3 text-xs leading-relaxed space-y-1 text-right">
+          <p class="text-gray-100 font-medium">${text}</p>
+          <div class="text-[9px] text-gray-400 text-left">همین الان</div>
+        </div>
+        <div class="w-7 h-7 rounded-full bg-[#CCFF00]/20 text-[#CCFF00] flex items-center justify-center shrink-0 border border-[#CCFF00]/40 font-bold text-xs">
+          آچ
+        </div>
+      `;
+      list.appendChild(userBubble);
+      list.scrollTop = list.scrollHeight;
+
+      // Simulate AI response
+      setTimeout(() => {
+        soundSuccess();
+        const aiBubble = document.createElement('div');
+        aiBubble.className = "flex items-start gap-2.5";
+        aiBubble.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-[#CCFF00]/15 text-[#CCFF00] flex items-center justify-center shrink-0 border border-[#CCFF00]/30 font-bold text-xs">
+            AI
+          </div>
+          <div class="theme-card max-w-[80%] bg-[#141722] border border-[#252B3A] rounded-2xl p-3 text-xs leading-relaxed space-y-1">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-[#CCFF00]">مربی هوشمند جیم‌برو</span>
+              <span class="theme-text-muted text-[10px] text-gray-500">پاسخ هوشمند</span>
+            </div>
+            <p class="theme-text-primary text-gray-200">
+              بر اساس رکوردهای قبلی و جلسه امروز (سینه و بازو)، پیشنهاد می‌کنم ست آخر پرس سینه را تا ناتوانی نروی و تمرکزت بر کنترل فاز منفی (eccentric) ۲ ثانیه‌ای باشد. آب و کراتین بعد از تمرین فراموش نشود!
+            </p>
+          </div>
+        `;
+        list.appendChild(aiBubble);
+        list.scrollTop = list.scrollHeight;
+      }, 700);
+    }
+
+    function retryAiMessage() {
+      sendQuickPrompt("تحلیل وضعیت استمرار و برنامه هفته جاری");
+    }
+
+    // Edit Metrics Modal Actions & Form Validation (AUDIT.md Batch 4)
+    function openEditMetricsModal() {
+      soundClick();
+      document.getElementById('editMetricsModal').classList.remove('hidden');
+    }
+
+    function closeEditMetricsModal() {
+      document.getElementById('editMetricsModal').classList.add('hidden');
+      document.getElementById('weightErrorText').classList.add('hidden');
+      document.getElementById('heightErrorText').classList.add('hidden');
+      document.getElementById('goalErrorText').classList.add('hidden');
+    }
+
+    let isSavingMetrics = false;
+    function submitEditMetrics() {
+      if (isSavingMetrics) return;
+
+      const w = parseFloat(document.getElementById('editWeightInput').value);
+      const h = parseFloat(document.getElementById('editHeightInput').value);
+      const g = document.getElementById('editGoalInput').value.trim();
+
+      let hasError = false;
+      if (isNaN(w) || w < 30 || w > 300) {
+        document.getElementById('weightErrorText').classList.remove('hidden');
+        hasError = true;
+      } else {
+        document.getElementById('weightErrorText').classList.add('hidden');
+      }
+
+      if (isNaN(h) || h < 100 || h > 250) {
+        document.getElementById('heightErrorText').classList.remove('hidden');
+        hasError = true;
+      } else {
+        document.getElementById('heightErrorText').classList.add('hidden');
+      }
+
+      if (!g) {
+        document.getElementById('goalErrorText').classList.remove('hidden');
+        hasError = true;
+      } else {
+        document.getElementById('goalErrorText').classList.add('hidden');
+      }
+
+      if (hasError) {
+        soundClick();
+        return;
+      }
+
+      // Lock button & show spinner
+      isSavingMetrics = true;
+      const btn = document.getElementById('saveMetricsSubmitBtn');
+      const spinner = document.getElementById('saveMetricsSpinner');
+      const text = document.getElementById('saveMetricsText');
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      text.textContent = 'در حال ذخیره...';
+
+      setTimeout(() => {
+        isSavingMetrics = false;
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+        text.textContent = 'ذخیره تغییرات';
+
+        // Update UI displays
+        document.getElementById('profileWeightDisplay').textContent = `${w} kg`;
+        document.getElementById('profileHeightDisplay').textContent = `${h} cm`;
+        document.getElementById('profileGoalDisplay').textContent = g;
+        document.getElementById('bioWeightText').textContent = `${w}kg`;
+        document.getElementById('bioHeightText').textContent = `${h}cm`;
+
+        closeEditMetricsModal();
+        soundSuccess();
+        alert("مشخصات فیزیکی با موفقیت در دیتابیس محلی ذخیره گردید.");
+      }, 600);
+    }
+
+    // Gemini Settings
+    function testGeminiConnectionUI() {
+      soundClick();
+      const box = document.getElementById('testStatusBox');
+      box.className = "p-2 rounded-xl text-xs font-bold text-center bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 block";
+      box.textContent = "در حال ارسال تست به Google AI Studio...";
+
+      setTimeout(() => {
+        box.className = "p-2 rounded-xl text-xs font-bold text-center bg-[#CCFF00]/15 text-[#CCFF00] border border-[#CCFF00]/40 block";
+        box.textContent = "اتصال با موفقیت تأیید شد (Gemini 1.5 Flash - Status: 200 OK)";
+        soundSuccess();
+      }, 700);
+    }
+
+    let isSavingApiKey = false;
+    function saveGeminiSettingsUI() {
+      if (isSavingApiKey) return;
+      isSavingApiKey = true;
+      soundClick();
+
+      const spinner = document.getElementById('saveApiKeySpinner');
+      const text = document.getElementById('saveApiKeyText');
+      spinner.classList.remove('hidden');
+      text.textContent = 'در حال ذخیره...';
+
+      setTimeout(() => {
+        isSavingApiKey = false;
+        spinner.classList.add('hidden');
+        text.textContent = 'ذخیره کلید';
+        soundSuccess();
+        alert("تنظیمات کلید API در حافظه امن مرورگر ذخیره شد.");
+      }, 500);
+    }
+
+    function resetSimulator() {
+      soundClick();
+      switchTab('dashboard');
+      closeWorkoutPlayer();
+      closeFoodScannerModal();
+      closeAiCoachModal();
+      closeOneRmModal();
+      closeMascotModal();
+      closeEditMetricsModal();
+    }
+  
+    // --- PHASE 13 NUTRITION TRACKING SIMULATOR LOGIC ---
+    let simWater = 2000;
+    const simTargetWater = 3000;
+
+    function addWaterSim(amount) {
+      simWater += amount;
+      updateWaterSimUi();
+      soundClick();
+    }
+
+    function undoWaterSim(amount) {
+      simWater = Math.max(0, simWater - amount);
+      updateWaterSimUi();
+      soundClick();
+    }
+
+    function updateWaterSimUi() {
+      const pct = Math.min(100, Math.round((simWater / simTargetWater) * 100));
+      const remaining = Math.max(0, simTargetWater - simWater);
+      document.getElementById('waterConsumedLabel').innerText = simWater.toLocaleString('fa-IR') + ' / ' + simTargetWater.toLocaleString('fa-IR') + ' ml';
+      document.getElementById('waterRemainingLabel').innerText = remaining.toLocaleString('fa-IR') + 'ml تا هدف روزانه';
+      document.getElementById('waterPercentageBadge').innerText = pct.toLocaleString('fa-IR') + '٪ از هدف';
+      document.getElementById('waterProgressBar').style.width = pct + '%';
+    }
+
+    function quickAddFood(name, cals, p, c, f, meal) {
+      soundClick();
+      const container = document.getElementById('additionalMealsContainer');
+      const item = document.createElement('div');
+      item.className = "theme-card bg-[#141722] border border-[#252B3A] rounded-xl p-3.5 space-y-1.5 animate-fadeIn";
+      item.innerHTML = `
+        <div class="flex justify-between items-center">
+          <span class="theme-text-primary text-xs font-bold text-white flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#CCFF00]"></span>
+            <span>${name} (${meal})</span>
+          </span>
+          <span class="text-xs text-[#CCFF00] font-black">${cals.toLocaleString('fa-IR')} kcal</span>
+        </div>
+        <div class="flex items-center gap-2 pt-1 text-[10px] text-gray-400">
+          <span>P: ${p.toLocaleString('fa-IR')}g</span> • <span>C: ${c.toLocaleString('fa-IR')}g</span> • <span>F: ${f.toLocaleString('fa-IR')}g</span>
+          <span class="mr-auto text-red-400 cursor-pointer hover:underline" onclick="this.closest('.theme-card').remove()">حذف</span>
+        </div>
+      `;
+      container.prepend(item);
+      alert(`وعده غذایی «${name}» با موفقیت به ${meal} افزوده گردید.`);
+    }
+
+    function duplicateFoodSim(meal) {
+      soundClick();
+      alert(`وعده ${meal} با موفقیت تکرار و در دفترچه ثبت شد.`);
+    }
+
+    function selectNutrDay(idx) {
+      soundClick();
+      document.querySelectorAll('.nutr-day-btn').forEach((b, i) => {
+        if (i === idx) {
+          b.className = "nutr-day-btn active-day py-1.5 rounded-xl border border-[#CCFF00] bg-[#CCFF00] text-[10px] text-black font-black";
+        } else {
+          b.className = "nutr-day-btn py-1.5 rounded-xl border border-[#252B3A] bg-[#1D2230] text-[10px] text-gray-400";
+        }
+      });
+      const labels = ['شنبه ۱۴ آبان', 'یکشنبه ۱۵ آبان', 'دوشنبه ۱۶ آبان', 'سه‌شنبه ۱۷ آبان', 'چهارشنبه ۱۸ آبان', 'پنج‌شنبه ۱۹ آبان', 'امروز (دوشنبه ۲۰ آبان)'];
+      document.getElementById('nutrSelectedDateLabel').innerText = labels[idx];
+    }
+
+    function shiftNutritionDay(dir) {
+      soundClick();
+      alert(dir > 0 ? 'انتقال به روز بعد' : 'انتقال به روز قبل');
+    }
+
+    function openNutritionGoalsModal() {
+      soundClick();
+      alert('تنظیم هوشمند اهداف کالری بر پایه Mifflin-St Jeor: هدف کالری ۲,۲۵۰ kcal، پروتئین ۱۶۰g، کربوهیدرات ۲۲۰g، چربی ۵۵g، آب ۳,۰۰۰ml.');
+    }
+
+    function openManualAddFoodModal() {
+      soundClick();
+      const name = prompt('نام غذا یا مکمل را وارد کنید:', 'سینه مرغ با برنج کته');
+      if (name) {
+        quickAddFood(name, 450, 40, 50, 8, 'ناهار');
+      }
+    }
+
+  </script>
+
+  <!-- ================= 1RM BRZYCKI CALCULATOR MODAL ================= -->
+  <div id="oneRmModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="max-w-md w-full bg-[#121622] border border-[#2B3346] rounded-3xl p-5 space-y-4 shadow-2xl relative text-right">
+      <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-[#CCFF00]/20 text-[#CCFF00] flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h2M14 14h2M8 18h2M14 18h2"/></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-white">محاسبه‌گر یک تکرار بیشینه (1RM)</h3>
+            <span class="text-[10px] text-gray-400">فرمول علمی Brzycki برای تعیین رکورد و شدت وزنه</span>
+          </div>
+        </div>
+        <button onclick="closeOneRmModal()" class="text-gray-400 hover:text-white p-1">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="text-gray-400 block mb-1">وزنه جابه‌جاشده (kg):</label>
+          <input type="number" id="oneRmWeightInput" value="80" oninput="calculateOneRmUI()" class="w-full bg-[#090C12] border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-center font-bold focus:border-[#CCFF00]" />
+        </div>
+        <div>
+          <label class="text-gray-400 block mb-1">تعداد تکرار صحیح:</label>
+          <input type="number" id="oneRmRepsInput" value="8" min="1" max="30" oninput="calculateOneRmUI()" class="w-full bg-[#090C12] border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-center font-bold focus:border-[#CCFF00]" />
+        </div>
+      </div>
+
+      <!-- Result Box -->
+      <div class="bg-gradient-to-br from-[#161B26] to-[#0E121B] border border-[#CCFF00]/40 rounded-2xl p-4 text-center space-y-1">
+        <span class="text-[11px] text-gray-400">رکورد تخمینی یک تکرار حداکثر شما (1RM):</span>
+        <div id="oneRmResultValue" class="text-3xl font-black text-[#CCFF00] font-mono">۱۰۰ kg</div>
+      </div>
+
+      <!-- Intensity Table -->
+      <div class="space-y-1.5">
+        <span class="text-[11px] font-bold text-gray-400 block">جدول درصد شدت برای برنامه‌ریزی ست‌ها:</span>
+        <div class="grid grid-cols-4 gap-2 text-center text-xs">
+          <div class="bg-[#090C12] p-2 rounded-xl border border-zinc-800">
+            <span class="text-[10px] text-gray-400 block">۹۵٪ (۱-۲ تکرار)</span>
+            <span id="pct95" class="font-bold text-cyan-400 font-mono">۹۵ kg</span>
+          </div>
+          <div class="bg-[#090C12] p-2 rounded-xl border border-zinc-800">
+            <span class="text-[10px] text-gray-400 block">۸۵٪ (۵-۶ تکرار)</span>
+            <span id="pct85" class="font-bold text-cyan-400 font-mono">۸۵ kg</span>
+          </div>
+          <div class="bg-[#090C12] p-2 rounded-xl border border-zinc-800">
+            <span class="text-[10px] text-gray-400 block">۷۵٪ (۸-۱۰ تکرار)</span>
+            <span id="pct75" class="font-bold text-cyan-400 font-mono">۷۵ kg</span>
+          </div>
+          <div class="bg-[#090C12] p-2 rounded-xl border border-zinc-800">
+            <span class="text-[10px] text-gray-400 block">۶۵٪ (۱۲-۱۵ تکرار)</span>
+            <span id="pct65" class="font-bold text-cyan-400 font-mono">۶۵ kg</span>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="closeOneRmModal()" class="w-full py-2.5 bg-[#CCFF00] text-black font-black text-xs rounded-xl active:scale-95 transition">
+        تأیید و بازگشت
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= MASCOT CABBAGE PACMAN MODAL ================= -->
+  <div id="cabbageMascotModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="max-w-md w-full bg-[#121622] border border-[#2B3346] rounded-3xl p-5 space-y-4 shadow-2xl relative text-right">
+      <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div>
+            <h3 class="text-sm font-black text-white">ماسکوت اختصاصی جیم‌برو (کلم ورزشی)</h3>
+            <span class="text-[10px] text-emerald-400">لودر هوشمند بلعیدن دمبل‌ها حین آنالیز و تمرین</span>
+          </div>
+        </div>
+        <button onclick="closeMascotModal()" class="text-gray-400 hover:text-white p-1">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="relative w-full h-28 bg-[#090C12] rounded-2xl border border-zinc-800 overflow-hidden shadow-inner flex items-center justify-center" dir="ltr">
+        <div class="absolute left-3 top-1/2 -translate-y-1/2 z-20 cabbage-chew-bob w-16 h-16 pointer-events-none">
+          <svg viewBox="0 0 100 100" class="w-full h-full" fill="none">
+            <circle cx="50" cy="54" r="38" fill="#15803d" />
+            <path d="M 20 40 Q 50 15 80 40" stroke="#86efac" stroke-width="3" fill="none" opacity="0.6" />
+            <path d="M 18 64 Q 50 88 82 64" stroke="#16a34a" stroke-width="2.5" fill="none" opacity="0.8" />
+            <circle cx="50" cy="54" r="35" fill="#22c55e" />
+            <rect x="18" y="26" width="64" height="12" rx="6" fill="#dc2626" />
+            <rect x="42" y="28" width="16" height="8" rx="2" fill="#ffffff" />
+            <text x="50" y="34.5" fill="#dc2626" font-size="6.5" font-weight="900" text-anchor="middle" dominant-baseline="middle">GYM</text>
+            <circle cx="38" cy="48" r="4.5" fill="#0f172a" />
+            <circle cx="40" cy="46" r="1.8" fill="#ffffff" />
+            <circle cx="60" cy="48" r="4.5" fill="#0f172a" />
+            <circle cx="62" cy="46" r="1.8" fill="#ffffff" />
+            <ellipse cx="28" cy="56" rx="4" ry="2.5" fill="#f472b6" opacity="0.85" />
+            <ellipse cx="70" cy="56" rx="4" ry="2.5" fill="#f472b6" opacity="0.85" />
+            <g class="mouth-chomp-right">
+              <path d="M 48 64 Q 66 50 84 64 Q 66 78 48 64 Z" fill="#881337" />
+              <ellipse cx="64" cy="67" rx="6" ry="3.5" fill="#fb7185" />
+              <rect x="60" y="54" width="10" height="3" rx="1" fill="#ffffff" />
+            </g>
+          </svg>
+        </div>
+
+        <div class="absolute left-[62px] top-1/2 -translate-y-1/2 pointer-events-none z-30">
+          <div class="w-2.5 h-2.5 rounded-full bg-amber-400 crumb-sparkle blur-[0.5px]"></div>
+          <div class="w-2 h-2 rounded-full bg-[#CCFF00] crumb-sparkle blur-[0.5px] mt-0.5 ml-0.5"></div>
+        </div>
+
+        <div class="absolute left-[60px] right-3 top-0 bottom-0 pointer-events-none">
+          <div class="conveyor-eat-1 w-7 h-7 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center shadow-md">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M2 9h2v6H2zm3-2h3v10H5zm4 4h6v2H9zm7-4h3v10h-3zm4 2h2v6h-2z"/></svg>
+          </div>
+          <div class="conveyor-eat-2 w-7 h-7 rounded-xl bg-[#CCFF00]/20 text-[#CCFF00] border border-[#CCFF00]/40 flex items-center justify-center shadow-md">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M2 9h2v6H2zm3-2h3v10H5zm4 4h6v2H9zm7-4h3v10h-3zm4 2h2v6h-2z"/></svg>
+          </div>
+          <div class="conveyor-eat-3 w-7 h-7 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 flex items-center justify-center shadow-md">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <div class="conveyor-eat-4 w-7 h-7 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/40 flex items-center justify-center shadow-md">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M2 9h2v6H2zm3-2h3v10H5zm4 4h6v2H9zm7-4h3v10h-3zm4 2h2v6h-2z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center space-y-1">
+        <span class="text-xs font-bold text-white block">کلم باشگاهی در حال بلعیدن و هضم دمبل‌ها!</span>
+        <p class="text-[11px] text-gray-400">تبدیل فوری دمبل‌های خورده‌شده به پروتئین خالص، انگیزه و امتیاز استمرار.</p>
+      </div>
+
+      <button onclick="closeMascotModal()" class="w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs rounded-xl transition">
+        بستن پیش‌نمایش ماسکوت
+      </button>
+    </div>
+  </div>
+
+</body>
+</html>

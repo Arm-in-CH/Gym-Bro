@@ -1,0 +1,331 @@
+id="pageWorkout" class="p-4 space-y-4 pb-36 hidden">
+            <!-- Header with Title & Active Program Details -->
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-[#CCFF00] animate-pulse"></span>
+                  <span class="text-[10px] font-black uppercase tracking-wider text-[#CCFF00]">برنامه فعال هفتگی</span>
+                </div>
+                <h2 class="theme-text-primary text-lg font-black text-white mt-0.5">برنامه تمرینی اختصاصی آرمین</h2>
+                <p class="theme-text-muted text-xs text-gray-400">اسپلیت ۳ روزه هایپرتروفی • پروتکل مفاصل، گرم‌کردن و سردکردن</p>
+              </div>
+              <button onclick="openAiCoachModal()" class="px-3 py-1.5 rounded-xl bg-[#CCFF00]/15 text-[#CCFF00] border border-[#CCFF00]/30 hover:bg-[#CCFF00]/25 transition text-xs font-bold flex items-center gap-1.5 active:scale-95">
+                <svg class="w-3.5 h-3.5 text-[#CCFF00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                <span>مشاوره مربی</span>
+              </button>
+            </div>
+
+            <!-- Private Coach Attribution Card (فیلد اختصاصی مربی خصوصی) -->
+            <div class="theme-card bg-gradient-to-r from-[#141722] via-[#181D2C] to-[#141722] border border-[#2B354C] rounded-2xl p-3.5 flex items-center justify-between shadow-lg">
+              <div class="flex items-center gap-3">
+                <div class="relative">
+                  <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-[#CCFF00] to-[#00F0FF] p-0.5 flex items-center justify-center">
+                    <div class="w-full h-full rounded-full bg-[#0E121B] flex items-center justify-center text-white font-black text-xs">
+                      راد
+                    </div>
+                  </div>
+                  <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#FFB800] text-black text-[9px] font-black flex items-center justify-center border border-black" title="مربی تایید شده IFBB Pro">✓</span>
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-black text-white">استاد علیرضا راد</span>
+                    <span class="text-[9px] font-bold bg-[#FFB800]/20 text-[#FFB800] px-1.5 py-0.5 rounded border border-[#FFB800]/40">مربی خصوصی شما</span>
+                  </div>
+                  <p class="text-[10px] text-gray-400 mt-0.5">مربی رسمی فدراسیون IFBB • برنامه اختصاصی هایپرتروفی و کات</p>
+                </div>
+              </div>
+              <button onclick="toggleCoachPrivateNotes()" class="px-2.5 py-1.5 rounded-lg bg-[#252B3A] hover:bg-[#323A4E] text-gray-300 hover:text-white text-[11px] font-bold transition flex items-center gap-1">
+                <svg class="w-3.5 h-3.5 text-[#CCFF00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>توصیه‌ها</span>
+              </button>
+            </div>
+
+            <!-- Coach Private Notes Dropdown (Collapsible) -->
+            <div id="coachPrivateNotesPanel" class="hidden theme-card bg-[#0E131E] border border-[#252B3A] rounded-2xl p-3.5 space-y-2 text-xs">
+              <div class="flex items-center gap-1.5 text-[#CCFF00] font-bold text-[11px]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span>دستورالعمل‌های خصوصی مربی برای آرمین:</span>
+              </div>
+              <ul class="text-[11px] text-gray-300 space-y-1.5 pr-4 list-disc marker:text-[#CCFF00] leading-relaxed">
+                <li>کنترل فاز منفی (Eccentric) به مدت ۲ ثانیه در حرکات اسکوات و پرس سینه.</li>
+                <li>استراحت بین ست‌های سنگین ۹۰ الی ۱۲۰ ثانیه و بین سوپرست‌ها ۶۰ ثانیه.</li>
+                <li>مصرف حداقل ۷۵۰ میلی‌لیتر آب الکترولیت‌دار حین هر جلسه تمرینی.</li>
+                <li>۵ دقیقه گرم‌کردن پویا قبل از بارگذاری و کشش ایستا پس از پایان تمرین.</li>
+              </ul>
+            </div>
+
+            <!-- Workout Day 1 -->
+            <div class="theme-card bg-[#141722] border border-[#252B3A] hover:border-[#38435C] rounded-2xl p-4 space-y-3.5 transition-all shadow-md">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-black text-white">برنامه شماره ۱: پا و شکم (Legs & Core)</span>
+                    <span class="theme-card-sub text-[10px] bg-zinc-800 text-gray-300 px-2 py-0.5 rounded-md font-bold">شنبه</span>
+                  </div>
+                  <div class="flex items-center gap-2 mt-1 text-[11px] text-gray-400">
+                    <span class="flex items-center gap-1">⏱️ ۵۰ دقیقه</span>
+                    <span>•</span>
+                    <span class="flex items-center gap-1 text-[#00F0FF]">🔥 ۴۵۰ کالری</span>
+                    <span>•</span>
+                    <span class="text-gray-300">۶ حرکت تخصصی</span>
+                  </div>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">تکمیل شده</span>
+              </div>
+
+              <!-- Structured Exercise Pills List -->
+              <div class="space-y-1.5 pt-1">
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۱</span>
+                    <span class="font-bold text-gray-200">اسکوات هالتر استاندارد</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۱۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۲</span>
+                    <span class="font-bold text-gray-200">پرس پا دستگاه شیبدار</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۱۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۳</span>
+                    <span class="font-bold text-gray-200">ددلیفت رومانیایی دمبل</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۸</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-black">⚡</span>
+                    <span class="font-bold text-gray-200">سوپرست جلوپا + پشت‌پا دستگاه</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">۳ × ۱۵</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۵</span>
+                    <span class="font-bold text-gray-200">ساق پا هاگ دستگاه</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۲۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-[10px] font-black">⚡</span>
+                    <span class="font-bold text-gray-200">سوپرست پلنک و شکم شیب</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">۳ × ۶۰s</span>
+                </div>
+              </div>
+
+              <!-- Warmup & Cooldown Pill -->
+              <div class="flex items-center gap-2 text-[10px] text-gray-400 bg-[#0A0D14] p-2 rounded-xl border border-zinc-800/80">
+                <span class="text-[#CCFF00]">🏃‍♂️ گرم‌کردن:</span>
+                <span>۵ دقیقه تردمیل شیبدار + چرخش فعال مفاصل زانو و مچ پا</span>
+              </div>
+
+              <button onclick="openWorkoutSessionModal(1)" class="w-full py-2.5 rounded-xl bg-[#1D2230] hover:bg-[#CCFF00] hover:text-black text-gray-200 font-black text-xs transition active:scale-95 flex items-center justify-center gap-2 border border-[#2B354C]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 5v14M18 5v14M2 9h4M18 9h4M2 15h4M18 15h4M6 12h12"/></svg>
+                <span>مرور و شروع مجدد تمرین پا و شکم</span>
+              </button>
+            </div>
+
+            <!-- Workout Day 2 (Active Today Highlight) -->
+            <div class="theme-card bg-gradient-to-b from-[#161B28] to-[#121622] border-2 border-[#CCFF00] rounded-2xl p-4 space-y-3.5 shadow-xl shadow-[#CCFF00]/10 relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-24 h-24 bg-[#CCFF00]/10 rounded-full blur-2xl pointer-events-none"></div>
+              
+              <div class="flex justify-between items-start relative z-10">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-black text-white">برنامه شماره ۲: سینه، بازو و فیله کمر</span>
+                  </div>
+                  <div class="flex items-center gap-2 mt-1 text-[11px] text-gray-300">
+                    <span class="flex items-center gap-1 font-bold text-white">⏱️ ۴۵ دقیقه</span>
+                    <span>•</span>
+                    <span class="flex items-center gap-1 text-[#00F0FF] font-bold">🔥 ۵۲۰ کالری</span>
+                    <span>•</span>
+                    <span class="text-gray-300">۶ حرکت هایپرتروفی</span>
+                  </div>
+                </div>
+                <span class="text-[11px] bg-[#CCFF00] text-black font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md shadow-[#CCFF00]/30 animate-pulse">
+                  <span>جلسه امروز</span>
+                  <span>🔥</span>
+                </span>
+              </div>
+
+              <!-- Structured Exercise Pills List -->
+              <div class="space-y-1.5 pt-1 relative z-10">
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0D1018] border border-[#252B3A] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#CCFF00] text-black flex items-center justify-center text-[10px] font-black">۱</span>
+                    <div>
+                      <span class="font-black text-white">پرس سینه هالتر هرمی</span>
+                      <span class="text-[10px] text-gray-400 block sm:inline sm:mr-1">افزایش وزنه در هر ست</span>
+                    </div>
+                  </div>
+                  <span class="text-[11px] font-mono font-black text-[#CCFF00] bg-[#CCFF00]/15 px-2 py-0.5 rounded border border-[#CCFF00]/30">۴ × ۱۲-۱۰-۸-۶</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0D1018] border border-[#252B3A] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۲</span>
+                    <span class="font-bold text-gray-200">قفسه بالاسینه کراس‌اور</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۱۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0D1018] border border-[#252B3A] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-black">⚡</span>
+                    <div>
+                      <span class="font-bold text-gray-200">سوپرست بالاسینه دمبل + شنا سوئدی</span>
+                      <span class="text-[10px] text-purple-300 block">پمپ خون و استرس متابولیک</span>
+                    </div>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">۳ × ۱۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0D1018] border border-[#252B3A] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۴</span>
+                    <span class="font-bold text-gray-200">پرس سینه دستگاه ماتریکس</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۱۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0D1018] border border-[#252B3A] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-[10px] font-black">⚡</span>
+                    <span class="font-bold text-gray-200">سوپرست‌های بازو (جلو بازو + دیپ)</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">۳ × ۱۲</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0D1018] border border-[#252B3A] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۶</span>
+                    <span class="font-bold text-gray-200">فیله کمر با وزنه (Hyperextensions)</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۱۵</span>
+                </div>
+              </div>
+
+              <!-- Warmup & Cooldown Pill -->
+              <div class="flex items-center gap-2 text-[10px] text-gray-300 bg-[#0A0D14] p-2 rounded-xl border border-zinc-800/80 relative z-10">
+                <span class="text-[#CCFF00] font-bold">🎯 دستورالعمل:</span>
+                <span>گرم‌کردن کامل روتاتور کاف شانه با کش پیلاتس + کشش سینه در پایان</span>
+              </div>
+
+              <!-- High-Impact Primary CTA Button -->
+              <button onclick="openWorkoutSessionModal(2)" class="w-full py-3 rounded-xl bg-[#CCFF00] hover:bg-[#b8e600] text-black font-black text-xs transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-[#CCFF00]/25 relative z-10">
+                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 5v14M18 5v14M2 9h4M18 9h4M2 15h4M18 15h4M6 12h12"/></svg>
+                <span>ورود به تمرین زنده سینه و بازو (جلسه امروز) 🚀</span>
+              </button>
+            </div>
+
+            <!-- Workout Day 3 -->
+            <div class="theme-card bg-[#141722] border border-[#252B3A] hover:border-[#38435C] rounded-2xl p-4 space-y-3.5 transition-all shadow-md">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-black text-white">برنامه شماره ۳: زیربغل، سرشانه، کول و شکم</span>
+                    <span class="theme-card-sub text-[10px] bg-zinc-800 text-gray-300 px-2 py-0.5 rounded-md font-bold">چهارشنبه</span>
+                  </div>
+                  <div class="flex items-center gap-2 mt-1 text-[11px] text-gray-400">
+                    <span class="flex items-center gap-1">⏱️ ۵۵ دقیقه</span>
+                    <span>•</span>
+                    <span class="flex items-center gap-1 text-[#00F0FF]">🔥 ۴۸۰ کالری</span>
+                    <span>•</span>
+                    <span class="text-gray-300">۶ حرکت تخصصی</span>
+                  </div>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">جلسه بعدی</span>
+              </div>
+
+              <!-- Structured Exercise Pills List -->
+              <div class="space-y-1.5 pt-1">
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۱</span>
+                    <span class="font-bold text-gray-200">بارفیکس مچ برعکس (Chin-ups)</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۸</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۲</span>
+                    <span class="font-bold text-gray-200">زیربغل قایقی میله V</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۱۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-black">⚡</span>
+                    <span class="font-bold text-gray-200">سوپرست سیم‌کش جلو + تی‌بار</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">۳ × ۱۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۴</span>
+                    <span class="font-bold text-gray-200">پرس سرشانه هالتر نظامی</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۱۰</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-[10px] font-black">⚡</span>
+                    <span class="font-bold text-gray-200">سوپرست پرس دمبل آرنولدی + نشر جانب</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">۳ × ۱۲</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-xl bg-[#0F121C] border border-[#1E2433] text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-md bg-[#252B3A] text-gray-300 flex items-center justify-center text-[10px] font-black">۶</span>
+                    <span class="font-bold text-gray-200">فلای معکوس دمبل + شراگز هالتر سنگین</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/20">۳ × ۱۵</span>
+                </div>
+              </div>
+
+              <button onclick="openWorkoutSessionModal(3)" class="w-full py-2.5 rounded-xl bg-[#1D2230] hover:bg-[#CCFF00] hover:text-black text-gray-200 font-black text-xs transition active:scale-95 flex items-center justify-center gap-2 border border-[#2B354C]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 5v14M18 5v14M2 9h4M18 9h4M2 15h4M18 15h4M6 12h12"/></svg>
+                <span>شروع تمرین پشت و سرشانه</span>
+              </button>
+            </div>
+
+            <!-- Home Fallback Plan -->
+            <div class="theme-card bg-gradient-to-r from-[#1A1822] to-[#141722] border border-orange-500/30 rounded-2xl p-4 space-y-3">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h3 class="text-sm font-bold text-orange-400">برنامه بدون وزنه در خانه</h3>
+                  <p class="text-[10px] text-gray-400 mt-0.5">جایگزین فوری در صورت عدم امکان مراجعه به باشگاه</p>
+                </div>
+                <span class="text-[10px] bg-orange-500/15 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded font-bold">خانگی</span>
+              </div>
+              <div class="flex flex-wrap gap-1 text-[11px]">
+                <span class="bg-[#0F121C] text-gray-300 px-2 py-0.5 rounded border border-zinc-800">شنا سوئدی</span>
+                <span class="bg-[#0F121C] text-gray-300 px-2 py-0.5 rounded border border-zinc-800">اسکوات تک‌پا</span>
+                <span class="bg-[#0F121C] text-gray-300 px-2 py-0.5 rounded border border-zinc-800">دیپ لبه صندلی</span>
+                <span class="bg-[#0F121C] text-gray-300 px-2 py-0.5 rounded border border-zinc-800">پلنک شکم</span>
+              </div>
+              <button onclick="openWorkoutSessionModal(4)" class="w-full py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-black font-black text-xs transition active:scale-95">
+                شروع تمرین خانگی
+              </button>
+            </div>
+          </section>
+</section>
+
+<!-- ================= TAB 3: NUTRITION (PHASE 13) ================= -->
+          <section 

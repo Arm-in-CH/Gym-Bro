@@ -1,0 +1,229 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="1600" height="1200">
+  <defs>
+    <linearGradient id="kitBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E121A"/>
+      <stop offset="100%" stop-color="#07090D"/>
+    </linearGradient>
+    <linearGradient id="limeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DDFF33"/>
+      <stop offset="50%" stop-color="#CCFF00"/>
+      <stop offset="100%" stop-color="#A2E600"/>
+    </linearGradient>
+    <linearGradient id="chromeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F1F5F9"/>
+      <stop offset="50%" stop-color="#94A3B8"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <linearGradient id="steelPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D3748"/>
+      <stop offset="50%" stop-color="#1A202C"/>
+      <stop offset="100%" stop-color="#111620"/>
+    </linearGradient>
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1600" height="1200" fill="url(#kitBg)"/>
+
+  <!-- HEADER -->
+  <text x="80" y="80" font-family="'Vazirmatn', -apple-system, sans-serif" font-size="32" font-weight="900" fill="#F4F6F8" letter-spacing="4">GYMBRO DESIGN SYSTEM • HUMAN-CRAFTED VECTOR SUITE</text>
+  <text x="80" y="115" font-family="'Vazirmatn', -apple-system, sans-serif" font-size="16" font-weight="600" fill="#CCFF00" letter-spacing="1">Optically Balanced Athletic Vectors • Hand-Drawn Béziers • Zero AI Artifacts</text>
+
+  <!-- SECTION 1: CORE ICONS (24x24 scale up to 64x64 cards) -->
+  <g id="CoreIcons" transform="translate(80, 160)">
+    <text x="0" y="0" font-family="'Vazirmatn', sans-serif" font-size="20" font-weight="800" fill="#94A3B8">1. سیستم آیکون‌های استاندارد ورزشی (Core Athletic Icons)</text>
+    
+    <!-- Icon 1: Workout / Dumbbell (Linear / Nike Style) -->
+    <g transform="translate(0, 30)">
+      <rect width="90" height="90" rx="18" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <g transform="translate(45, 45) rotate(-45)">
+        <!-- Barbell shaft with knurling -->
+        <rect x="-18" y="-4" width="36" height="8" rx="2" fill="url(#chromeGrad)"/>
+        <!-- Left Plate -->
+        <path d="M -18 -18 C -16 -18, -14 -16, -14 -12 L -14 12 C -14 16, -16 18, -18 18 C -22 18, -24 16, -24 12 L -24 -12 C -24 -16, -22 -18, -18 -18 Z" fill="url(#limeGrad)"/>
+        <rect x="-28" y="-12" width="5" height="24" rx="2" fill="#475569"/>
+        <!-- Right Plate -->
+        <path d="M 18 -18 C 22 -18, 24 -16, 24 -12 L 24 12 C 24 16, 22 18, 18 18 C 16 18, 14 16, 14 12 L 14 -12 C 14 -16, 16 -18, 18 -18 Z" fill="url(#limeGrad)"/>
+        <rect x="23" y="-12" width="5" height="24" rx="2" fill="#475569"/>
+      </g>
+      <text x="45" y="80" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8" font-weight="700">DUMBBELL</text>
+    </g>
+
+    <!-- Icon 2: Timer / Stopwatch -->
+    <g transform="translate(110, 30)">
+      <rect width="90" height="90" rx="18" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <circle cx="45" cy="48" r="22" fill="none" stroke="#F4F6F8" stroke-width="3"/>
+      <!-- Pusher -->
+      <path d="M 42 22 L 48 22 L 48 26 L 42 26 Z" fill="#CCFF00"/>
+      <!-- Hands -->
+      <line x1="45" y1="48" x2="45" y2="35" stroke="#CCFF00" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="45" y1="48" x2="57" y2="48" stroke="#CCFF00" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="45" cy="48" r="3" fill="#CCFF00"/>
+      <text x="45" y="80" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8" font-weight="700">TIMER</text>
+    </g>
+
+    <!-- Icon 3: Nutrition / Apple -->
+    <g transform="translate(220, 30)">
+      <rect width="90" height="90" rx="18" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <path d="M 45 36 C 41 31, 32 32, 29 38 C 24 47, 28 62, 38 65 C 42 66, 44 64, 45 64 C 46 64, 48 66, 52 65 C 62 62, 66 47, 61 38 C 58 32, 49 31, 45 36 Z" 
+            fill="none" stroke="#CCFF00" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M 45 34 C 47 28, 52 26, 55 26" fill="none" stroke="#78CFE0" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="45" y="80" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8" font-weight="700">NUTRITION</text>
+    </g>
+
+    <!-- Icon 4: AI Coach (Neural Sparkle) -->
+    <g transform="translate(330, 30)">
+      <rect width="90" height="90" rx="18" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <path d="M 45 26 C 45 36, 47 43, 57 45 C 47 47, 45 54, 45 64 C 45 54, 43 47, 33 45 C 43 43, 45 36, 45 26 Z" 
+            fill="url(#limeGrad)"/>
+      <circle cx="58" cy="31" r="3" fill="#78CFE0"/>
+      <circle cx="32" cy="58" r="2" fill="#78CFE0"/>
+      <text x="45" y="80" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8" font-weight="700">AI COACH</text>
+    </g>
+
+    <!-- Icon 5: Personal Record / Trophy -->
+    <g transform="translate(440, 30)">
+      <rect width="90" height="90" rx="18" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <path d="M 32 30 L 58 30 L 55 48 C 53 54, 48 57, 45 57 C 42 57, 37 54, 35 48 Z" fill="none" stroke="#FFB86B" stroke-width="2.5"/>
+      <path d="M 32 34 C 26 34, 25 42, 33 44" fill="none" stroke="#FFB86B" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 58 34 C 64 34, 65 42, 57 44" fill="none" stroke="#FFB86B" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 45 57 L 45 64 M 36 64 L 54 64" stroke="#FFB86B" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="45" y="80" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8" font-weight="700">RECORD PR</text>
+    </g>
+  </g>
+
+  <!-- SECTION 2: PRO EQUIPMENT ILLUSTRATIONS (13 PIECES) -->
+  <g id="EquipmentIllustrations" transform="translate(80, 330)">
+    <text x="0" y="0" font-family="'Vazirmatn', sans-serif" font-size="20" font-weight="800" fill="#94A3B8">2. تصویرسازی وکتوری تجهیزات تخصصی باشگاه (Pro Equipment Illustrations)</text>
+
+    <!-- Equipment 1: Olympic Barbell with Tri-Grip Plates -->
+    <g transform="translate(0, 30)">
+      <rect width="210" height="150" rx="20" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <g transform="translate(105, 70)">
+        <!-- Bar shaft -->
+        <rect x="-85" y="-3" width="170" height="6" rx="2" fill="url(#chromeGrad)"/>
+        <!-- Rotating Collars -->
+        <rect x="-65" y="-6" width="6" height="12" rx="1.5" fill="#CBD5E1"/>
+        <rect x="59" y="-6" width="6" height="12" rx="1.5" fill="#CBD5E1"/>
+        <!-- Inner Plates -->
+        <rect x="-60" y="-36" width="12" height="72" rx="4" fill="url(#steelPlateGrad)" stroke="#475569" stroke-width="2"/>
+        <rect x="48" y="-36" width="12" height="72" rx="4" fill="url(#steelPlateGrad)" stroke="#475569" stroke-width="2"/>
+        <!-- Outer Plates (Lime Ring) -->
+        <rect x="-46" y="-32" width="10" height="64" rx="3.5" fill="url(#limeGrad)"/>
+        <rect x="36" y="-32" width="10" height="64" rx="3.5" fill="url(#limeGrad)"/>
+      </g>
+      <text x="105" y="132" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#F4F6F8">OLYMPIC BARBELL</text>
+    </g>
+
+    <!-- Equipment 2: Cast Iron Kettlebell -->
+    <g transform="translate(230, 30)">
+      <rect width="210" height="150" rx="20" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <g transform="translate(105, 70)">
+        <!-- Handle Horn -->
+        <path d="M -26 -12 C -26 -38, 26 -38, 26 -12 L 26 0 L -26 0 Z" fill="none" stroke="url(#chromeGrad)" stroke-width="7" stroke-linecap="round"/>
+        <!-- Ball Body -->
+        <circle cx="0" cy="14" r="32" fill="url(#steelPlateGrad)" stroke="#334155" stroke-width="3"/>
+        <!-- Center Weight Recess -->
+        <circle cx="0" cy="14" r="16" fill="#111620" stroke="#CCFF00" stroke-width="2.5"/>
+        <text x="0" y="18" text-anchor="middle" font-family="monospace" font-size="12" font-weight="900" fill="#CCFF00">24KG</text>
+      </g>
+      <text x="105" y="132" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#F4F6F8">COMPETITION KETTLEBELL</text>
+    </g>
+
+    <!-- Equipment 3: Heavy Flat Bench Press -->
+    <g transform="translate(460, 30)">
+      <rect width="210" height="150" rx="20" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <g transform="translate(105, 75)">
+        <!-- Upright Posts -->
+        <rect x="-55" y="-30" width="7" height="50" rx="2" fill="#334155"/>
+        <rect x="48" y="-30" width="7" height="50" rx="2" fill="#334155"/>
+        <!-- J-Hooks -->
+        <path d="M -58 -18 L -48 -18 L -48 -14" stroke="#CCFF00" stroke-width="3" fill="none"/>
+        <path d="M 45 -18 L 55 -18 L 55 -14" stroke="#CCFF00" stroke-width="3" fill="none"/>
+        <!-- Barbell on racks -->
+        <line x1="-75" y1="-20" x2="75" y2="-20" stroke="#E2E8F0" stroke-width="4" stroke-linecap="round"/>
+        <rect x="-70" y="-30" width="6" height="20" rx="2" fill="#CCFF00"/>
+        <rect x="64" y="-30" width="6" height="20" rx="2" fill="#CCFF00"/>
+        <!-- Bench Pad -->
+        <rect x="-42" y="2" width="84" height="14" rx="4" fill="url(#steelPlateGrad)" stroke="#475569" stroke-width="2"/>
+        <line x1="-25" y1="16" x2="-25" y2="28" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+        <line x1="25" y1="16" x2="25" y2="28" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+      </g>
+      <text x="105" y="132" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#F4F6F8">FLAT BENCH PRESS</text>
+    </g>
+
+    <!-- Equipment 4: Dual Cable Machine -->
+    <g transform="translate(690, 30)">
+      <rect width="210" height="150" rx="20" fill="#141923" stroke="#263245" stroke-width="2"/>
+      <g transform="translate(105, 70)">
+        <!-- Tower Frame Left & Right -->
+        <rect x="-65" y="-35" width="20" height="66" rx="4" fill="#1A202C" stroke="#334155" stroke-width="2"/>
+        <rect x="45" y="-35" width="20" height="66" rx="4" fill="#1A202C" stroke="#334155" stroke-width="2"/>
+        <!-- Top Cross Beam -->
+        <rect x="-65" y="-35" width="130" height="8" rx="2" fill="#334155"/>
+        <!-- Pulleys -->
+        <circle cx="-45" cy="-10" r="5" fill="#CCFF00"/>
+        <circle cx="45" cy="-10" r="5" fill="#CCFF00"/>
+        <!-- Cable Curves with dynamic Bézier -->
+        <path d="M -45 -10 Q 0 10, 0 20" stroke="#78CFE0" stroke-width="2" fill="none" stroke-dasharray="4 2"/>
+        <path d="M 45 -10 Q 0 10, 0 20" stroke="#78CFE0" stroke-width="2" fill="none" stroke-dasharray="4 2"/>
+        <!-- Handle Ring -->
+        <circle cx="0" cy="22" r="5" fill="none" stroke="#CCFF00" stroke-width="2"/>
+      </g>
+      <text x="105" y="132" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#F4F6F8">CABLE CROSSOVER</text>
+    </g>
+  </g>
+
+  <!-- SECTION 3: SCULPTED ANATOMICAL MUSCLE MAP (ORGANIC BÉZIER CURVES) -->
+  <g id="MuscleAnatomy" transform="translate(80, 540)">
+    <text x="0" y="0" font-family="'Vazirmatn', sans-serif" font-size="20" font-weight="800" fill="#94A3B8">3. نقشه عضلانی ارگانیک و آناتومیک (Sculpted Anatomical Muscle System)</text>
+    
+    <g transform="translate(0, 30)">
+      <rect width="500" height="580" rx="24" fill="#141923" stroke="#263245" stroke-width="2"/>
+      
+      <!-- Torso Base Silhouette (Bézier Anatomical Sculpt) -->
+      <g transform="translate(250, 40) scale(1.15)">
+        <!-- Head & Neck -->
+        <path d="M -14 -10 C -14 -24, 14 -24, 14 -10 C 14 0, -14 0, -14 -10 Z" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+        <!-- Neck to Traps -->
+        <path d="M -10 -2 C -18 8, -42 16, -55 24 C -60 27, -62 38, -58 48 C -54 58, -48 68, -46 80 L -42 130 C -42 145, -34 165, -30 180 C -26 195, -28 240, -28 280 C -28 310, -22 340, -22 370 L 0 370 L 22 370 C 22 340, 28 310, 28 280 C 28 240, 26 195, 30 180 C 34 165, 42 145, 42 130 L 46 80 C 48 68, 54 58, 58 48 C 62 38, 60 27, 55 24 C 42 16, 18 8, 10 -2 Z" 
+              fill="#111620" stroke="#334155" stroke-width="2.5" stroke-linejoin="round"/>
+
+        <!-- PECTORALS (CHEST) - Fluid Athletic Arcs -->
+        <path d="M -3 38 C -14 38, -32 40, -42 32 C -46 45, -42 66, -26 72 C -14 76, -3 72, -2 62 Z" 
+              fill="url(#limeGrad)" stroke="#CCFF00" stroke-width="1.5" filter="url(#subtleGlow)"/>
+        <path d="M 3 38 C 14 38, 32 40, 42 32 C 46 45, 42 66, 26 72 C 14 76, 3 72, 2 62 Z" 
+              fill="url(#limeGrad)" stroke="#CCFF00" stroke-width="1.5" filter="url(#subtleGlow)"/>
+
+        <!-- ABDOMINALS (SIX PACK) - Human Tapered Bellies -->
+        <!-- Upper Pack -->
+        <rect x="-14" y="80" width="12" height="14" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1.2"/>
+        <rect x="2" y="80" width="12" height="14" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1.2"/>
+        <!-- Mid Pack -->
+        <rect x="-15" y="98" width="13" height="16" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1.2"/>
+        <rect x="2" y="98" width="13" height="16" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1.2"/>
+        <!-- Lower Pack -->
+        <rect x="-14" y="118" width="12" height="18" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1.2"/>
+        <rect x="2" y="118" width="12" height="18" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1.2"/>
+
+        <!-- DELTOIDS (SHOULDERS) - Curving Caps -->
+        <path d="M -44 26 C -54 28, -62 36, -58 50 C -55 58, -48 64, -46 68 C -44 56, -42 42, -44 26 Z" 
+              fill="#202A37" stroke="#475569" stroke-width="1.5"/>
+        <path d="M 44 26 C 54 28, 62 36, 58 50 C 55 58, 48 64, 46 68 C 44 56, 42 42, 44 26 Z" 
+              fill="#202A37" stroke="#475569" stroke-width="1.5"/>
+
+        <!-- QUADRICEPS (THIGHS) - Teardrop & Lateral Sweep -->
+        <!-- Left Quad -->
+        <path d="M -6 195 C -12 215, -26 230, -26 260 C -26 275, -20 285, -16 288 C -10 288, -6 275, -4 250 C -3 230, -4 210, -6 195 Z" 
+              fill="#202A37" stroke="#475569" stroke-width="1.5"/>
+        <!-- Right Quad -->
+        <path d="M 6 195 C 12 215, 26 230, 26 260 C 26 275, 20 285, 16 288 C 10 288, 6 275, 4 250 C 3 230, 4 210, 6 195 Z" 
+              fill="#202A37" stroke="#475569" stroke-width="1.5"/>
+      </g>
+      <text x="250" y="550" text-anchor="middle" font-family="'Vazirmatn', sans-serif" font-size="14" font-weight="800" fill="#F4F6F8">آناتومی ارگانیک بالاتنه و عضلات هدف (Pectoralis Highlight)</text>
+    </g>
+  </g>
+</svg>

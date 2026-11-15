@@ -1,0 +1,1814 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      GymBro - Premium Iconography & Visual Asset Design Lab (Phase 11)
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Vazirmatn:wght@400;600;700;800;900&display=swap");
+      body {
+        font-family: "Vazirmatn", "Plus Jakarta Sans", sans-serif;
+        background-color: #0b0e14;
+        color: #f1f5f9;
+      }
+      .neon-glow {
+        box-shadow: 0 0 20px rgba(204, 255, 0, 0.25);
+      }
+      .metallic-surface {
+        background: linear-gradient(135deg, #1a1f2c 0%, #11141d 100%);
+        border: 1px solid #283042;
+      }
+      .metallic-surface:hover {
+        border-color: #ccff00;
+        transform: translateY(-2px);
+      }
+      .collection-card {
+        min-height: 176px;
+        background: linear-gradient(155deg, #191f2d 0%, #11141d 100%);
+        border: 1px solid #2b3548;
+        border-radius: 16px;
+      }
+      .collection-card:hover {
+        border-color: #718096;
+        transform: translateY(-2px);
+      }
+      .equipment-artboard {
+        width: 88px;
+        height: 82px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #293447;
+        border-radius: 14px;
+        background:
+          radial-gradient(
+            ellipse at 50% 80%,
+            rgba(204, 255, 0, 0.08),
+            transparent 68%
+          ),
+          #0d1119;
+      }
+      .muscle-artboard {
+        position: relative;
+        width: 84px;
+        height: 84px;
+        overflow: hidden;
+        border: 1px solid #334155;
+        border-radius: 14px;
+        background: #07090e;
+        isolation: isolate;
+      }
+      .muscle-artboard img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center var(--crop-position, 50%);
+        opacity: 0.9;
+        filter: contrast(1.08) saturate(0.8);
+      }
+      .muscle-artboard::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 48%,
+          rgba(7, 9, 14, 0.62)
+        );
+        pointer-events: none;
+      }
+      .muscle-focus {
+        position: absolute;
+        z-index: 1;
+        left: var(--spot-x, 50%);
+        top: var(--spot-y, 50%);
+        width: 20px;
+        height: 26px;
+        transform: translate(-50%, -50%);
+        border: 2px solid var(--muscle-color, #ccff00);
+        border-radius: 48% 52% 42% 58%;
+        background: color-mix(
+          in srgb,
+          var(--muscle-color, #ccff00) 26%,
+          transparent
+        );
+        box-shadow: 0 0 12px
+          color-mix(in srgb, var(--muscle-color, #ccff00) 60%, transparent);
+        opacity: var(--focus-opacity, 0.9);
+      }
+      .muscle-view-label {
+        position: absolute;
+        z-index: 2;
+        bottom: 4px;
+        right: 5px;
+        color: #e2e8f0;
+        background: rgba(7, 9, 14, 0.76);
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        border-radius: 5px;
+        padding: 1px 5px;
+        font:
+          700 8px "Vazirmatn",
+          sans-serif;
+      }
+      .muscle-filter-active {
+        background: rgba(204, 255, 0, 0.16) !important;
+        color: #ccff00 !important;
+        box-shadow: inset 0 0 0 1px rgba(204, 255, 0, 0.45);
+      }
+      /* Dynamic Animations */
+      @keyframes floatDumbbell {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(4deg);
+        }
+      }
+      @keyframes liftBarbell {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-12px);
+        }
+        70% {
+          transform: translateY(-2px);
+        }
+      }
+      @keyframes pulsePulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.12);
+        }
+      }
+      @keyframes rotateHandClean {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes rippleWater {
+        0%,
+        100% {
+          transform: translateY(0) scaleY(1);
+        }
+        50% {
+          transform: translateY(-4px) scaleY(1.08);
+        }
+      }
+      @keyframes muscleBreathingPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 3px #ccff00);
+        }
+        50% {
+          transform: scale(1.06);
+          filter: drop-shadow(0 0 8px #ccff00);
+        }
+      }
+      .anim-float {
+        animation: floatDumbbell 2.2s infinite ease-in-out;
+      }
+      .anim-lift {
+        animation: liftBarbell 2.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .anim-pulse {
+        animation: pulsePulse 1.8s infinite ease-in-out;
+      }
+      .anim-rotate {
+        animation: rotateHandClean 4s infinite linear;
+      }
+      .anim-ripple {
+        animation: rippleWater 2s infinite ease-in-out;
+      }
+      .anim-muscle-glow {
+        animation: muscleBreathingPulse 2s infinite ease-in-out;
+        transform-origin: 50px 50px;
+      }
+      .anim-paused * {
+        animation-play-state: paused !important;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen p-4 md:p-8">
+    <!-- Header -->
+    <header
+      class="max-w-7xl mx-auto mb-8 bg-[#121622] border border-[#232B3E] rounded-3xl p-6 shadow-2xl relative overflow-hidden"
+    >
+      <div
+        class="absolute -left-10 -top-10 w-44 h-44 bg-[#CCFF00]/10 rounded-full blur-3xl pointer-events-none"
+      ></div>
+      <div
+        class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 relative z-10"
+      >
+        <div class="flex items-start gap-4">
+          <img
+            src="../assets/images/app_logo.png"
+            alt="GymBro Logo"
+            class="w-14 h-14 rounded-2xl border-2 border-[#CCFF00] shadow-[0_0_20px_rgba(204,255,0,0.35)] object-cover flex-shrink-0 mt-1"
+          />
+          <div>
+            <div class="flex items-center gap-3 mb-2 flex-wrap">
+              <span
+                class="px-3 py-1 rounded-full bg-[#CCFF00]/15 text-[#CCFF00] font-black text-xs border border-[#CCFF00]/40 tracking-wider"
+              >
+                PHASE 11 • COMPLETE ICONOGRAPHY LAB
+              </span>
+              <span
+                class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs flex items-center gap-1.5"
+              >
+                <span
+                  class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"
+                ></span>
+                Cohesive Emoji-Style & 60fps CustomPainter
+              </span>
+            </div>
+            <h1
+              class="text-2xl md:text-3xl font-black text-white tracking-tight"
+            >
+              آزمایشگاه طراحی هویت بصری، آیکون‌ها و تصویرسازی‌های وکتور
+              <span class="text-[#CCFF00]">GymBro</span>
+            </h1>
+            <p class="text-sm text-gray-400 mt-1 leading-relaxed max-w-2xl">
+              طراحی مجدد کامل: آیکون‌های آناتومیک عضلات با انیمیشن پالس،
+              خوراکی‌ها به سبک ایموجی مدرن، بازطراحی اصولی کارت‌های داشبورد بر
+              مبنای گرید ۸ پیکسلی، و رفع ریشه‌ای تراز عقربه کرونومتر.
+            </p>
+          </div>
+        </div>
+
+        <!-- Global Controls -->
+        <div
+          class="flex flex-wrap items-center gap-3 bg-[#0B0E14] p-3 rounded-2xl border border-zinc-800"
+        >
+          <div class="flex items-center gap-2 px-2">
+            <label class="text-xs text-gray-400 font-bold">اندازه:</label>
+            <input
+              type="range"
+              id="sizeSlider"
+              min="28"
+              max="96"
+              value="72"
+              class="w-24 accent-[#CCFF00] cursor-pointer"
+              oninput="updateIconSize(this.value)"
+            />
+            <span
+              id="sizeDisplay"
+              class="text-xs font-mono font-bold text-[#CCFF00] w-9"
+              >72px</span
+            >
+          </div>
+          <div class="h-5 w-px bg-zinc-700"></div>
+          <button
+            onclick="toggleAnimation()"
+            id="animToggleBtn"
+            class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-gray-200 transition flex items-center gap-1.5"
+          >
+            <span>⏸️</span> توقف انیمیشن
+          </button>
+          <button
+            onclick="toggleTheme()"
+            id="themeToggleBtn"
+            class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-gray-200 transition flex items-center gap-1.5"
+          >
+            <span>☀️</span> حالت روشن
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto space-y-12">
+      <!-- Section 1: Equipment Collection -->
+      <section>
+        <div
+          class="flex items-center justify-between mb-4 pb-2 border-b border-zinc-800"
+        >
+          <div>
+            <h2
+              class="text-lg md:text-xl font-black text-white flex items-center gap-2"
+            >
+              <span class="w-3 h-3 rounded-sm bg-[#CCFF00]"></span>
+              ۱. مجموعه تجهیزات بدنسازی (Fitness Equipment Collection - ۱۳ قطعه)
+            </h2>
+            <p class="text-xs text-gray-400 mt-0.5">
+              هر وسیله با silhouette اختصاصی، جزئیات کاربردی و accent محدود
+              جیم‌برو
+            </p>
+          </div>
+          <span
+            class="text-xs font-mono px-2.5 py-1 rounded-lg bg-zinc-800 text-gray-300"
+            >13 Items</span
+          >
+        </div>
+
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3.5"
+          id="equipmentGrid"
+        >
+          <!-- Equipment Items dynamically injected -->
+        </div>
+      </section>
+
+      <!-- Section 2: Muscle & Anatomy Collection (TASK 1) -->
+      <section>
+        <div
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-2 border-b border-zinc-800"
+        >
+          <div>
+            <h2
+              class="text-lg md:text-xl font-black text-white flex items-center gap-2"
+            >
+              <span class="w-3 h-3 rounded-sm bg-[#CCFF00]"></span>
+              ۲. آناتومی و عضلات هدف بدنسازی (Muscle & Anatomy Groups - ۱۲ گروه)
+            </h2>
+            <p class="text-xs text-gray-400 mt-0.5">
+              تصویرسازی دقیق آناتومیک برای تک‌تک عضلات روی نیم‌تنه با انیمیشن
+              پالس/تنفس هدف
+            </p>
+          </div>
+          <div
+            class="flex items-center gap-2 bg-[#121622] p-1.5 rounded-xl border border-zinc-800 text-xs"
+          >
+            <button
+              data-muscle-filter="all_primary"
+              onclick="setMuscleFilter('all_primary')"
+              class="px-2.5 py-1 rounded-lg text-[#CCFF00] font-bold"
+            >
+              هدف اصلی
+            </button>
+            <button
+              data-muscle-filter="all_secondary"
+              onclick="setMuscleFilter('all_secondary')"
+              class="px-2.5 py-1 rounded-lg text-amber-400 hover:bg-zinc-800 font-bold"
+            >
+              کمکی / ثانویه
+            </button>
+            <button
+              data-muscle-filter="all_inactive"
+              onclick="setMuscleFilter('all_inactive')"
+              class="px-2.5 py-1 rounded-lg text-gray-400 hover:bg-zinc-800 font-bold"
+            >
+              غیرفعال
+            </button>
+            <button
+              data-muscle-filter="smart"
+              onclick="setMuscleFilter('smart')"
+              class="px-2.5 py-1 rounded-lg text-cyan-400 hover:bg-zinc-800 font-bold"
+            >
+              ترکیبی هوشمند
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5"
+          id="muscleGrid"
+        >
+          <!-- Muscle Items -->
+        </div>
+      </section>
+
+      <!-- Section 3: Nutrition & Health Collection (TASK 2) -->
+      <section>
+        <div
+          class="flex items-center justify-between mb-4 pb-2 border-b border-zinc-800"
+        >
+          <div>
+            <h2
+              class="text-lg md:text-xl font-black text-white flex items-center gap-2"
+            >
+              <span class="w-3 h-3 rounded-sm bg-cyan-400"></span>
+              ۳. تغذیه و سلامت ورزشی (Nutrition & Macros Collection - ۱۲ آیتم
+              سبک ایموجی)
+            </h2>
+            <p class="text-xs text-gray-400 mt-0.5">
+              آیکون‌های ایموجی حرفه‌ای: سینه مرغ، نان و غلات، آووکادو، بروکلی،
+              استیک، تخم‌مرغ، برنج، شیکر و اسکنر
+            </p>
+          </div>
+          <span
+            class="text-xs font-mono px-2.5 py-1 rounded-lg bg-zinc-800 text-gray-300"
+            >12 Items + Fallback</span
+          >
+        </div>
+
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5"
+          id="nutritionGrid"
+        >
+          <!-- Nutrition Items -->
+        </div>
+      </section>
+
+      <!-- Section 4: Application & Navigation Icons (TASK 3 Redesign) -->
+      <section>
+        <div
+          class="flex items-center justify-between mb-4 pb-2 border-b border-zinc-800"
+        >
+          <div>
+            <h2
+              class="text-lg md:text-xl font-black text-white flex items-center gap-2"
+            >
+              <span class="w-3 h-3 rounded-sm bg-purple-400"></span>
+              ۴. بازطراحی اصولی داشبورد و ناوبری (Dashboard & Navigation Icons
+              Redesign)
+            </h2>
+            <p class="text-xs text-gray-400 mt-0.5">
+              تفکیک سلسله‌مراتبی، گرید فاصله‌گذاری ۸ پیکسلی، تاچ‌تارگت $\ge
+              48\text{dp}$ و کنتراست استاندارد WCAG AA
+            </p>
+          </div>
+          <span
+            class="text-xs font-mono px-2.5 py-1 rounded-lg bg-zinc-800 text-gray-300"
+            >17 Dashboard + 6 Nav</span
+          >
+        </div>
+
+        <!-- Hero Action Cards Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <!-- Hero 1: Live Workout -->
+          <div
+            class="p-5 rounded-2xl bg-gradient-to-br from-[#1B2418] to-[#121622] border-2 border-[#CCFF00] shadow-lg relative overflow-hidden flex items-center justify-between"
+          >
+            <div class="space-y-1.5 z-10">
+              <span
+                class="px-2 py-0.5 rounded-full bg-[#CCFF00] text-black text-[10px] font-black uppercase tracking-wider"
+                >اقدام اصلی تمرین</span
+              >
+              <div class="text-base font-black text-white">
+                جلسه زنده تمرین بدنسازی
+              </div>
+              <div class="text-xs text-gray-300">
+                ورود به ثبت ست‌ها، وزنه‌ها و تایمر استراحت
+              </div>
+            </div>
+            <div
+              class="w-14 h-14 rounded-2xl bg-[#CCFF00]/20 flex items-center justify-center shrink-0 border border-[#CCFF00]/40"
+            >
+              <svg width="36" height="36" viewBox="0 0 100 100" fill="none">
+                <line
+                  x1="25"
+                  y1="75"
+                  x2="75"
+                  y2="25"
+                  stroke="#CCFF00"
+                  stroke-width="10"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="16"
+                  y1="64"
+                  x2="34"
+                  y2="82"
+                  stroke="#F1F5F9"
+                  stroke-width="9"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="66"
+                  y1="18"
+                  x2="84"
+                  y2="36"
+                  stroke="#F1F5F9"
+                  stroke-width="9"
+                  stroke-linecap="round"
+                />
+                <circle cx="50" cy="50" r="8" fill="#CCFF00" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Hero 2: Focused Training -->
+          <div
+            class="p-5 rounded-2xl bg-gradient-to-br from-[#122228] to-[#121622] border border-cyan-400/50 shadow-lg relative overflow-hidden flex items-center justify-between"
+          >
+            <div class="space-y-1.5 z-10">
+              <span
+                class="px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 text-[10px] font-black uppercase tracking-wider"
+                >Focus Mode</span
+              >
+              <div class="text-base font-black text-white">
+                تمرین متمرکز و بدون حواس‌پرتی
+              </div>
+              <div class="text-xs text-gray-300">
+                نمایش تمام صفحه تک حرکت با فلو بی‌وقفه
+              </div>
+            </div>
+            <div
+              class="w-14 h-14 rounded-2xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-400/40"
+            >
+              <svg width="36" height="36" viewBox="0 0 100 100" fill="none">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="34"
+                  stroke="#94A3B8"
+                  stroke-width="6"
+                />
+                <line
+                  x1="50"
+                  y1="8"
+                  x2="50"
+                  y2="24"
+                  stroke="#06B6D4"
+                  stroke-width="7"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="50"
+                  y1="76"
+                  x2="50"
+                  y2="92"
+                  stroke="#06B6D4"
+                  stroke-width="7"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="8"
+                  y1="50"
+                  x2="24"
+                  y2="50"
+                  stroke="#06B6D4"
+                  stroke-width="7"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="76"
+                  y1="50"
+                  x2="92"
+                  y2="50"
+                  stroke="#06B6D4"
+                  stroke-width="7"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M52 34 L44 50 L52 50 L46 66 L58 48 L50 48 Z"
+                  fill="#06B6D4"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Hero 3: AI Coach Synapse -->
+          <div
+            class="p-5 rounded-2xl bg-gradient-to-br from-[#22162A] to-[#121622] border border-purple-500/50 shadow-lg relative overflow-hidden flex items-center justify-between"
+          >
+            <div class="space-y-1.5 z-10">
+              <span
+                class="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-black uppercase tracking-wider"
+                >مربی هوشمند</span
+              >
+              <div class="text-base font-black text-white">
+                تحلیلگر و کوچ ژنومی Gemini
+              </div>
+              <div class="text-xs text-gray-300">
+                تنظیم متغیرهای اضافه بار پیشرونده و رژیم
+              </div>
+            </div>
+            <div
+              class="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center shrink-0 border border-purple-500/40"
+            >
+              <svg width="36" height="36" viewBox="0 0 100 100" fill="none">
+                <path
+                  d="M50 14 Q50 50 86 50 Q50 50 50 86 Q50 50 14 50 Q50 50 50 14 Z"
+                  fill="#C084FC"
+                />
+                <circle cx="50" cy="50" r="9" fill="#1E1B4B" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Core Modules Grid -->
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3.5"
+          id="dashboardGrid"
+        >
+          <!-- Dashboard Icons dynamically injected -->
+        </div>
+      </section>
+
+      <!-- Section 5: Dynamic Animation Showcase (TASK 4 Stopwatch Fix) -->
+      <section>
+        <div
+          class="flex items-center justify-between mb-4 pb-2 border-b border-zinc-800"
+        >
+          <div>
+            <h2
+              class="text-lg md:text-xl font-black text-white flex items-center gap-2"
+            >
+              <span class="w-3 h-3 rounded-sm bg-rose-400"></span>
+              ۵. سیستم موشن و مایکرواینتراکشن‌ها (Micro-Animation Showcase &
+              Stopwatch Fix)
+            </h2>
+            <p class="text-xs text-gray-400 mt-0.5">
+              رفع اساسی و ریاضی باگ عقربه کرونومتر: گردش کاملاً محصور در داخل
+              مرکز دایره
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Anim 1: Floating Dumbbell -->
+          <div class="metallic-surface p-5 rounded-2xl text-center space-y-3">
+            <div class="h-24 flex items-center justify-center">
+              <div class="anim-float">
+                <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+                  <rect
+                    x="30"
+                    y="46"
+                    width="40"
+                    height="8"
+                    rx="4"
+                    fill="#CCFF00"
+                  />
+                  <rect
+                    x="16"
+                    y="28"
+                    width="14"
+                    height="44"
+                    rx="5"
+                    fill="#334155"
+                    stroke="#64748B"
+                    stroke-width="2"
+                  />
+                  <rect
+                    x="70"
+                    y="28"
+                    width="14"
+                    height="44"
+                    rx="5"
+                    fill="#334155"
+                    stroke="#64748B"
+                    stroke-width="2"
+                  />
+                  <rect
+                    x="24"
+                    y="36"
+                    width="6"
+                    height="28"
+                    rx="3"
+                    fill="#1E293B"
+                  />
+                  <rect
+                    x="70"
+                    y="36"
+                    width="6"
+                    height="28"
+                    rx="3"
+                    fill="#1E293B"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">
+                شناوری ارگونومیک دمبل
+              </div>
+              <div class="text-[10px] text-gray-400">
+                GymBroAnimationType.floatingDumbbell
+              </div>
+            </div>
+          </div>
+
+          <!-- Anim 2: Lifting Barbell -->
+          <div class="metallic-surface p-5 rounded-2xl text-center space-y-3">
+            <div class="h-24 flex items-center justify-center">
+              <div class="anim-lift">
+                <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+                  <line
+                    x1="8"
+                    y1="50"
+                    x2="92"
+                    y2="50"
+                    stroke="#CBD5E1"
+                    stroke-width="5"
+                    stroke-linecap="round"
+                  />
+                  <rect x="40" y="47" width="20" height="6" fill="#CCFF00" />
+                  <rect
+                    x="18"
+                    y="22"
+                    width="8"
+                    height="56"
+                    rx="3"
+                    fill="#334155"
+                    stroke="#94A3B8"
+                    stroke-width="1.5"
+                  />
+                  <rect
+                    x="26"
+                    y="28"
+                    width="6"
+                    height="44"
+                    rx="2.5"
+                    fill="#475569"
+                  />
+                  <rect
+                    x="74"
+                    y="22"
+                    width="8"
+                    height="56"
+                    rx="3"
+                    fill="#334155"
+                    stroke="#94A3B8"
+                    stroke-width="1.5"
+                  />
+                  <rect
+                    x="68"
+                    y="28"
+                    width="6"
+                    height="44"
+                    rx="2.5"
+                    fill="#475569"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">لیفت انفجاری هالتر</div>
+              <div class="text-[10px] text-gray-400">
+                GymBroAnimationType.liftingBarbell
+              </div>
+            </div>
+          </div>
+
+          <!-- Anim 3: Pulsing Calories -->
+          <div class="metallic-surface p-5 rounded-2xl text-center space-y-3">
+            <div class="h-24 flex items-center justify-center">
+              <div class="anim-pulse">
+                <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+                  <path
+                    d="M50 14 C66 36 76 54 72 72 C68 86 32 86 28 72 C24 54 40 44 46 34 C50 42 56 44 58 36 Z"
+                    fill="#F59E0B"
+                    opacity="0.95"
+                  />
+                  <path
+                    d="M50 46 C58 58 58 74 50 78 C42 74 42 58 50 46 Z"
+                    fill="#CCFF00"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">
+                تپش انرژی و متابولیسم
+              </div>
+              <div class="text-[10px] text-gray-400">
+                GymBroAnimationType.pulsingEnergy
+              </div>
+            </div>
+          </div>
+
+          <!-- Anim 4: Chronometer Hand (TASK 4 - Clean Mathematical Fix) -->
+          <div
+            class="metallic-surface p-5 rounded-2xl text-center space-y-3 border-emerald-500/40"
+          >
+            <div class="h-24 flex items-center justify-center">
+              <!-- Fixed: Hand rotates entirely inside dial around exact center (50, 54) -->
+              <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+                <!-- Dial Bezel -->
+                <circle
+                  cx="50"
+                  cy="54"
+                  r="34"
+                  stroke="#334155"
+                  stroke-width="6"
+                  fill="#0F172A"
+                />
+                <!-- Top Pusher Crown -->
+                <line
+                  x1="42"
+                  y1="10"
+                  x2="58"
+                  y2="10"
+                  stroke="#CCFF00"
+                  stroke-width="5"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="50"
+                  y1="10"
+                  x2="50"
+                  y2="20"
+                  stroke="#CCFF00"
+                  stroke-width="5"
+                  stroke-linecap="round"
+                />
+                <!-- 2 o'clock side pusher -->
+                <line
+                  x1="72"
+                  y1="24"
+                  x2="80"
+                  y2="16"
+                  stroke="#94A3B8"
+                  stroke-width="4"
+                  stroke-linecap="round"
+                />
+                <!-- Minute tick marks -->
+                <circle cx="50" cy="26" r="2" fill="#64748B" />
+                <circle cx="78" cy="54" r="2" fill="#64748B" />
+                <circle cx="50" cy="82" r="2" fill="#64748B" />
+                <circle cx="22" cy="54" r="2" fill="#64748B" />
+                <!-- Needle rotating strictly around dial center (50, 54), length 22px (stays within r=34) -->
+                <g style="transform-origin: 50px 54px; transform-box: view-box">
+                  <line
+                    x1="50"
+                    y1="54"
+                    x2="50"
+                    y2="34"
+                    stroke="#CCFF00"
+                    stroke-width="3.5"
+                    stroke-linecap="round"
+                  >
+                    <animateTransform
+                      attributeName="transform"
+                      type="rotate"
+                      from="0 50 54"
+                      to="360 50 54"
+                      dur="3s"
+                      repeatCount="indefinite"
+                    />
+                  </line>
+                </g>
+                <!-- Center Hub -->
+                <circle cx="50" cy="54" r="5" fill="#CCFF00" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-emerald-400">
+                کرونومتر دقیق (رفع باگ بیرون‌زدگی)
+              </div>
+              <div class="text-[10px] text-gray-400">
+                GymBroAnimationType.rotatingStopwatch
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Interactive Script for Filtering & Rendering -->
+    <script>
+      let currentSize = 72;
+      let isPaused = false;
+      let isLight = false;
+      let currentMuscleFilter = "smart";
+
+      const equipments = [
+        {
+          id: "dumbbell",
+          nameFa: "دمبل شش‌ضلعی",
+          nameEn: "Dumbbell",
+          category: "Free Weights",
+        },
+        {
+          id: "barbell",
+          nameFa: "هالتر المپیک",
+          nameEn: "Barbell",
+          category: "Free Weights",
+        },
+        {
+          id: "weightPlate",
+          nameFa: "صفحه هالتر",
+          nameEn: "Weight Plate",
+          category: "Plates",
+        },
+        {
+          id: "kettlebell",
+          nameFa: "کتل‌بل رقابتی",
+          nameEn: "Kettlebell",
+          category: "Free Weights",
+        },
+        {
+          id: "resistanceBand",
+          nameFa: "کش تمرینی",
+          nameEn: "Resistance Band",
+          category: "Mobility",
+        },
+        {
+          id: "benchPress",
+          nameFa: "میز پرس سینه",
+          nameEn: "Bench Press",
+          category: "Benches",
+        },
+        {
+          id: "treadmill",
+          nameFa: "تردمیل هوازی",
+          nameEn: "Treadmill",
+          category: "Cardio",
+        },
+        {
+          id: "exerciseBike",
+          nameFa: "دوچرخه ثابت",
+          nameEn: "Exercise Bike",
+          category: "Cardio",
+        },
+        {
+          id: "cableMachine",
+          nameFa: "دستگاه کراس‌اور",
+          nameEn: "Cable Machine",
+          category: "Cables",
+        },
+        {
+          id: "pullUpBar",
+          nameFa: "میله بارفیکس",
+          nameEn: "Pull-up Bar",
+          category: "Calisthenics",
+        },
+        {
+          id: "legPress",
+          nameFa: "پرس پا ۴۵ درجه",
+          nameEn: "Leg Press",
+          category: "Machines",
+        },
+        {
+          id: "smithMachine",
+          nameFa: "اسمیت ماشین",
+          nameEn: "Smith Machine",
+          category: "Machines",
+        },
+        {
+          id: "gymMachine",
+          nameFa: "دستگاه ترکیبی",
+          nameEn: "Gym Machine",
+          category: "Machines",
+        },
+      ];
+
+      const muscles = [
+        {
+          id: "chest",
+          nameFa: "سینه (پکتورالیس)",
+          nameEn: "Pectorals",
+          state: "primary",
+          view: "front",
+          spots: [
+            [184, 176],
+            [256, 176],
+          ],
+        },
+        {
+          id: "back",
+          nameFa: "زیربغل و پشت (لت)",
+          nameEn: "Latissimus Dorsi",
+          state: "primary",
+          view: "back",
+          spots: [
+            [166, 236],
+            [274, 236],
+          ],
+        },
+        {
+          id: "shoulders",
+          nameFa: "سرشانه (دلتوئید)",
+          nameEn: "Deltoids",
+          state: "secondary",
+          view: "front",
+          spots: [
+            [146, 145],
+            [294, 145],
+          ],
+        },
+        {
+          id: "biceps",
+          nameFa: "جلوبازو (بایسپس)",
+          nameEn: "Biceps Brachii",
+          state: "primary",
+          view: "front",
+          spots: [
+            [126, 212],
+            [314, 212],
+          ],
+        },
+        {
+          id: "triceps",
+          nameFa: "پشت‌بازو (ترایسپس)",
+          nameEn: "Triceps Brachii",
+          state: "secondary",
+          view: "back",
+          spots: [
+            [126, 214],
+            [314, 214],
+          ],
+        },
+        {
+          id: "forearms",
+          nameFa: "ساعد و پنجه",
+          nameEn: "Forearms",
+          state: "inactive",
+          view: "front",
+          spots: [
+            [98, 306],
+            [342, 306],
+          ],
+        },
+        {
+          id: "abs",
+          nameFa: "شکم (سیکس‌پک)",
+          nameEn: "Abdominals",
+          state: "primary",
+          view: "front",
+          spots: [[220, 278]],
+        },
+        {
+          id: "obliques",
+          nameFa: "مورب شکمی (پهلو)",
+          nameEn: "Obliques",
+          state: "secondary",
+          view: "front",
+          spots: [
+            [176, 292],
+            [264, 292],
+          ],
+        },
+        {
+          id: "quadriceps",
+          nameFa: "چهارسر ران",
+          nameEn: "Quadriceps",
+          state: "primary",
+          view: "front",
+          spots: [
+            [178, 432],
+            [262, 432],
+          ],
+        },
+        {
+          id: "hamstrings",
+          nameFa: "پشت پا (همسترینگ)",
+          nameEn: "Hamstrings",
+          state: "secondary",
+          view: "back",
+          spots: [
+            [180, 438],
+            [260, 438],
+          ],
+        },
+        {
+          id: "calves",
+          nameFa: "ساق پا (دوقلو)",
+          nameEn: "Calves",
+          state: "inactive",
+          view: "back",
+          spots: [
+            [180, 566],
+            [260, 566],
+          ],
+        },
+        {
+          id: "glutes",
+          nameFa: "سرینی (باسن)",
+          nameEn: "Gluteus Maximus",
+          state: "primary",
+          view: "back",
+          spots: [
+            [180, 354],
+            [260, 354],
+          ],
+        },
+      ];
+
+      const nutritions = [
+        {
+          id: "protein",
+          nameFa: "پروتئین خالص",
+          nameEn: "Protein",
+          color: "#CCFF00",
+          desc: "فیله مرغ گریل‌شده و وی",
+        },
+        {
+          id: "carbs",
+          nameFa: "کربوهیدرات پیچیده",
+          nameEn: "Carbohydrates",
+          color: "#F59E0B",
+          desc: "نان غلات کامل، جو و سیب‌زمینی",
+        },
+        {
+          id: "fat",
+          nameFa: "چربی‌های سالم",
+          nameEn: "Healthy Fats",
+          color: "#10B981",
+          desc: "آووکادو تازه و روغن زیتون",
+        },
+        {
+          id: "calories",
+          nameFa: "انرژی کالری",
+          nameEn: "Calories",
+          color: "#EF4444",
+          desc: "متابولیسم پایه + کالری سوزانده شده",
+        },
+        {
+          id: "water",
+          nameFa: "آب و هیدراتاسیون",
+          nameEn: "Hydration",
+          color: "#38BDF8",
+          desc: "مصرف روزانه ۲ الی ۴ لیتر",
+        },
+        {
+          id: "fruits",
+          nameFa: "میوه‌های تازه",
+          nameEn: "Fresh Fruits",
+          color: "#E11D48",
+          desc: "سیب قرمز، موز و آنتی‌اکسیدان",
+        },
+        {
+          id: "vegetables",
+          nameFa: "سبزیجات و سالاد",
+          nameEn: "Vegetables",
+          color: "#22C55E",
+          desc: "بروکلی ترد، کاهو و اسفناج",
+        },
+        {
+          id: "meat",
+          nameFa: "گوشت قرمز و استیک",
+          nameEn: "Lean Meat",
+          color: "#BE123C",
+          desc: "استیک فیله، آهن و کراتین طبیعی",
+        },
+        {
+          id: "eggs",
+          nameFa: "تخم‌مرغ ورزشی",
+          nameEn: "Eggs",
+          color: "#FBBF24",
+          desc: "تخم‌مرغ کامل با زرده غنی",
+        },
+        {
+          id: "rice",
+          nameFa: "برنج کته رژیمی",
+          nameEn: "Steamed Rice",
+          color: "#E2E8F0",
+          desc: "کاسه برنج بخارپز، گلیکوژن عضله",
+        },
+        {
+          id: "supplements",
+          nameFa: "مکمل بدنسازی",
+          nameEn: "Supplements",
+          color: "#A855F7",
+          desc: "شیکر ورزشی و پیمانه پروتئین",
+        },
+        {
+          id: "foodScanner",
+          nameFa: "اسکنر هوشمند غذا",
+          nameEn: "AI Meal Scanner",
+          color: "#CCFF00",
+          desc: "تشخیص فوری با هوش مصنوعی",
+        },
+        {
+          id: "fallback",
+          nameFa: "وعده غذایی ارگانیک",
+          nameEn: "Meal Plate",
+          color: "#64748B",
+          desc: "کلواش سرو غذا و ماکروی متوازن",
+        },
+      ];
+
+      const dashboardIcons = [
+        { id: "workout", nameFa: "برنامه تمرینی", nameEn: "Workout" },
+        {
+          id: "trainingPlans",
+          nameFa: "برنامه‌های آماده",
+          nameEn: "Training Plans",
+        },
+        { id: "exerciseHistory", nameFa: "تاریخچه جلسات", nameEn: "History" },
+        { id: "timer", nameFa: "تایمر استراحت", nameEn: "Rest Timer" },
+        { id: "stopwatch", nameFa: "کرونومتر ورزشی", nameEn: "Stopwatch" },
+        { id: "calendar", nameFa: "تقویم تمرین", nameEn: "Calendar" },
+        { id: "progress", nameFa: "نمودار رشد", nameEn: "Progress Curve" },
+        { id: "statistics", nameFa: "آمار حجم تمرین", nameEn: "Statistics" },
+        {
+          id: "personalRecord",
+          nameFa: "رکوردهای شخصی (PR)",
+          nameEn: "PR Trophy",
+        },
+        { id: "notification", nameFa: "اعلان‌ها", nameEn: "Notifications" },
+        { id: "profile", nameFa: "پروفایل اتلتیک", nameEn: "Athletic Profile" },
+        { id: "settings", nameFa: "تنظیمات", nameEn: "Settings" },
+        {
+          id: "achievements",
+          nameFa: "مدال‌ها و دستاورد",
+          nameEn: "Achievements",
+        },
+        { id: "goals", nameFa: "اهداف بدنی", nameEn: "Body Goals" },
+        {
+          id: "focusedTraining",
+          nameFa: "تمرین متمرکز",
+          nameEn: "Focused Training",
+        },
+        { id: "homeMode", nameFa: "صفحه اصلی", nameEn: "Home Mode" },
+        {
+          id: "aiCoach",
+          nameFa: "مربی هوش مصنوعی",
+          nameEn: "AI Coach Synapse",
+        },
+      ];
+
+      // Helper SVG Generators
+      function getEquipmentSvg(id, size) {
+        const wrap = (content) =>
+          `<svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none" role="img" aria-label="${id}">${content}</svg>`;
+        const steel = "#9AA8BA";
+        const dark = "#344154";
+        switch (id) {
+          case "dumbbell":
+            return wrap(
+              `<rect x="29" y="46" width="42" height="8" rx="4" fill="#CCFF00"/><rect x="14" y="30" width="13" height="40" rx="4" fill="${dark}" stroke="${steel}" stroke-width="2"/><rect x="73" y="30" width="13" height="40" rx="4" fill="${dark}" stroke="${steel}" stroke-width="2"/><path d="M20 36v28M80 36v28" stroke="#64748B" stroke-width="2"/>`,
+            );
+          case "barbell":
+            return wrap(
+              `<path d="M9 50h82" stroke="${steel}" stroke-width="5" stroke-linecap="round"/><path d="M43 50h14" stroke="#CCFF00" stroke-width="6"/><rect x="17" y="23" width="8" height="54" rx="3" fill="${dark}" stroke="${steel}" stroke-width="2"/><rect x="27" y="30" width="7" height="40" rx="2" fill="#526176"/><rect x="75" y="23" width="8" height="54" rx="3" fill="${dark}" stroke="${steel}" stroke-width="2"/><rect x="66" y="30" width="7" height="40" rx="2" fill="#526176"/>`,
+            );
+          case "weightPlate":
+            return wrap(
+              `<circle cx="50" cy="50" r="39" fill="${dark}" stroke="${steel}" stroke-width="4"/><circle cx="50" cy="50" r="29" stroke="#CCFF00" stroke-width="2"/><circle cx="50" cy="50" r="10" fill="#0B0E14" stroke="${steel}" stroke-width="3"/><path d="M50 14v8M86 50h-8M50 86v-8M14 50h8" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>`,
+            );
+          case "kettlebell":
+            return wrap(
+              `<path d="M37 34c0-22 26-22 26 0" stroke="${steel}" stroke-width="6" stroke-linecap="round"/><path d="M28 52c0-12 10-19 22-19s22 7 22 19l7 16c3 9-4 17-13 17H34c-9 0-16-8-13-17z" fill="${dark}" stroke="${steel}" stroke-width="2.5"/><path d="M39 61h22" stroke="#CCFF00" stroke-width="5" stroke-linecap="round"/>`,
+            );
+          case "resistanceBand":
+            return wrap(
+              `<path d="M25 25c15-12 35-12 50 0v50c-15 12-35 12-50 0z" stroke="#CCFF00" stroke-width="6"/><path d="M32 30c11-8 25-8 36 0v40c-11 8-25 8-36 0z" stroke="${steel}" stroke-width="2"/><path d="M25 34H15v32h10M75 34h10v32H75" stroke="${steel}" stroke-width="4" stroke-linejoin="round"/>`,
+            );
+          case "benchPress":
+            return wrap(
+              `<path d="M18 72h64M27 72v12M73 72v12" stroke="${steel}" stroke-width="4" stroke-linecap="round"/><rect x="34" y="55" width="34" height="8" rx="3" fill="#526176" stroke="${steel}" stroke-width="2"/><path d="M22 18v48M78 18v48M16 24h68" stroke="${steel}" stroke-width="4" stroke-linecap="round"/><path d="M30 24v11M70 24v11" stroke="#CCFF00" stroke-width="5"/>`,
+            );
+          case "treadmill":
+            return wrap(
+              `<path d="M24 69h51l9 8H22z" fill="${dark}" stroke="${steel}" stroke-width="2.5"/><path d="M31 66 44 31h27" stroke="${steel}" stroke-width="4" stroke-linecap="round"/><path d="M44 31 37 22M68 31l8-10" stroke="${steel}" stroke-width="3" stroke-linecap="round"/><rect x="61" y="16" width="20" height="12" rx="3" fill="#1E293B" stroke="#CCFF00" stroke-width="2"/><circle cx="32" cy="81" r="4" fill="#64748B"/><circle cx="76" cy="81" r="4" fill="#64748B"/>`,
+            );
+          case "exerciseBike":
+            return wrap(
+              `<circle cx="27" cy="70" r="14" stroke="${steel}" stroke-width="3"/><circle cx="73" cy="70" r="14" stroke="${steel}" stroke-width="3"/><path d="M27 70 44 45l16 25H27l13-17h20" stroke="#CCFF00" stroke-width="3" stroke-linejoin="round"/><path d="M39 42h17M57 39l7 2M42 43l-4-7" stroke="${steel}" stroke-width="3" stroke-linecap="round"/><circle cx="44" cy="45" r="3" fill="${steel}"/>`,
+            );
+          case "cableMachine":
+            return wrap(
+              `<path d="M23 15v70M77 15v70M23 18h54M23 82h54" stroke="${steel}" stroke-width="4" stroke-linecap="round"/><rect x="29" y="52" width="17" height="25" rx="2" fill="${dark}" stroke="${steel}" stroke-width="2"/><circle cx="55" cy="27" r="5" fill="#CCFF00"/><path d="M55 32v27l14 7M69 66v9M64 75h10" stroke="#CCFF00" stroke-width="2.5" stroke-linecap="round"/><path d="M49 58h12" stroke="${steel}" stroke-width="3"/>`,
+            );
+          case "pullUpBar":
+            return wrap(
+              `<path d="M24 18v66M76 18v66M18 24h64" stroke="${steel}" stroke-width="5" stroke-linecap="round"/><path d="M35 24v11M50 24v13M65 24v11" stroke="#CCFF00" stroke-width="4" stroke-linecap="round"/><path d="M18 84h12M70 84h12" stroke="#64748B" stroke-width="4" stroke-linecap="round"/>`,
+            );
+          case "legPress":
+            return wrap(
+              `<path d="M23 79 70 27M31 82l47-52M26 79h47" stroke="${steel}" stroke-width="4" stroke-linecap="round"/><path d="M60 24h24v13H60z" fill="${dark}" stroke="#CCFF00" stroke-width="2" transform="rotate(-48 72 30)"/><rect x="25" y="57" width="22" height="13" rx="3" fill="#526176" stroke="${steel}" stroke-width="2"/><path d="M30 70v12M48 66l8 13" stroke="${steel}" stroke-width="3"/>`,
+            );
+          case "smithMachine":
+            return wrap(
+              `<path d="M24 14v72M76 14v72" stroke="${steel}" stroke-width="5"/><path d="M24 28h52" stroke="#CCFF00" stroke-width="4"/><rect x="17" y="20" width="9" height="17" rx="2" fill="${dark}" stroke="${steel}" stroke-width="2"/><rect x="74" y="20" width="9" height="17" rx="2" fill="${dark}" stroke="${steel}" stroke-width="2"/><path d="M35 76h30M41 76v8M59 76v8" stroke="${steel}" stroke-width="4" stroke-linecap="round"/>`,
+            );
+          case "gymMachine":
+            return wrap(
+              `<path d="M26 14v72M74 14v72M26 18h48M26 82h48" stroke="${steel}" stroke-width="4"/><rect x="32" y="44" width="22" height="31" rx="2" fill="${dark}" stroke="#64748B" stroke-width="2"/><path d="M39 48h8M39 54h8M39 60h8M39 66h8" stroke="#94A3B8" stroke-width="2"/><circle cx="64" cy="26" r="5" fill="#CCFF00"/><path d="M64 31v21l-11 9M49 61h15M55 61v12" stroke="#CCFF00" stroke-width="2.5" stroke-linecap="round"/><rect x="47" y="74" width="24" height="7" rx="2" fill="#526176" stroke="${steel}" stroke-width="2"/>`,
+            );
+          default:
+            return wrap(
+              `<circle cx="50" cy="50" r="32" stroke="${steel}" stroke-width="3"/><path d="M32 50h36" stroke="#CCFF00" stroke-width="4" stroke-linecap="round"/>`,
+            );
+        }
+      }
+
+      function getMuscleSvg(id, size, state) {
+        const muscle = muscles.find((item) => item.id === id);
+        if (!muscle) return "";
+        const accent =
+          state === "primary"
+            ? "#CCFF00"
+            : state === "secondary"
+              ? "#F59E0B"
+              : "#94A3B8";
+        const dimension = Math.max(84, Math.round(size * 1.16));
+        const viewName = muscle.view === "back" ? "پشت" : "جلو";
+        const opacity = state === "inactive" ? ".38" : ".92";
+        const targetY =
+          muscle.spots.reduce((sum, spot) => sum + spot[1], 0) /
+          muscle.spots.length;
+        const cropTop = Math.max(0, Math.min(240, targetY - 220));
+        const cropPosition = (cropTop / 240) * 100;
+        const focusMarks = muscle.spots
+          .map(
+            ([x, y]) => `
+          <span class="muscle-focus" aria-hidden="true" style="--spot-x:${(x / 440) * 100}%;--spot-y:${((y - cropTop) / 440) * 100}%"></span>
+        `,
+          )
+          .join("");
+
+        return `
+        <div class="muscle-artboard" role="img" aria-label="${muscle.nameFa}، نمای ${viewName}"
+          style="width:${dimension}px;height:${dimension}px;--crop-position:${cropPosition}%;--muscle-color:${accent};--focus-opacity:${opacity}">
+          <img src="../assets/images/anatomy_${muscle.view}.png" alt="" loading="lazy" />
+          ${focusMarks}
+          <span class="muscle-view-label">${viewName}</span>
+        </div>
+      `;
+      }
+
+      // TASK 2: Complete Emoji-Style Vector SVGs for All 12 Nutrition Items + Fallback
+      function getNutritionSvg(id, size, color) {
+        switch (id) {
+          case "protein":
+            // Grilled Chicken Breast with Grill Marks & Herb
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M24 50 C24 32 46 22 72 32 C82 50 78 72 58 78 C38 84 24 72 24 50 Z" fill="#FBBF24" stroke="#D97706" stroke-width="2.5" />
+              <!-- Golden Sear Marks -->
+              <line x1="38" y1="36" x2="48" y2="48" stroke="#92400E" stroke-width="3" stroke-linecap="round" />
+              <line x1="48" y1="42" x2="58" y2="54" stroke="#92400E" stroke-width="3" stroke-linecap="round" />
+              <line x1="58" y1="48" x2="68" y2="60" stroke="#92400E" stroke-width="3" stroke-linecap="round" />
+              <!-- Herb Sprig -->
+              <circle cx="64" cy="40" r="3.5" fill="#22C55E" />
+              <circle cx="68" cy="36" r="3" fill="#15803D" />
+            </svg>
+          `;
+
+          case "carbs":
+            // Whole Wheat Bread Loaf & Grain Ears
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <!-- Loaf Body -->
+              <path d="M22 62 C22 42 34 32 50 32 C66 32 78 42 78 62 C78 74 68 76 50 76 C32 76 22 74 22 62 Z" fill="#F59E0B" stroke="#B45309" stroke-width="2.5" />
+              <!-- Crust Scores -->
+              <path d="M34 46 Q38 40 42 46" stroke="#FEF3C7" stroke-width="2.5" stroke-linecap="round" fill="none" />
+              <path d="M48 44 Q52 38 56 44" stroke="#FEF3C7" stroke-width="2.5" stroke-linecap="round" fill="none" />
+              <path d="M62 46 Q66 40 70 46" stroke="#FEF3C7" stroke-width="2.5" stroke-linecap="round" fill="none" />
+            </svg>
+          `;
+
+          case "fat":
+            // Sliced Ripe Avocado with Round Pit
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <!-- Avocado Skin -->
+              <path d="M50 16 C68 34 76 58 72 74 C68 86 32 86 28 74 C24 58 32 34 50 16 Z" fill="#15803D" stroke="#166534" stroke-width="2.5" />
+              <!-- Avocado Flesh -->
+              <path d="M50 22 C64 38 70 58 66 72 C62 80 38 80 34 72 C30 58 36 38 50 22 Z" fill="#86EFAC" />
+              <!-- Round Seed / Pit -->
+              <circle cx="50" cy="62" r="14" fill="#92400E" stroke="#78350F" stroke-width="2" />
+              <circle cx="46" cy="58" r="3.5" fill="#B45309" opacity="0.6" />
+            </svg>
+          `;
+
+          case "calories":
+            // Vibrant Dual-Tone Energy Fire Flame
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M50 14 C66 36 76 54 72 72 C68 86 32 86 28 72 C24 54 40 44 46 34 C50 42 56 44 58 36 Z" fill="#F59E0B" />
+              <path d="M50 46 C58 58 58 74 50 78 C42 74 42 58 50 46 Z" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "water":
+            // Glossy Hydration Water Drop
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M50 16 C50 16 26 48 26 66 C26 80 37 88 50 88 C63 88 74 80 74 66 C74 48 50 16 50 16 Z" fill="#38BDF8" stroke="#0284C7" stroke-width="2.5" />
+              <!-- Specular Reflection -->
+              <path d="M38 60 C38 72 44 78 52 78" stroke="#BAE6FD" stroke-width="3" stroke-linecap="round" fill="none" />
+              <circle cx="42" cy="46" r="3.5" fill="#FFFFFF" opacity="0.75" />
+            </svg>
+          `;
+
+          case "fruits":
+            // Crisp Red Apple with Leaf & Sliced Banana
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <!-- Apple Body -->
+              <path d="M46 34 C32 24 20 44 24 64 C28 80 40 84 46 82 C52 84 64 80 68 64 C72 44 60 24 46 34 Z" fill="#EF4444" stroke="#B91C1C" stroke-width="2.5" />
+              <!-- Leaf & Stem -->
+              <path d="M46 34 L46 22" stroke="#78350F" stroke-width="3" stroke-linecap="round" />
+              <path d="M46 26 Q58 18 58 28 Q48 30 46 26 Z" fill="#22C55E" />
+              <!-- Banana Wedge -->
+              <path d="M60 52 C72 58 78 72 74 82 C70 82 66 74 58 68 Z" fill="#FACC15" stroke="#CA8A04" stroke-width="1.8" />
+            </svg>
+          `;
+
+          case "vegetables":
+            // Fresh Broccoli Crown & Crisp Lettuce
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <!-- Stem -->
+              <rect x="44" y="58" width="12" height="24" rx="4" fill="#86EFAC" stroke="#16A34A" stroke-width="2" />
+              <!-- Florets -->
+              <circle cx="36" cy="48" r="14" fill="#22C55E" stroke="#15803D" stroke-width="2" />
+              <circle cx="64" cy="48" r="14" fill="#22C55E" stroke="#15803D" stroke-width="2" />
+              <circle cx="50" cy="36" r="16" fill="#16A34A" stroke="#15803D" stroke-width="2" />
+              <circle cx="42" cy="40" r="4" fill="#4ADE80" opacity="0.6" />
+              <circle cx="58" cy="40" r="4" fill="#4ADE80" opacity="0.6" />
+            </svg>
+          `;
+
+          case "meat":
+            // Marbled Ribeye Cut / T-Bone Steak
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M26 40 C24 26 46 22 66 30 C82 38 84 66 72 78 C54 88 28 80 26 62 C24 54 28 46 26 40 Z" fill="#DC2626" stroke="#991B1B" stroke-width="2.5" />
+              <!-- Bone -->
+              <circle cx="44" cy="42" r="6" fill="#FEF2F2" stroke="#E5E7EB" stroke-width="1.5" />
+              <!-- Fat Marbling -->
+              <path d="M54 38 Q64 46 72 44" stroke="#FECACA" stroke-width="2.5" stroke-linecap="round" fill="none" />
+              <path d="M48 58 Q58 66 66 62" stroke="#FECACA" stroke-width="2.5" stroke-linecap="round" fill="none" />
+            </svg>
+          `;
+
+          case "eggs":
+            // Sunny-Side Up Boiled Egg Half with Golden Yolk
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M26 54 C24 38 36 26 52 26 C68 26 78 38 76 54 C74 72 64 78 48 78 C32 78 28 72 26 54 Z" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2.5" />
+              <!-- Rich Golden Yolk -->
+              <circle cx="50" cy="52" r="16" fill="#FBBF24" stroke="#F59E0B" stroke-width="2" />
+              <!-- Specular Light -->
+              <circle cx="45" cy="47" r="4" fill="#FFFFFF" opacity="0.75" />
+            </svg>
+          `;
+
+          case "rice":
+            // Steaming Rice Bowl with Grain Texture
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <!-- Ceramic Bowl -->
+              <path d="M22 52 C22 74 34 82 50 82 C66 82 78 74 78 52 Z" fill="#1E293B" stroke="#475569" stroke-width="2.5" />
+              <rect x="42" y="82" width="16" height="4" fill="#475569" />
+              <!-- Mounded Rice -->
+              <path d="M24 52 C24 38 36 32 50 32 C64 32 76 38 76 52 Z" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2" />
+              <!-- Steam Wiggles -->
+              <path d="M42 26 Q46 20 42 14" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" fill="none" />
+              <path d="M50 24 Q54 18 50 12" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" fill="none" />
+              <path d="M58 26 Q62 20 58 14" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" fill="none" />
+            </svg>
+          `;
+
+          case "supplements":
+            // Gym Shaker Bottle with Flip-Top & Scoop
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <!-- Shaker Body -->
+              <path d="M34 32 L66 32 L60 84 L40 84 Z" fill="#0284C7" stroke="#0369A1" stroke-width="2.5" />
+              <!-- Measurement ticks -->
+              <line x1="42" y1="48" x2="48" y2="48" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" />
+              <line x1="42" y1="58" x2="52" y2="58" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" />
+              <line x1="42" y1="68" x2="48" y2="68" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" />
+              <!-- Cap -->
+              <rect x="30" y="22" width="40" height="10" rx="3" fill="#0F172A" />
+              <rect x="44" y="14" width="12" height="8" rx="2" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "foodScanner":
+            // High-Tech Lens Reticle with AI Scan Target
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M22 34 L22 22 L34 22" stroke="#CCFF00" stroke-width="4.5" stroke-linecap="round" />
+              <path d="M78 34 L78 22 L66 22" stroke="#CCFF00" stroke-width="4.5" stroke-linecap="round" />
+              <path d="M22 66 L22 78 L34 78" stroke="#CCFF00" stroke-width="4.5" stroke-linecap="round" />
+              <path d="M78 66 L78 78 L66 78" stroke="#CCFF00" stroke-width="4.5" stroke-linecap="round" />
+              <!-- Center Camera Aperture -->
+              <circle cx="50" cy="50" r="14" stroke="#CCFF00" stroke-width="3" />
+              <circle cx="50" cy="50" r="5" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "fallback":
+          default:
+            // Nutritious Meal Cloche Dome Platter
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <ellipse cx="50" cy="74" rx="34" ry="8" fill="#334155" stroke="#475569" stroke-width="2" />
+              <path d="M24 72 C24 38 76 38 76 72 Z" fill="#CCFF00" opacity="0.9" stroke="#65A30D" stroke-width="2.5" />
+              <circle cx="50" cy="34" r="5" fill="#F1F5F9" />
+            </svg>
+          `;
+        }
+      }
+
+      // TASK 3: Redesigned 17 Unique Vector Dashboard Icons
+      function getDashboardSvg(id, size) {
+        switch (id) {
+          case "workout":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <line x1="25" y1="75" x2="75" y2="25" stroke="#CCFF00" stroke-width="10" stroke-linecap="round" />
+              <line x1="16" y1="64" x2="34" y2="82" stroke="#F1F5F9" stroke-width="9" stroke-linecap="round" />
+              <line x1="66" y1="18" x2="84" y2="36" stroke="#F1F5F9" stroke-width="9" stroke-linecap="round" />
+              <circle cx="50" cy="50" r="7" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "trainingPlans":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <rect x="20" y="20" width="60" height="70" rx="8" stroke="#F1F5F9" stroke-width="6" fill="#1E293B" />
+              <rect x="36" y="10" width="28" height="14" rx="4" fill="#CCFF00" />
+              <line x1="32" y1="42" x2="68" y2="42" stroke="#CCFF00" stroke-width="5" stroke-linecap="round" />
+              <line x1="32" y1="58" x2="68" y2="58" stroke="#CCFF00" stroke-width="5" stroke-linecap="round" />
+              <line x1="32" y1="74" x2="54" y2="74" stroke="#CCFF00" stroke-width="5" stroke-linecap="round" />
+            </svg>
+          `;
+
+          case "exerciseHistory":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="34" stroke="#64748B" stroke-width="6" />
+              <path d="M50 16 A34 34 0 1 1 20 40" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <polygon points="12,40 24,40 20,28" fill="#CCFF00" />
+              <line x1="50" y1="50" x2="50" y2="32" stroke="#CCFF00" stroke-width="5" stroke-linecap="round" />
+              <line x1="50" y1="50" x2="64" y2="50" stroke="#CCFF00" stroke-width="5" stroke-linecap="round" />
+            </svg>
+          `;
+
+          case "timer":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="52" r="34" stroke="#334155" stroke-width="6" />
+              <path d="M50 18 A34 34 0 1 1 22 62" stroke="#CCFF00" stroke-width="7" stroke-linecap="round" />
+              <line x1="42" y1="8" x2="58" y2="8" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <line x1="50" y1="8" x2="50" y2="18" stroke="#CCFF00" stroke-width="6" />
+            </svg>
+          `;
+
+          case "stopwatch":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="54" r="34" stroke="#94A3B8" stroke-width="6" />
+              <line x1="42" y1="10" x2="58" y2="10" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <line x1="50" y1="10" x2="50" y2="20" stroke="#CCFF00" stroke-width="6" />
+              <line x1="72" y1="24" x2="80" y2="16" stroke="#CCFF00" stroke-width="5" stroke-linecap="round" />
+              <line x1="50" y1="54" x2="68" y2="36" stroke="#CCFF00" stroke-width="5" stroke-linecap="round" />
+              <circle cx="50" cy="54" r="5" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "calendar":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <rect x="18" y="22" width="64" height="64" rx="10" stroke="#F1F5F9" stroke-width="6" fill="#1E293B" />
+              <line x1="18" y1="42" x2="82" y2="42" stroke="#F1F5F9" stroke-width="6" />
+              <line x1="32" y1="12" x2="32" y2="26" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <line x1="68" y1="12" x2="68" y2="26" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <circle cx="50" cy="62" r="8" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "progress":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M16 76 L38 52 L56 64 L84 26" stroke="#CCFF00" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M66 26 L84 26 L84 44" stroke="#CCFF00" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          `;
+
+          case "statistics":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <rect x="18" y="52" width="16" height="34" rx="4" fill="#64748B" />
+              <rect x="42" y="28" width="16" height="58" rx="4" fill="#CCFF00" />
+              <rect x="66" y="42" width="16" height="44" rx="4" fill="#64748B" />
+            </svg>
+          `;
+
+          case "personalRecord":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M26 22 L74 22 L68 54 Q50 66 32 54 Z" stroke="#F59E0B" stroke-width="6" fill="#1E293B" />
+              <line x1="50" y1="64" x2="50" y2="78" stroke="#F59E0B" stroke-width="6" />
+              <line x1="32" y1="78" x2="68" y2="78" stroke="#F59E0B" stroke-width="6" stroke-linecap="round" />
+              <circle cx="50" cy="38" r="6" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "notification":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M50 16 C34 26 30 50 24 66 L76 66 C70 50 66 26 50 16 Z" stroke="#F1F5F9" stroke-width="6" fill="#1E293B" />
+              <circle cx="50" cy="78" r="7" fill="#F1F5F9" />
+              <circle cx="74" cy="24" r="8" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "profile":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="34" r="18" stroke="#CCFF00" stroke-width="6" fill="#1E293B" />
+              <path d="M16 84 Q26 62 50 62 Q74 62 84 84" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+            </svg>
+          `;
+
+          case "settings":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="20" stroke="#CCFF00" stroke-width="6" />
+              <line x1="50" y1="12" x2="50" y2="24" stroke="#94A3B8" stroke-width="7" stroke-linecap="round" />
+              <line x1="50" y1="76" x2="50" y2="88" stroke="#94A3B8" stroke-width="7" stroke-linecap="round" />
+              <line x1="12" y1="50" x2="24" y2="50" stroke="#94A3B8" stroke-width="7" stroke-linecap="round" />
+              <line x1="76" y1="50" x2="88" y2="50" stroke="#94A3B8" stroke-width="7" stroke-linecap="round" />
+            </svg>
+          `;
+
+          case "achievements":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <polygon points="50,14 84,48 50,82 16,48" stroke="#CCFF00" stroke-width="6" fill="#1E293B" />
+              <circle cx="50" cy="48" r="10" fill="#F59E0B" />
+            </svg>
+          `;
+
+          case "goals":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="38" stroke="#64748B" stroke-width="5" />
+              <circle cx="50" cy="50" r="22" stroke="#CCFF00" stroke-width="5" />
+              <circle cx="50" cy="50" r="8" fill="#F59E0B" />
+            </svg>
+          `;
+
+          case "focusedTraining":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="34" stroke="#64748B" stroke-width="5" />
+              <line x1="50" y1="8" x2="50" y2="24" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <line x1="50" y1="76" x2="50" y2="92" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <line x1="8" y1="50" x2="24" y2="50" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <line x1="76" y1="50" x2="92" y2="50" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" />
+              <path d="M52 34 L44 50 L52 50 L46 66 L58 48 L50 48 Z" fill="#CCFF00" />
+            </svg>
+          `;
+
+          case "homeMode":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M16 48 L50 18 L84 48 L84 84 L16 84 Z" stroke="#CCFF00" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="#1E293B" />
+              <rect x="42" y="60" width="16" height="24" stroke="#CCFF00" stroke-width="4" />
+            </svg>
+          `;
+
+          case "aiCoach":
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <path d="M50 14 Q50 50 86 50 Q50 50 50 86 Q50 50 14 50 Q50 50 50 14 Z" fill="#CCFF00" />
+              <circle cx="50" cy="50" r="9" fill="#0F172A" />
+            </svg>
+          `;
+
+          default:
+            return `
+            <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none">
+              <rect x="22" y="22" width="56" height="56" rx="14" stroke="#CCFF00" stroke-width="5" fill="#1E293B" />
+              <circle cx="50" cy="50" r="8" fill="#CCFF00" />
+            </svg>
+          `;
+        }
+      }
+
+      // Render functions
+      function renderEquipment() {
+        const container = document.getElementById("equipmentGrid");
+        container.innerHTML = equipments
+          .map(
+            (e) => `
+        <div class="collection-card p-3.5 text-center transition flex flex-col items-center justify-between gap-2.5">
+          <div class="equipment-artboard">
+            ${getEquipmentSvg(e.id, currentSize)}
+          </div>
+          <div>
+            <div class="text-xs font-bold text-white">${e.nameFa}</div>
+            <div class="text-[10px] text-gray-400 font-mono">${e.nameEn}</div>
+          </div>
+          <span class="text-[9px] px-2 py-0.5 rounded-full bg-zinc-800 text-gray-400">${e.category}</span>
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      function renderMuscles(filter = currentMuscleFilter) {
+        currentMuscleFilter = filter;
+        const container = document.getElementById("muscleGrid");
+        document.querySelectorAll("[data-muscle-filter]").forEach((button) => {
+          button.classList.toggle(
+            "muscle-filter-active",
+            button.dataset.muscleFilter === filter,
+          );
+        });
+        container.innerHTML = muscles
+          .map((m) => {
+            let state = m.state;
+            if (filter === "all_primary") state = "primary";
+            if (filter === "all_secondary") state = "secondary";
+            if (filter === "all_inactive") state = "inactive";
+
+            const stateBadge =
+              state === "primary"
+                ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-[#CCFF00]/20 text-[#CCFF00] font-black">عضله هدف</span>'
+                : state === "secondary"
+                  ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">عضله کمکی</span>'
+                  : '<span class="text-[9px] px-2 py-0.5 rounded-full bg-zinc-800 text-gray-400">غیرفعال</span>';
+
+            return `
+          <div class="collection-card p-3.5 text-center transition flex flex-col items-center justify-between gap-2" data-muscle="${m.id}" data-state="${state}" data-view="${m.view}">
+            <div class="h-[88px] flex items-center justify-center">
+              ${getMuscleSvg(m.id, currentSize, state)}
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">${m.nameFa}</div>
+              <div class="text-[10px] text-gray-400 font-mono">${m.nameEn}</div>
+            </div>
+            ${stateBadge}
+          </div>
+        `;
+          })
+          .join("");
+      }
+
+      function renderNutrition() {
+        const container = document.getElementById("nutritionGrid");
+        container.innerHTML = nutritions
+          .map(
+            (n) => `
+        <div class="metallic-surface rounded-2xl p-3.5 text-center transition flex flex-col items-center justify-between gap-2">
+          <div class="h-16 flex items-center justify-center">
+            ${getNutritionSvg(n.id, currentSize, n.color)}
+          </div>
+          <div>
+            <div class="text-xs font-bold text-white">${n.nameFa}</div>
+            <div class="text-[10px] text-gray-400 font-mono">${n.nameEn}</div>
+          </div>
+          <div class="text-[9px] text-gray-400 leading-tight">${n.desc}</div>
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      function renderDashboard() {
+        const container = document.getElementById("dashboardGrid");
+        container.innerHTML = dashboardIcons
+          .map(
+            (d) => `
+        <div class="metallic-surface rounded-2xl p-3.5 text-center transition flex flex-col items-center justify-between gap-2 hover:border-[#CCFF00] cursor-pointer min-h-[110px]">
+          <div class="h-14 flex items-center justify-center">
+            ${getDashboardSvg(d.id, Math.min(currentSize, 40))}
+          </div>
+          <div>
+            <div class="text-xs font-bold text-white">${d.nameFa}</div>
+            <div class="text-[10px] text-gray-400 font-mono">${d.nameEn}</div>
+          </div>
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      function updateIconSize(val) {
+        currentSize = Number(val);
+        document.getElementById("sizeDisplay").innerText = val + "px";
+        renderEquipment();
+        renderMuscles(currentMuscleFilter);
+        renderNutrition();
+        renderDashboard();
+      }
+
+      function toggleAnimation() {
+        isPaused = !isPaused;
+        document.body.classList.toggle("anim-paused", isPaused);
+        document.getElementById("animToggleBtn").innerHTML = isPaused
+          ? "<span>▶️</span> شروع انیمیشن"
+          : "<span>⏸️</span> توقف انیمیشن";
+      }
+
+      function toggleTheme() {
+        isLight = !isLight;
+        if (isLight) {
+          document.body.style.backgroundColor = "#F8FAFC";
+          document.body.style.color = "#0F172A";
+          document.getElementById("themeToggleBtn").innerHTML =
+            "<span>🌙</span> حالت تیره";
+        } else {
+          document.body.style.backgroundColor = "#0B0E14";
+          document.body.style.color = "#F1F5F9";
+          document.getElementById("themeToggleBtn").innerHTML =
+            "<span>☀️</span> حالت روشن";
+        }
+      }
+
+      function setMuscleFilter(filter) {
+        renderMuscles(filter);
+      }
+
+      // Init
+      renderEquipment();
+      renderMuscles();
+      renderNutrition();
+      renderDashboard();
+    </script>
+  </body>
+</html>

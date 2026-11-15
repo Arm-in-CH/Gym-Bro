@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GymBro - شبیه‌ساز گوشی تاشو و ایستر اگ اختصاصی</title>
+    <style>
+      :root {
+        --bg-dark: #090a0f;
+        --surface-dark: #0f172a;
+        --card-dark: #1e293b;
+        --border-dark: #334155;
+        --lime: #ccff00;
+        --lime-glow: rgba(204, 255, 0, 0.25);
+        --amber: #f59e0b;
+        --text-main: #ffffff;
+        --text-muted: #8e9aa8;
+        --phone-bezel: #11141e;
+        --hinge-metal: #2a3346;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+
+      body {
+        background: radial-gradient(
+          circle at 50% 20%,
+          #151c2c 0%,
+          var(--bg-dark) 100%
+        );
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      header {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-dark);
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-badge {
+        background: var(--lime);
+        color: #000;
+        font-weight: 900;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+      }
+
+      .brand-title {
+        font-size: 18px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .app-status {
+        font-size: 13px;
+        color: var(--text-muted);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        flex: 1;
+        gap: 24px;
+        padding: 24px;
+        max-width: 1540px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Controls Sidebar */
+      .controls-panel {
+        background: var(--surface-dark);
+        border: 1px solid var(--border-dark);
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: fit-content;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--lime);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .control-label {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      select,
+      input[type="range"] {
+        width: 100%;
+        background: var(--card-dark);
+        border: 1px solid var(--border-dark);
+        color: var(--text-main);
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
+        cursor: pointer;
+      }
+
+      select:focus {
+        border-color: var(--lime);
+      }
+
+      .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .btn {
+        background: var(--card-dark);
+        border: 1px solid var(--border-dark);
+        color: var(--text-main);
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .btn:hover {
+        background: #283548;
+        border-color: var(--border-dark);
+      }
+
+      .btn.active {
+        background: var(--lime);
+        color: #000;
+        border-color: var(--lime);
+        box-shadow: 0 0 12px var(--lime-glow);
+      }
+
+      .btn-scenario {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid var(--border-dark);
+        text-align: right;
+        justify-content: flex-start;
+        padding: 10px 14px;
+        font-size: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-scenario:hover {
+        border-color: var(--lime);
+        background: var(--card-dark);
+      }
+
+      .btn-scenario strong {
+        display: block;
+        color: var(--lime);
+        font-size: 13px;
+        margin-bottom: 2px;
+      }
+
+      .switch-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: var(--card-dark);
+        border-radius: 10px;
+        border: 1px solid var(--border-dark);
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #334155;
+        transition: 0.3s;
+        border-radius: 24px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: var(--lime);
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(20px);
+        background-color: #000;
+      }
+
+      /* Simulation Stage */
+      .stage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid var(--border-dark);
+        border-radius: 20px;
+        padding: 30px 20px;
+        position: relative;
+        overflow: hidden;
+        perspective: 1400px;
+      }
+
+      .device-metrics-bar {
+        margin-bottom: 24px;
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .metric-pill {
+        background: var(--card-dark);
+        border: 1px solid var(--border-dark);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .metric-pill span {
+        color: var(--lime);
+        font-weight: 700;
+        margin-right: 4px;
+      }
+
+      /* Phone 3D Device Container */
+      .phone-wrapper {
+        position: relative;
+        transition:
+          transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+          width 0.5s ease,
+          height 0.5s ease;
+        transform-style: preserve-3d;
+        margin: 0 auto;
+      }
+
+      .phone-body {
+        background: var(--phone-bezel);
+        border-radius: 36px;
+        box-shadow:
+          0 25px 60px rgba(0, 0, 0, 0.8),
+          0 0 0 10px #1a2233,
+          0 0 0 12px #2f3b52;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        transform-style: preserve-3d;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      /* Screen Panes */
+      .screen-pane {
+        background: #090a0f;
+        color: white;
+        height: 100%;
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.5s ease;
+      }
+
+      /* Physical Hinge Visual */
+      .hinge-crease {
+        width: 14px;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.6) 0%,
+          rgba(255, 255, 255, 0.08) 50%,
+          rgba(0, 0, 0, 0.6) 100%
+        );
+        position: relative;
+        z-index: 10;
+        flex-shrink: 0;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hinge-crease::before {
+        content: "";
+        width: 2px;
+        height: 80%;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 1px;
+      }
+
+      /* In-App Mockup */
+      .app-header {
+        background: #0f172a;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #1e293b;
+        flex-shrink: 0;
+      }
+
+      .app-header-title {
+        font-weight: 800;
+        font-size: 15px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .app-body {
+        padding: 16px;
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .workout-timer-box {
+        background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        border: 1.5px solid var(--lime);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+        box-shadow: 0 0 20px var(--lime-glow);
+      }
+
+      .timer-val {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--lime);
+        font-variant-numeric: tabular-nums;
+        margin: 6px 0;
+      }
+
+      .timer-exercise {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .btn-action {
+        background: var(--lime);
+        color: #000;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      /* Secret Easter Egg Modal */
+      .easter-egg-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+      }
+
+      .easter-egg-overlay.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .easter-egg-card {
+        background: #0f172a;
+        border: 2px solid var(--lime);
+        box-shadow:
+          0 0 35px var(--lime-glow),
+          0 20px 40px rgba(0, 0, 0, 0.8);
+        border-radius: 24px;
+        padding: 24px 20px;
+        max-width: 380px;
+        width: 100%;
+        text-align: center;
+        transform: scale(0.8);
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+      }
+
+      .easter-egg-overlay.visible .easter-egg-card {
+        transform: scale(1);
+      }
+
+      .stickers-row {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 12px;
+        font-size: 38px;
+      }
+
+      .sticker-cool {
+        display: inline-block;
+        animation: wobble 1.5s infinite ease-in-out alternate;
+      }
+
+      .sticker-flex {
+        display: inline-block;
+        animation: pump 1.2s infinite ease-in-out alternate;
+      }
+
+      .sticker-laugh {
+        display: inline-block;
+        animation: bounce 1.4s infinite ease-in-out alternate;
+      }
+
+      @keyframes wobble {
+        0% {
+          transform: rotate(-8deg) scale(1);
+        }
+        100% {
+          transform: rotate(8deg) scale(1.1);
+        }
+      }
+
+      @keyframes pump {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.22);
+        }
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-8px);
+        }
+      }
+
+      .egg-title {
+        font-size: 19px;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 8px;
+        line-height: 1.35;
+      }
+
+      .egg-subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 18px;
+        line-height: 1.4;
+      }
+
+      .egg-btn {
+        width: 100%;
+        background: var(--lime);
+        color: #000;
+        border: none;
+        padding: 12px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .egg-btn:hover {
+        background: #b5e600;
+      }
+
+      .egg-progress {
+        width: 100%;
+        height: 4px;
+        background: rgba(204, 255, 0, 0.15);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 14px;
+      }
+
+      .egg-progress-fill {
+        height: 100%;
+        background: var(--lime);
+        width: 100%;
+        transition: width 6s linear;
+      }
+
+      /* Confetti Canvas */
+      #confettiCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 60;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <span class="brand-badge">PHASE 9</span>
+        <h1 class="brand-title">
+          GymBro <span>- شبیه‌ساز گوشی‌های تاشو و ایستر اگ</span>
+        </h1>
+      </div>
+      <div class="app-status" id="deviceStatusText">
+        حالت فعلی: باز شده تخت (Flat Unfolded - 180°)
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Controls Panel -->
+      <div class="controls-panel">
+        <div class="control-group">
+          <div class="section-title">مدل دستگاه تاشو</div>
+          <select id="deviceSelect" onchange="changeDevicePreset()">
+            <option value="zfold6">Samsung Galaxy Z Fold 6 (کتابی)</option>
+            <option value="pixelfold">Google Pixel Fold (کتابی عریض)</option>
+            <option value="zflip6">
+              Samsung Galaxy Z Flip 6 (صدفی / Clamshell)
+            </option>
+            <option value="tablet">
+              تبلت معمولی (Galaxy Tab S9) - بدون قابلیت تاشو
+            </option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="section-title">وضعیت لولا و تاشدگی (Posture)</div>
+          <div class="btn-group">
+            <button class="btn" id="btnFolded" onclick="setPosture('folded')">
+              بسته (Cover)
+            </button>
+            <button
+              class="btn"
+              id="btnTabletop"
+              onclick="setPosture('tabletop')"
+            >
+              حالت فلکس (90°)
+            </button>
+          </div>
+          <button
+            class="btn active"
+            id="btnFlat"
+            style="margin-top: 8px"
+            onclick="setPosture('flat')"
+          >
+            کاملاً باز (Flat - 180°)
+          </button>
+
+          <div style="margin-top: 10px">
+            <div
+              class="control-label"
+              style="display: flex; justify-content: space-between"
+            >
+              <span>زاویه دقیق لولا:</span>
+              <strong id="angleValText" style="color: var(--lime)">180°</strong>
+            </div>
+            <input
+              type="range"
+              id="hingeAngleSlider"
+              min="0"
+              max="180"
+              value="180"
+              oninput="onAngleSliderChange(this.value)"
+              style="margin-top: 4px"
+            />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="section-title">سناریوهای تست خودکار</div>
+          <button class="btn-scenario" onclick="runScenario('A')">
+            <strong>سناریو A: باز شدن اولیه برنامه در حالت Unfolded</strong>
+            نمایش ایستر اگ بلافاصله پس از آماده شدن صفحه داخلی
+          </button>
+          <button class="btn-scenario" onclick="runScenario('B')">
+            <strong>سناریو B: باز شدن برنامه روی صفحه کوچک کاور</strong>
+            عدم نمایش ایستر اگ روی صفحه بیرونی و انتظار برای باز شدن
+          </button>
+          <button class="btn-scenario" onclick="runScenario('C')">
+            <strong>سناریو C: اجرای برنامه بسته و سپس باز کردن گوشی</strong>
+            تشخیص دقیق جابجایی حالت (Transition) و شلیک ایستر اگ
+          </button>
+          <button class="btn-scenario" onclick="runScenario('D')">
+            <strong>سناریو D: بستن و دوباره باز کردن گوشی در همان نشست</strong>
+            جلوگیری از نمایش مجدد و آزاردهنده (Session Deduplication)
+          </button>
+        </div>
+
+        <div class="control-group">
+          <div class="section-title">قوانین حفاظتی تمرین فعال (Scenario E)</div>
+          <div class="switch-container">
+            <div>
+              <div style="font-weight: 700; font-size: 13px">
+                جلسه تمرین در حال اجراست
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted)">
+                عدم قطع تمرین، ست یا تایمر
+              </div>
+            </div>
+            <label class="switch">
+              <input
+                type="checkbox"
+                id="workoutActiveToggle"
+                onchange="toggleWorkoutActive(this.checked)"
+              />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <button
+          class="btn"
+          style="background: #334155"
+          onclick="resetEasterEggSession()"
+        >
+          🔄 ریست کردن سشن ایستر اگ (اجازه تست مجدد)
+        </button>
+      </div>
+
+      <!-- Simulator Stage -->
+      <div class="stage">
+        <div class="device-metrics-bar">
+          <div class="metric-pill">
+            سایز نمایشگر: <span id="metricSize">768 x 900 dp</span>
+          </div>
+          <div class="metric-pill">
+            پوسچر: <span id="metricPosture">Flat (باز)</span>
+          </div>
+          <div class="metric-pill">
+            سنسور Hinge: <span id="metricHinge">فعال (Vertical)</span>
+          </div>
+          <div class="metric-pill">
+            ایستر اگ این سشن: <span id="metricEggSession">نمایش داده نشده</span>
+          </div>
+        </div>
+
+        <!-- Phone Wrapper -->
+        <div
+          class="phone-wrapper"
+          id="phoneWrapper"
+          style="width: 620px; height: 680px"
+        >
+          <div
+            class="phone-body"
+            id="phoneBody"
+            style="width: 100%; height: 100%"
+          >
+            <!-- Left Pane (or Top Pane in Tabletop) -->
+            <div class="screen-pane" id="pane1">
+              <div class="app-header">
+                <div class="app-header-title"><span>⚡</span> GymBro Live</div>
+                <div
+                  style="
+                    font-size: 11px;
+                    color: var(--lime);
+                    background: rgba(204, 255, 0, 0.1);
+                    padding: 3px 8px;
+                    border-radius: 6px;
+                  "
+                >
+                  PPL روز ۱ - سینه
+                </div>
+              </div>
+
+              <div class="app-body">
+                <div class="workout-timer-box">
+                  <div class="timer-exercise">
+                    پرس بالاسینه هالتر (ست ۲ از ۴)
+                  </div>
+                  <div class="timer-val" id="mockTimer">01:15</div>
+                  <div style="font-size: 11px; color: var(--text-muted)">
+                    استراحت تا ست بعدی
+                  </div>
+                  <button class="btn-action" onclick="alert('تایمر متوقف شد')">
+                    مکث تایمر
+                  </button>
+                </div>
+
+                <div class="card">
+                  <div
+                    style="
+                      font-weight: 700;
+                      font-size: 13px;
+                      margin-bottom: 6px;
+                    "
+                  >
+                    حرکت بعدی:
+                  </div>
+                  <div style="font-size: 12px; color: var(--text-muted)">
+                    پارالل وزنه‌دار (Dips) - ۳ ست ۸ تایی
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Physical Central Hinge -->
+            <div class="hinge-crease" id="hingeCrease"></div>
+
+            <!-- Right Pane (or Bottom Pane in Tabletop) -->
+            <div class="screen-pane" id="pane2">
+              <div class="app-header">
+                <div class="app-header-title">ثبت ست‌ها و رکورد</div>
+                <div style="font-size: 11px; color: var(--text-muted)">
+                  RPE 8.5
+                </div>
+              </div>
+
+              <div class="app-body">
+                <div
+                  class="card"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <div>
+                    <div style="font-weight: 700; font-size: 13px">
+                      ست ۱: ۸۰ کیلوگرم
+                    </div>
+                    <div style="font-size: 11px; color: var(--lime)">
+                      انجام شد (۱۰ تکرار) ✔
+                    </div>
+                  </div>
+                  <button
+                    class="btn"
+                    style="padding: 6px 10px; font-size: 11px"
+                  >
+                    ویرایش
+                  </button>
+                </div>
+
+                <div
+                  class="card"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-color: var(--lime);
+                  "
+                >
+                  <div>
+                    <div style="font-weight: 700; font-size: 13px">
+                      ست ۲: ۸۵ کیلوگرم
+                    </div>
+                    <div style="font-size: 11px; color: var(--amber)">
+                      در حال استراحت...
+                    </div>
+                  </div>
+                  <button
+                    class="btn active"
+                    style="padding: 6px 10px; font-size: 11px"
+                  >
+                    ثبت ست
+                  </button>
+                </div>
+
+                <div class="card">
+                  <div
+                    style="
+                      font-weight: 700;
+                      font-size: 12px;
+                      margin-bottom: 4px;
+                    "
+                  >
+                    یادداشت مربی جیم‌برو:
+                  </div>
+                  <div
+                    style="
+                      font-size: 11px;
+                      color: var(--text-muted);
+                      line-height: 1.4;
+                    "
+                  >
+                    آرمین جان دامنه‌ی کامل حرکت رو حفظ کن و موقع پایین آوردن
+                    هالتر ۳ ثانیه مکث منفی داشته باش!
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Secret Easter Egg Overlay -->
+            <div class="easter-egg-overlay" id="easterEggOverlay">
+              <canvas id="confettiCanvas"></canvas>
+              <div class="easter-egg-card">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 12px;
+                  "
+                >
+                  <span
+                    style="
+                      background: var(--lime);
+                      color: #000;
+                      font-weight: 900;
+                      font-size: 10px;
+                      padding: 3px 8px;
+                      border-radius: 6px;
+                    "
+                    >GYMBRO FOLD</span
+                  >
+                  <span
+                    onclick="dismissEasterEgg()"
+                    style="color: #aaa; cursor: pointer; font-size: 16px"
+                    >✕</span
+                  >
+                </div>
+
+                <div class="egg-title">اوه، ببین کی داره پُز می‌ده بابا!</div>
+                <div class="egg-subtitle">حالا برو تمرینتو بکن.</div>
+
+                <button class="egg-btn" onclick="dismissEasterEgg()">
+                  باشه، بریم تمرین
+                </button>
+
+                <div class="egg-progress">
+                  <div class="egg-progress-fill" id="eggProgressFill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // State
+      let currentDevice = "zfold6";
+      let currentPosture = "flat"; // 'folded', 'tabletop', 'flat'
+      let currentAngle = 180;
+      let isWorkoutActive = false;
+      let hasShownEasterEggInSession = false;
+      let autoDismissTimer = null;
+
+      const devicePresets = {
+        zfold6: {
+          name: "Samsung Galaxy Z Fold 6",
+          isFoldable: true,
+          type: "book",
+          coverSize: { w: 340, h: 680 },
+          innerSize: { w: 620, h: 680 },
+        },
+        pixelfold: {
+          name: "Google Pixel Fold",
+          isFoldable: true,
+          type: "book",
+          coverSize: { w: 370, h: 620 },
+          innerSize: { w: 680, h: 620 },
+        },
+        zflip6: {
+          name: "Samsung Galaxy Z Flip 6",
+          isFoldable: true,
+          type: "clamshell",
+          coverSize: { w: 320, h: 320 },
+          innerSize: { w: 360, h: 720 },
+        },
+        tablet: {
+          name: "Galaxy Tab S9 (Tablet)",
+          isFoldable: false,
+          type: "none",
+          coverSize: { w: 720, h: 560 },
+          innerSize: { w: 720, h: 560 },
+        },
+      };
+
+      function changeDevicePreset() {
+        currentDevice = document.getElementById("deviceSelect").value;
+        const dev = devicePresets[currentDevice];
+
+        if (!dev.isFoldable) {
+          document.getElementById("metricHinge").innerText =
+            "غیرفعال (تبلت معمولی)";
+          setPosture("flat");
+          return;
+        }
+
+        setPosture(currentPosture);
+      }
+
+      function setPosture(posture) {
+        const prevPosture = currentPosture;
+        currentPosture = posture;
+
+        // Update Buttons
+        document
+          .getElementById("btnFolded")
+          .classList.toggle("active", posture === "folded");
+        document
+          .getElementById("btnTabletop")
+          .classList.toggle("active", posture === "tabletop");
+        document
+          .getElementById("btnFlat")
+          .classList.toggle("active", posture === "flat");
+
+        const dev = devicePresets[currentDevice];
+        const phoneWrapper = document.getElementById("phoneWrapper");
+        const phoneBody = document.getElementById("phoneBody");
+        const pane2 = document.getElementById("pane2");
+        const hingeCrease = document.getElementById("hingeCrease");
+
+        if (!dev.isFoldable) {
+          phoneWrapper.style.width = dev.innerSize.w + "px";
+          phoneWrapper.style.height = dev.innerSize.h + "px";
+          hingeCrease.style.display = "none";
+          pane2.style.display = "flex";
+          updateMetrics(dev.innerSize.w, dev.innerSize.h, "Tablet (غیر تاشو)");
+          return;
+        }
+
+        if (posture === "folded") {
+          currentAngle = 0;
+          document.getElementById("hingeAngleSlider").value = 0;
+          document.getElementById("angleValText").innerText = "0° (بسته)";
+          phoneWrapper.style.width = dev.coverSize.w + "px";
+          phoneWrapper.style.height = dev.coverSize.h + "px";
+          phoneBody.style.flexDirection = "row";
+          pane2.style.display = "none";
+          hingeCrease.style.display = "none";
+          phoneWrapper.style.transform = "rotateX(0deg) rotateY(0deg)";
+          updateMetrics(
+            dev.coverSize.w,
+            dev.coverSize.h,
+            "Folded (صفحه بیرونی کاور)",
+          );
+        } else if (posture === "tabletop") {
+          currentAngle = 90;
+          document.getElementById("hingeAngleSlider").value = 90;
+          document.getElementById("angleValText").innerText =
+            "90° (Flex/Tabletop)";
+
+          if (dev.type === "clamshell") {
+            phoneWrapper.style.width = dev.innerSize.w + "px";
+            phoneWrapper.style.height = dev.innerSize.h + "px";
+            phoneBody.style.flexDirection = "column";
+            hingeCrease.style.width = "100%";
+            hingeCrease.style.height = "14px";
+            phoneWrapper.style.transform = "perspective(1000px) rotateX(25deg)";
+          } else {
+            phoneWrapper.style.width = dev.innerSize.w + "px";
+            phoneWrapper.style.height = dev.innerSize.h + "px";
+            phoneBody.style.flexDirection = "row";
+            hingeCrease.style.width = "14px";
+            hingeCrease.style.height = "100%";
+            phoneWrapper.style.transform =
+              "perspective(1000px) rotateY(-20deg)";
+          }
+
+          pane2.style.display = "flex";
+          hingeCrease.style.display = "flex";
+          updateMetrics(
+            dev.innerSize.w,
+            dev.innerSize.h,
+            "Tabletop / Flex Mode (90°)",
+          );
+          checkEasterEggTrigger(prevPosture);
+        } else {
+          // Flat (180°)
+          currentAngle = 180;
+          document.getElementById("hingeAngleSlider").value = 180;
+          document.getElementById("angleValText").innerText =
+            "180° (کاملاً باز)";
+
+          phoneWrapper.style.width = dev.innerSize.w + "px";
+          phoneWrapper.style.height = dev.innerSize.h + "px";
+          phoneBody.style.flexDirection =
+            dev.type === "clamshell" ? "column" : "row";
+
+          if (dev.type === "clamshell") {
+            hingeCrease.style.width = "100%";
+            hingeCrease.style.height = "10px";
+          } else {
+            hingeCrease.style.width = "14px";
+            hingeCrease.style.height = "100%";
+          }
+
+          pane2.style.display = "flex";
+          hingeCrease.style.display = "flex";
+          phoneWrapper.style.transform = "rotateX(0deg) rotateY(0deg)";
+          updateMetrics(
+            dev.innerSize.w,
+            dev.innerSize.h,
+            "Flat Unfolded (صفحه اصلی)",
+          );
+          checkEasterEggTrigger(prevPosture);
+        }
+      }
+
+      function onAngleSliderChange(val) {
+        currentAngle = parseInt(val);
+        document.getElementById("angleValText").innerText = currentAngle + "°";
+
+        if (currentAngle <= 25) {
+          setPosture("folded");
+        } else if (currentAngle > 25 && currentAngle < 145) {
+          setPosture("tabletop");
+        } else {
+          setPosture("flat");
+        }
+      }
+
+      function updateMetrics(w, h, postureText) {
+        document.getElementById("metricSize").innerText = w + " x " + h + " dp";
+        document.getElementById("metricPosture").innerText = postureText;
+        document.getElementById("deviceStatusText").innerText =
+          "حالت فعلی: " + postureText;
+      }
+
+      function toggleWorkoutActive(checked) {
+        isWorkoutActive = checked;
+        if (
+          isWorkoutActive &&
+          document
+            .getElementById("easterEggOverlay")
+            .classList.contains("visible")
+        ) {
+          dismissEasterEgg();
+        }
+      }
+
+      function checkEasterEggTrigger(prevPosture) {
+        const dev = devicePresets[currentDevice];
+
+        // Rule 1: Non-foldable device / tablet -> NEVER triggers
+        if (!dev.isFoldable) {
+          return;
+        }
+
+        // Rule 2: Cover screen -> NEVER triggers on cover screen
+        if (currentPosture === "folded") {
+          return;
+        }
+
+        // Rule 3: Session Deduplication -> Do not show twice in same session
+        if (hasShownEasterEggInSession) {
+          return;
+        }
+
+        // Rule 4: Active Workout -> NEVER interrupt active workout!
+        if (isWorkoutActive) {
+          console.log(
+            "Easter Egg suppressed: Active workout in progress (Scenario E)",
+          );
+          return;
+        }
+
+        // Trigger condition met!
+        triggerEasterEgg();
+      }
+
+      function triggerEasterEgg() {
+        hasShownEasterEggInSession = true;
+        document.getElementById("metricEggSession").innerText =
+          "نمایش داده شد ✔";
+
+        const overlay = document.getElementById("easterEggOverlay");
+        overlay.classList.add("visible");
+
+        // Reset progress bar
+        const fill = document.getElementById("eggProgressFill");
+        fill.style.transition = "none";
+        fill.style.width = "100%";
+        setTimeout(() => {
+          fill.style.transition = "width 6s linear";
+          fill.style.width = "0%";
+        }, 50);
+
+        // Launch Confetti
+        fireConfetti();
+
+        // Auto-dismiss in 6s
+        clearTimeout(autoDismissTimer);
+        autoDismissTimer = setTimeout(() => {
+          dismissEasterEgg();
+        }, 6000);
+      }
+
+      function dismissEasterEgg() {
+        clearTimeout(autoDismissTimer);
+        const overlay = document.getElementById("easterEggOverlay");
+        overlay.classList.remove("visible");
+      }
+
+      function resetEasterEggSession() {
+        hasShownEasterEggInSession = false;
+        document.getElementById("metricEggSession").innerText =
+          "ریست شد (آماده)";
+        dismissEasterEgg();
+      }
+
+      // Scenario Runners
+      function runScenario(s) {
+        if (s === "A") {
+          // Launch unfolded
+          resetEasterEggSession();
+          document.getElementById("deviceSelect").value = "zfold6";
+          changeDevicePreset();
+          setPosture("flat");
+          setTimeout(() => triggerEasterEgg(), 400);
+        } else if (s === "B") {
+          // Launch folded
+          resetEasterEggSession();
+          setPosture("folded");
+        } else if (s === "C") {
+          // Transition from folded to unfolded
+          resetEasterEggSession();
+          setPosture("folded");
+          setTimeout(() => {
+            setPosture("flat");
+          }, 1200);
+        } else if (s === "D") {
+          // Fold and re-open
+          setPosture("folded");
+          setTimeout(() => {
+            setPosture("flat");
+            // Should not trigger again because hasShownEasterEggInSession is true
+          }, 1200);
+        }
+      }
+
+      // Confetti Canvas Particle Simulation
+      function fireConfetti() {
+        const canvas = document.getElementById("confettiCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+
+        const particles = [];
+        const colors = ["#CCFF00", "#F59E0B", "#38BDF8", "#EC4899", "#FFFFFF"];
+
+        for (let i = 0; i < 40; i++) {
+          particles.push({
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            vx: (Math.random() - 0.5) * 12,
+            vy: (Math.random() - 0.7) * 14,
+            size: 4 + Math.random() * 6,
+            color: colors[i % colors.length],
+            rotation: Math.random() * 360,
+            rotSpeed: (Math.random() - 0.5) * 10,
+            alpha: 1,
+          });
+        }
+
+        function update() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          let alive = false;
+
+          particles.forEach((p) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.35; // gravity
+            p.rotation += p.rotSpeed;
+            p.alpha -= 0.012;
+
+            if (p.alpha > 0) {
+              alive = true;
+              ctx.save();
+              ctx.globalAlpha = p.alpha;
+              ctx.translate(p.x, p.y);
+              ctx.rotate((p.rotation * Math.PI) / 180);
+              ctx.fillStyle = p.color;
+              ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+              ctx.restore();
+            }
+          });
+
+          if (
+            alive &&
+            document
+              .getElementById("easterEggOverlay")
+              .classList.contains("visible")
+          ) {
+            requestAnimationFrame(update);
+          }
+        }
+
+        requestAnimationFrame(update);
+      }
+
+      // Init
+      window.onload = () => {
+        setPosture("flat");
+      };
+    </script>
+  </body>
+</html>

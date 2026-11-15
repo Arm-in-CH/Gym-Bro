@@ -1,0 +1,27 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "colorGroups": [
+    {"query": "path:\"1 - Inbox\"", "color": {"a": 1, "rgb": 14701138}},
+    {"query": "path:\"2 - About Our Team\"", "color": {"a": 1, "rgb": 3455195}},
+    {"query": "path:\"3 - Project\"", "color": {"a": 1, "rgb": 5025616}},
+    {"query": "path:\"4 - Marketing\"", "color": {"a": 1, "rgb": 15762277}},
+    {"query": "path:\"5 - Social Media\"", "color": {"a": 1, "rgb": 9109759}}
+  ],
+  "collapse-display": true,
+  "showArrow": true,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.5,
+  "repelStrength": 12,
+  "linkStrength": 1,
+  "linkDistance": 220,
+  "scale": 1,
+  "close": false
+}

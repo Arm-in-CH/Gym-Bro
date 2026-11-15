@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GymBro UI Visual Inspector & Interactive Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0F1115;
+      --surface-dark: #161920;
+      --surface-card: #1D212A;
+      --surface-card-hover: #242935;
+      --primary: #B8FF00;
+      --primary-dim: rgba(184, 255, 0, 0.15);
+      --primary-glow: rgba(184, 255, 0, 0.35);
+      --accent-coral: #FF5A36;
+      --accent-cyan: #00D8F6;
+      --accent-amber: #FFB300;
+      --text-white: #FFFFFF;
+      --text-muted: #8F9BA8;
+      --border-subtle: #29303D;
+      --border-accent: rgba(184, 255, 0, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(180deg, #161920 0%, #0F1115 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-badge {
+      background: var(--primary);
+      color: #000;
+      font-weight: 900;
+      font-size: 1.1rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      letter-spacing: -0.5px;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-white);
+    }
+
+    .brand-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .stat-chip {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stat-chip span.dot {
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--primary);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* NAV TABS */
+    .screen-selector {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      scrollbar-width: thin;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      background: var(--surface-dark);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.75rem 1.4rem;
+      border-radius: var(--radius-md);
+      font-family: var(--font-family);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      background: var(--surface-card-hover);
+      color: var(--text-white);
+      border-color: var(--border-accent);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    /* SHOWCASE SPLIT VIEW */
+    .showcase-layout {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1080px) {
+      .showcase-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* PHONE FRAME */
+    .phone-mockup-wrapper {
+      position: sticky;
+      top: 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .phone-mockup {
+      width: 412px;
+      height: 840px;
+      background: #000;
+      border-radius: 46px;
+      border: 12px solid #29303D;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(184, 255, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 22px;
+      background: #29303D;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 10;
+    }
+
+    .screen-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      display: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .screen-img.active {
+      display: block;
+    }
+
+    .screen-img.active.live-phone-lab {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+      background: #08090C;
+      padding: 34px 1rem 1.5rem 1rem;
+      gap: 1.1rem;
+      box-sizing: border-box;
+      direction: rtl;
+    }
+
+    .live-phone-lab::-webkit-scrollbar {
+      width: 4px;
+    }
+    .live-phone-lab::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    .mockup-controls {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* DETAILS PANE */
+    .details-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      padding: 0.2rem 0.5rem;
+      background: var(--surface-dark);
+      border-radius: var(--radius-sm);
+      color: var(--primary);
+      border: 1px solid var(--border-accent);
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .spec-box {
+      background: var(--surface-dark);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .spec-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .spec-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .feature-list li {
+      position: relative;
+      padding-right: 1.5rem;
+      font-size: 0.92rem;
+      color: #D2D8E0;
+    }
+
+    .feature-list li::before {
+      content: "✔";
+      position: absolute;
+      right: 0;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .code-block {
+      background: #0B0D11;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #A9B7C6;
+      overflow-x: auto;
+      direction: ltr;
+      text-align: left;
+    }
+
+    /* INTERACTIVE FEATURE LAB STYLES */
+    .icon-test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .icon-box {
+      background: var(--surface-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      text-align: center;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .icon-box:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .icon-box.active {
+      border-color: var(--primary);
+      background: rgba(184, 255, 0, 0.08);
+      box-shadow: 0 0 16px rgba(184, 255, 0, 0.2);
+    }
+
+    .icon-box svg {
+      width: 28px;
+      height: 28px;
+      transition: all 0.25s ease;
+    }
+
+    .icon-box.active svg {
+      color: var(--primary);
+      filter: drop-shadow(0 0 8px rgba(184, 255, 0, 0.45));
+    }
+
+    .icon-box:not(.active) svg {
+      color: var(--text-muted);
+    }
+
+    .icon-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .icon-status {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    .icon-box.active .icon-status {
+      background: rgba(184, 255, 0, 0.2);
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* Live Preview Box */
+    .live-demo-box {
+      background: var(--surface-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* Simulated Flutter Tab Animation */
+    @keyframes flutterTabFadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .flutter-tab-enter {
+      animation: flutterTabFadeSlideUp 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Simulated Flutter Stagger Card Animation */
+    @keyframes flutterStaggerSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .stagger-anim-0 { animation: flutterStaggerSlide 320ms cubic-bezier(0.16, 1, 0.3, 1) 0ms forwards; }
+    .stagger-anim-1 { animation: flutterStaggerSlide 320ms cubic-bezier(0.16, 1, 0.3, 1) 60ms forwards; }
+    .stagger-anim-2 { animation: flutterStaggerSlide 320ms cubic-bezier(0.16, 1, 0.3, 1) 120ms forwards; }
+    .stagger-anim-3 { animation: flutterStaggerSlide 320ms cubic-bezier(0.16, 1, 0.3, 1) 180ms forwards; }
+
+    /* Simulated Flutter Page Push (280ms) */
+    @keyframes flutterPagePush {
+      0% {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .flutter-push-enter {
+      animation: flutterPagePush 280ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--surface-dark);
+      border-top: 1px solid var(--border-subtle);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-badge">GYMBRO</div>
+      <div>
+        <div class="brand-title">GymBro UI Visual Inspector</div>
+        <div class="brand-subtitle">کاوشگر تعاملی فرانت‌اند و صفحات فلاتر برای هوش مصنوعی و تیم فنی</div>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-chip">
+        <span class="dot"></span>
+        <span>Flutter Analyze: <strong>0 Issues</strong></span>
+      </div>
+      <div class="stat-chip">
+        <span class="dot"></span>
+        <span>Test Suite: <strong>227/227 Passed</strong></span>
+      </div>
+      <div class="stat-chip">
+        <span>Vazirmatn RTL & WCAG 2.2 AA</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- SCREEN SELECTOR TABS -->
+    <div class="screen-selector">
+      <button class="tab-btn active" onclick="switchScreen('dashboard')">🏠 داشبورد اصلی (Dashboard)</button>
+      <button class="tab-btn" onclick="switchScreen('feature_lab')">⚡ آزمایشگاه تعاملی تغییرات جدید (New Feature Lab)</button>
+      <button class="tab-btn" onclick="switchScreen('workout')">🏋️ برنامه‌های تمرینی (Workout)</button>
+      <button class="tab-btn" onclick="switchScreen('active_workout')">⏱️ تمرین زنده و لاگ رکورد (Live Workout)</button>
+      <button class="tab-btn" onclick="switchScreen('rest_timer')">⏳ تایمر استراحت (Rest Timer)</button>
+      <button class="tab-btn" onclick="switchScreen('nutrition')">🥗 تغذیه و آب (Nutrition)</button>
+      <button class="tab-btn" onclick="switchScreen('profile')">👤 پروفایل و دستاوردها (Profile)</button>
+      <button class="tab-btn" onclick="switchScreen('marketplace')">🛍️ کاوش و خرید (Marketplace)</button>
+      <button class="tab-btn" onclick="switchScreen('ai_coach')">🤖 مربی هوش مصنوعی (AI Coach)</button>
+      <button class="tab-btn" onclick="switchScreen('meal_scanner')">📸 اسکنر وعده غذایی (Meal Scanner)</button>
+    </div>
+
+    <!-- SHOWCASE VIEW -->
+    <div class="showcase-layout">
+      <!-- MOCKUP PHONE -->
+      <div class="phone-mockup-wrapper">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <img id="img-dashboard" class="screen-img active" src="screenshots/dashboard.png" alt="داشبورد جیم‌برو">
+          <img id="img-workout" class="screen-img" src="screenshots/workout.png" alt="تمرین جیم‌برو">
+          <img id="img-active_workout" class="screen-img" src="screenshots/active_workout.png" alt="تمرین فعال">
+          <img id="img-rest_timer" class="screen-img" src="screenshots/rest_timer.png" alt="تایمر استراحت">
+          <img id="img-nutrition" class="screen-img" src="screenshots/nutrition.png" alt="تغذیه">
+          <img id="img-profile" class="screen-img" src="screenshots/profile.png" alt="پروفایل کاربر">
+          <img id="img-marketplace" class="screen-img" src="screenshots/marketplace.png" alt="مارکت‌پلیس">
+          <img id="img-ai_coach" class="screen-img" src="screenshots/ai_coach.png" alt="کوچ هوشمند">
+          <img id="img-meal_scanner" class="screen-img" src="screenshots/meal_scanner.png" alt="اسکنر هوشمند غذا">
+
+          <!-- LIVE FEATURE LAB INTERACTIVE VIEW -->
+          <div id="img-feature_lab" class="screen-img live-phone-lab">
+            <div style="background: rgba(201, 243, 106, 0.08); border: 1px solid rgba(201, 243, 106, 0.25); border-radius: 14px; padding: 0.85rem; display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 800; color: var(--primary); font-size: 0.92rem;">⚡ آزمایشگاه زنده تغییرات (v2.4)</div>
+                <div style="color: var(--text-muted); font-size: 0.72rem;">آیکون‌های Bold + انیمیشن‌های فلاتر + اصلاح باگ‌ها</div>
+              </div>
+              <span style="background: var(--primary); color: #000; font-size: 0.65rem; font-weight: 900; padding: 2px 8px; border-radius: 20px;">LIVE QA</span>
+            </div>
+
+            <!-- SECTION 1: NIKE / FITBOD BOLD ICONS -->
+            <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <div style="font-weight: 700; font-size: 0.82rem; color: #fff;">۱. آیکون‌های بولد ترکیبی (کلیک برای تست):</div>
+              </div>
+              <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                سبک Nike/Fitbod با فیل و استروک همزمان + درخشش نئونی و Elevation سایه 2.0 در حالت فعال:
+              </p>
+              <div class="icon-test-grid" style="grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+                <!-- Home -->
+                <div class="icon-box active" onclick="toggleLabIcon(this)">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.5L2 11h3.2v9.5c0 .6.4 1 1 1h4.3v-6.2h3v6.2h4.3c.6 0 1-.4 1-1V11H22L12 2.5z" stroke="currentColor" stroke-width="0.8" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="icon-name">خانه (Home)</span>
+                  <span class="icon-status">فعال (Active)</span>
+                </div>
+                <!-- Workout -->
+                <div class="icon-box active" onclick="toggleLabIcon(this)">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.5 10a1.5 1.5 0 0 1 1.5-1.5h1.2v7H4a1.5 1.5 0 0 1-1.5-1.5v-4zm3.7-2.5c.8 0 1.5.7 1.5 1.5v6c0 .8-.7 1.5-1.5 1.5h-.5V7.5h.5zm9.6 0c.8 0 1.5.7 1.5 1.5v6c0 .8-.7 1.5-1.5 1.5h-.5V7.5h.5zm2.7 1H20a1.5 1.5 0 0 1 1.5 1.5v4A1.5 1.5 0 0 1 20 15.5h-1.5v-7zm-11.3 2.7h9.6v1.6H7.2v-1.6z" stroke="currentColor" stroke-width="0.7"/>
+                  </svg>
+                  <span class="icon-name">تمرین (Workout)</span>
+                  <span class="icon-status">فعال (Active)</span>
+                </div>
+                <!-- Nutrition -->
+                <div class="icon-box" onclick="toggleLabIcon(this)">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.5 2.5c-.8.9-1.3 2.1-1.1 3.2 1.1.1 2.3-.5 3-1.4.7-.9 1.1-2.1.9-3.2-1.1 0-2.1.5-2.8 1.4zm3.8 6.7c-.5-.3-2.3-1.3-2.3-3.7 0-1.9 1.5-2.9 1.6-3-.9-1.3-2.4-1.5-2.9-1.5-1.3-.1-2.5.8-3.1.8-.7 0-1.7-.8-2.7-.7-1.4.1-2.7.9-3.4 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1.1 1.6 2.2 2.7 2.2 1.1 0 1.6-.7 2.9-.7 1.3 0 1.7.7 2.8.7 1.2 0 1.9-1 2.7-2.1.8-1.2 1.2-2.4 1.2-2.5 0-.1-.2-.1-.7-.3z" stroke="currentColor" stroke-width="0.6"/>
+                  </svg>
+                  <span class="icon-name">تغذیه (Nutrition)</span>
+                  <span class="icon-status">غیرفعال</span>
+                </div>
+                <!-- Marketplace -->
+                <div class="icon-box" onclick="toggleLabIcon(this)">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 4h16l1.2 4.5H2.8L4 4zm-1.5 6.5h19v2.2c0 1.2-.9 2.1-2.1 2.1-.9 0-1.7-.6-2-1.4-.4.9-1.2 1.4-2.1 1.4s-1.7-.6-2-1.4c-.4.9-1.2 1.4-2.1 1.4s-1.7-.6-2-1.4c-.4.9-1.2 1.4-2.1 1.4-1.2 0-2.1-.9-2.1-2.1v-2.2zM4.5 16.5H9v5H4.5v-5zm6.5 0h8.5v5H11v-5z" stroke="currentColor" stroke-width="0.6"/>
+                  </svg>
+                  <span class="icon-name">فروشگاه (Market)</span>
+                  <span class="icon-status">غیرفعال</span>
+                </div>
+                <!-- Profile -->
+                <div class="icon-box" onclick="toggleLabIcon(this)">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.6 0-10.8 1.8-10.8 5.4V22h21.6v-2.2c0-3.6-7.2-5.4-10.8-5.4z" stroke="currentColor" stroke-width="0.6"/>
+                  </svg>
+                  <span class="icon-name">پروفایل (Profile)</span>
+                  <span class="icon-status">غیرفعال</span>
+                </div>
+                <!-- AI Coach -->
+                <div class="icon-box active" onclick="toggleLabIcon(this)">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13 2.5L4.5 13.5h6.2L8.8 22l10.7-12h-6.2L16 2.5h-3z" stroke="currentColor" stroke-width="0.8" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="icon-name">مربی AI (Lightning)</span>
+                  <span class="icon-status">فعال (Active)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 2: SMOOTH TAB SWITCHING SIMULATOR -->
+            <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <div style="font-weight: 700; font-size: 0.82rem; color: #fff;">۲. تست انیمیشن روان تب‌ها (200ms Fade + 8px Slide):</div>
+              </div>
+              <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                FadeTransition + جهش عمودی ۸px به بالا (Curves.easeOutCubic). تب‌ها را امتحان کنید:
+              </p>
+              
+              <!-- Tab Preview Container -->
+              <div id="labTabPreviewContainer" class="flutter-tab-enter" style="background: #11141D; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.85rem; text-align: center; min-height: 75px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <span id="labTabTitle" style="font-size: 0.9rem; font-weight: 800; color: var(--primary);">صفحه انتخابی: داشبورد اصلی</span>
+                <span id="labTabDesc" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">ترنزیشن Fade+SlideUp ۲۰۰ میلی‌ثانیه فلاتر بدون بازسازی پرهزینه</span>
+              </div>
+
+              <!-- Mini Nav Bar for Testing -->
+              <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 0.65rem; background: #0c0e14; padding: 5px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                <button onclick="testTabTransition('داشبورد اصلی', 'نمای کلی تمرین و هیدراتاسیون امروز', this)" style="background: rgba(201,243,106,0.15); border: 1px solid var(--primary); color: var(--primary); padding: 5px 2px; border-radius: 7px; font-size: 0.68rem; font-weight: 700; cursor: pointer;">داشبورد</button>
+                <button onclick="testTabTransition('برنامه‌های تمرینی', 'لیست اسپلیت‌های پوش پول لگز', this)" style="background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 5px 2px; border-radius: 7px; font-size: 0.68rem; font-weight: 600; cursor: pointer;">تمرین</button>
+                <button onclick="testTabTransition('تغذیه و آب', 'کالری‌شمار روزانه و ماکروها', this)" style="background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 5px 2px; border-radius: 7px; font-size: 0.68rem; font-weight: 600; cursor: pointer;">تغذیه</button>
+                <button onclick="testTabTransition('کاوش و مارکت', 'برنامه‌ها و مکمل‌های ورزشی', this)" style="background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 5px 2px; border-radius: 7px; font-size: 0.68rem; font-weight: 600; cursor: pointer;">مارکت</button>
+                <button onclick="testTabTransition('پروفایل کاربر', 'محاسبه 1RM برزیگی و رکوردهای فردی', this)" style="background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 5px 2px; border-radius: 7px; font-size: 0.68rem; font-weight: 600; cursor: pointer;">پروفایل</button>
+              </div>
+            </div>
+
+            <!-- SECTION 3: STAGGERED ENTRANCE CARDS -->
+            <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <div style="font-weight: 700; font-size: 0.82rem; color: #fff;">۳. ورود آبشاری کارت‌ها (Staggered):</div>
+                <button onclick="replayStaggerDemo()" style="background: var(--primary); color: #000; border: none; border-radius: 8px; padding: 3px 8px; font-size: 0.68rem; font-weight: 800; cursor: pointer;">پخش مجدد 🌊</button>
+              </div>
+              <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                ورود نرم المان‌ها به ترتیب ایندکس (60ms * index) با حرکت ۱۲ پیکسل از پایین:
+              </p>
+              
+              <div id="staggerCardsContainer" style="display: flex; flex-direction: column; gap: 0.45rem;">
+                <div class="stagger-anim-0" style="background: #141722; border: 1px solid rgba(255,255,255,0.06); padding: 0.55rem 0.75rem; border-radius: 9px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.74rem; font-weight: 700; color: #fff;">کارت ۰: خلاصه وضعیت و استریک هفتگی</span>
+                  <span style="font-size: 0.65rem; color: var(--primary); font-family: monospace;">تاخیر: 0ms</span>
+                </div>
+                <div class="stagger-anim-1" style="background: #141722; border: 1px solid rgba(255,255,255,0.06); padding: 0.55rem 0.75rem; border-radius: 9px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.74rem; font-weight: 700; color: #fff;">کارت ۱: هیروی تمرین یا روز ریکاوری</span>
+                  <span style="font-size: 0.65rem; color: var(--primary); font-family: monospace;">تاخیر: 60ms</span>
+                </div>
+                <div class="stagger-anim-2" style="background: #141722; border: 1px solid rgba(255,255,255,0.06); padding: 0.55rem 0.75rem; border-radius: 9px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.74rem; font-weight: 700; color: #fff;">کارت ۲: پایشگر هیدراتاسیون (آب روزانه)</span>
+                  <span style="font-size: 0.65rem; color: var(--primary); font-family: monospace;">تاخیر: 120ms</span>
+                </div>
+                <div class="stagger-anim-3" style="background: #141722; border: 1px solid rgba(255,255,255,0.06); padding: 0.55rem 0.75rem; border-radius: 9px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.74rem; font-weight: 700; color: #fff;">کارت ۳: وضعیت تغذیه و ماکروهای روزانه</span>
+                  <span style="font-size: 0.65rem; color: var(--primary); font-family: monospace;">تاخیر: 180ms</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 4: BUG FIXES 1 & 2 (WORKOUT ROTATION / REST DAY & WATER DATE SYNC) -->
+            <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <div style="font-weight: 700; font-size: 0.82rem; color: #fff;">۴. اصلاح باگ ۱ و ۲ (چرخش تمرین و تاریخ آب):</div>
+                <button onclick="toggleLabRestDay()" id="labRestDayToggleBtn" style="background: rgba(0, 216, 246, 0.15); color: #00D8F6; border: 1px solid rgba(0, 216, 246, 0.35); border-radius: 8px; padding: 3px 8px; font-size: 0.68rem; font-weight: 800; cursor: pointer;">تغییر به روز استراحت 🔄</button>
+              </div>
+              <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                چرخش هوشمند بر اساس روز هفته به جای پلن هاردکد + برچسب دقیق تاریخ روی کارت آب:
+              </p>
+
+              <!-- Dynamic Hero Card Preview -->
+              <div id="labHeroCard" style="background: linear-gradient(135deg, rgba(201, 243, 106, 0.12) 0%, rgba(18, 22, 33, 0.95) 100%); border: 1px solid rgba(201, 243, 106, 0.3); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.65rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                  <span id="labHeroTag" style="font-size: 0.65rem; font-weight: 800; color: #C9F36A; background: rgba(201,243,106,0.15); padding: 2px 7px; border-radius: 6px;">روز فعال تمرین</span>
+                  <span id="labHeroBadge" style="font-size: 0.65rem; color: #94A3B8;">چرخش خودکار برنامه‌ها</span>
+                </div>
+                <div id="labHeroTitle" style="font-weight: 800; font-size: 0.9rem; color: #fff; margin-bottom: 0.2rem;">سینه و جلوبازو (Push A)</div>
+                <div id="labHeroDesc" style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 0.6rem;">۴ حرکت اصلی • تمرکز بر هایپرتروفی عضلات سینه</div>
+                <button id="labHeroBtn" style="width: 100%; background: #C9F36A; color: #000; font-weight: 800; font-size: 0.75rem; padding: 6px; border-radius: 8px; border: none; cursor: pointer;">شروع تمرین امروز (۴ حرکت)</button>
+              </div>
+
+              <!-- Water Tracker Date Label Verification -->
+              <div style="background: #11141D; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.7rem;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #38BDF8; margin-bottom: 0.35rem;">💧 هماهنگی و تفکیک برچسب تاریخ هیدراتاسیون:</div>
+                <div style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.7rem;">
+                  <div style="display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 4px 7px; border-radius: 6px;">
+                    <span style="color: #94A3B8;">کارت داشبورد:</span>
+                    <span style="color: #fff; font-weight: 700;">هدف روزانه (امروز): ۳۵۰۰ میلی‌لیتر</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 4px 7px; border-radius: 6px;">
+                    <span style="color: #94A3B8;">کارت تغذیه:</span>
+                    <span style="color: #38BDF8; font-weight: 700;">امروز • ۱۴۰۳/۰۸/۲۴</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-controls">
+          <span>ابعاد شبیه‌سازی: ۴۱۲ × ۹۱۵ پیکسل (Android Flagship)</span>
+        </div>
+      </div>
+
+      <!-- DETAILS & TECHNICAL SPECS -->
+      <div class="details-pane">
+        <!-- DYNAMIC CARD 1: OVERVIEW -->
+        <div class="card">
+          <div class="card-header">
+            <h2 id="screen-title" class="card-title">داشبورد یکپارچه (DashboardScreen)</h2>
+            <span id="screen-file" class="card-tag">lib/screens/dashboard_screen.dart</span>
+          </div>
+          <p id="screen-desc" style="color: var(--text-muted); font-size: 0.95rem;">
+            هسته اصلی برنامه که بلافاصله وضعیت فعالیت روزانه، جلسه تمرینی امروز، کارت هیدراتاسیون پویا و پیشرفت کالری را بدون شلوغی‌های فیک نمایش می‌دهد.
+          </p>
+          <div class="spec-grid">
+            <div class="spec-box">
+              <span class="spec-label">نقش صفحه (Screen Role)</span>
+              <span id="screen-role" class="spec-value">هاب مرکزی روزانه (Daily Hub)</span>
+            </div>
+            <div class="spec-box">
+              <span class="spec-label">مدیریت وضعیت (State Binding)</span>
+              <span id="screen-state" class="spec-value">AppState Consumer & ValueListenable</span>
+            </div>
+            <div class="spec-box">
+              <span class="spec-label">کنتراست و دسترسی‌پذیری</span>
+              <span class="spec-value">WCAG 2.2 AA (کنتراست بالای ۴.۵:۱)</span>
+            </div>
+            <div class="spec-box">
+              <span class="spec-label">ویجت‌های شاخص</span>
+              <span id="screen-widgets" class="spec-value">DailyHydrationCard, TodayWorkoutHero</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DYNAMIC CARD 2: ARCHITECTURE & CODE -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">⚡ قابلیت‌ها و منطق بیلد (Key UI Capabilities)</h3>
+            <span class="card-tag">Flutter Clean Widgets</span>
+          </div>
+          <ul id="screen-features" class="feature-list">
+            <li>هیروی شاخص تمرین امروز با اکشن تک‌کلیکی شروع تمرین (Start Workout CTA)</li>
+            <li>کارت پویای نوشیدن آب سینک شده مستقیم با بخش Nutrition به صورت دوطرفه</li>
+            <li>بدون نمودارهای فیک یا کارت‌های گرید تکراری هوش مصنوعی</li>
+            <li>پشتیبانی کامل از جهت راست‌به‌چپ (RTL) و مقیاس متنی ۲ برابری بدون Overflow</li>
+          </ul>
+        </div>
+
+        <!-- DYNAMIC CARD 3: HOW TO MODIFY FOR AI -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🤖 راهنمای توسعه برای AI (AI Developer Instructions)</h3>
+            <span class="card-tag">Zero Side-Effects</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            برای اعمال تغییر در این صفحه از توکن‌های استاندارد طراحی استفاده کنید:
+          </p>
+          <div id="screen-code" class="code-block">
+// دسترسی به تم و استیت در DashboardScreen:
+final appState = Provider.of<AppState>(context);
+// رنگ‌ها و استایل‌ها:
+AppColors.brandPrimary  // #B8FF00 نئون اختصاصی
+AppColors.surfaceDark   // #161920
+AppTypography.h2(context) // تیتر استاندارد وزیرمتن
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>پروژه <strong>GymBro</strong> — توسعه داده شده با فلاتر و اصول مهندسی سیستم‌های مقیاس‌پذیر | بازبینی فرانت‌اند اختصاصی</p>
+  </footer>
+
+  <script>
+    const screensData = {
+      dashboard: {
+        title: "داشبورد یکپارچه (DashboardScreen)",
+        file: "lib/screens/dashboard_screen.dart",
+        desc: "هسته اصلی برنامه که بلافاصله وضعیت فعالیت روزانه، جلسه تمرینی امروز، کارت هیدراتاسیون پویا و پیشرفت کالری را بدون شلوغی‌های فیک نمایش می‌دهد.",
+        role: "هاب مرکزی روزانه (Daily Hub)",
+        state: "AppState Consumer & ValueListenable",
+        widgets: "DailyHydrationCard, TodayWorkoutHero, ConsistencyStrip",
+        features: [
+          "هیروی شاخص تمرین امروز با اکشن تک‌کلیکی شروع تمرین (Start Workout CTA)",
+          "کارت پویای نوشیدن آب سینک شده مستقیم با بخش Nutrition به صورت دوطرفه",
+          "بدون نمودارهای فیک یا کارت‌های گرید تکراری هوش مصنوعی",
+          "پشتیبانی کامل از جهت راست‌به‌چپ (RTL) و مقیاس متنی ۲ برابری بدون Overflow"
+        ],
+        code: `// معماری ایمن ویجت هیدراتاسیون در داشبورد:
+class _DailyHydrationCard extends StatelessWidget {
+  // واکنش آنی به تغییرات آب مصرفی روزانه بدون نیاز به رفرش دستی
+  final int consumedMl = appState.selectedConsumedWaterMl;
+  final int targetMl = appState.targetWaterMl;
+}`
+      },
+      workout: {
+        title: "برنامه‌های تمرینی (WorkoutScreen)",
+        file: "lib/screens/workout_screen.dart",
+        desc: "صفحه انتخاب و شروع برنامه‌ها؛ اولویت بالا روی خوانایی، عدم شلوغی بصری و نمایش سریع وضعیت تمرین جاری.",
+        role: "مدیریت برنامه ورزشی (Plan Management)",
+        state: "WorkoutPlan & WorkoutSession Provider",
+        widgets: "PlanCard, MuscleHeatmapPreview, ExerciseItemRow",
+        features: [
+          "تفکیک روزهای تمرینی (Push / Pull / Legs) و مشخص بودن عضلات هدف",
+          "امکان مشاهده سریع جزییات حرکات بدون باز کردن دیالوگ‌های سنگین",
+          "تایپوگرافی اعداد شفاف و با کنتراست بالا متناسب با محیط باشگاه",
+          "دکمه واضح شروع تمرین که وضعیت AppState.isWorkoutActive را فعال می‌کند"
+        ],
+        code: `// فراخوانی شروع تمرین از صفحه برنامه:
+void _startSession(WorkoutPlan plan) {
+  appState.startActiveWorkout(plan);
+  Navigator.push(context, MaterialPageRoute(builder: (_) => const ActiveWorkoutScreen()));
+}`
+      },
+      active_workout: {
+        title: "تمرین زنده و لاگ رکورد (ActiveWorkoutScreen)",
+        file: "lib/screens/active_workout_screen.dart",
+        desc: "محیط لاگینگ تمرین هنگام اجرای زنده در باشگاه؛ ویرایش آسان وزنه‌ها، ست‌ها و ثبت تکرارها با فیدبک هپتیک.",
+        role: "لاگر زنده باشگاه (Gym Live Tracker)",
+        state: "ActiveWorkoutSession, RestTimerController",
+        widgets: "LiveSetRow, RestTimerBanner, VolumeCounter",
+        features: [
+          "ثبت ست با یک تپ، محاسبه خودکار حجم کل (Volume = Weight × Reps)",
+          "امکان Undo کردن ست ثبت‌شده بدون خطا در محاسبات پایگاه داده",
+          "آیکون‌ها و تاچ تارگت‌های بزرگ (حداقل ۴۸ پیکسل) برای راحتی کار با دستان خسته",
+          "شروع خودکار تایمر استراحت (Rest Timer) بلافاصله پس از تایید هر ست"
+        ],
+        code: `// اضافه کردن ست و شروع استراحت:
+appState.completeCurrentSet(weight: 80.0, reps: 10);
+// شروع هوشمند تایمر ۹۰ ثانیه‌ای استراحت
+appState.startRestTimer(seconds: 90);`
+      },
+      rest_timer: {
+        title: "تایمر استراحت بین ست‌ها (Rest Timer Modal)",
+        file: "lib/widgets/rest_timer_sheet.dart",
+        desc: "تایمر استراحت دقیق مبتنی بر Timestamp بدون لود اضافی روی فریم‌های CPU و قابل کنترل در پس‌زمینه.",
+        role: "مدیریت ریکاوری (Recovery Controller)",
+        state: "RestTimerNotifier (Pure Timestamp based)",
+        widgets: "CircularTimerRing, QuickTimeAdjuster (+30s / -15s)",
+        features: [
+          "محاسبه بر اساس اختلاف زمان سیستمی (System Clock Diff) نه تیک‌های متناوب گمراه‌کننده",
+          "دکمه‌های تغییر سریع زمان (+30s و -15s و Skip)",
+          "پایداری در صورت سوییچ به برنامه‌های دیگر (موسیقی، پاسخ به پیام)",
+          "هشدار صوتی و هپتیک اختصاصی اتمام استراحت"
+        ],
+        code: `// تایمر با پایداری در چرخه حیات (Lifecycle):
+int get remainingSeconds {
+  final now = DateTime.now().millisecondsSinceEpoch;
+  return math.max(0, ((targetTimestamp - now) / 1000).ceil());
+}`
+      },
+      nutrition: {
+        title: "مدیریت تغذیه و ماکروها (NutritionScreen)",
+        file: "lib/screens/nutrition_screen.dart",
+        desc: "صفحه ثبت مواد غذایی، کالری‌شمار دقیق و مصورسازی ماکروها (پروتئین، کربوهیدرات، چربی) با تمرکز بر سرعت لاگینگ.",
+        role: "ثبت و ردگیری تغذیه (Macro & Meal Tracker)",
+        state: "NutritionState, DailyMealLog, HydrationModel",
+        widgets: "MacroProgressBar, MealCategoryAccordion, WaterIntakeStepper",
+        features: [
+          "ثبت، ویرایش، حذف و داپلیکیت کردن آیتم‌های غذایی برای روزهای گذشته و امروز",
+          "تفکیک وعده‌ها: صبحانه، ناهار، شام و میان‌وعده",
+          "تنظیم هیدراتاسیون با افزاینده‌های سریع ۲۵۰ میلی‌لیتری و سینک مستقیم با داشبورد",
+          "بدون کارت‌های فانتزی دست‌وپاگیر که سرعت وارد کردن غذا را کند کند"
+        ],
+        code: `// محاسبه کالری کل ذخیره شده:
+double get totalCalories => meals.fold(0, (sum, meal) => sum + meal.totalCalories);
+// سینک آنی هیدراتاسیون:
+appState.addWater(250); // بلافاصله در تمام صفحات منعکس می‌شود`
+      },
+      profile: {
+        title: "پروفایل، رکوردها و پیشرفت (ProfileScreen)",
+        file: "lib/screens/profile_screen.dart",
+        desc: "نمای شخصی پیشرفت کاربر، رکوردهای وزنه (1RM)، تاریخچه تمرینات انجام شده و محاسبات متابولیک شخصی.",
+        role: "هویت و تاریخچه کاربر (User Identity & Progress)",
+        state: "UserProfile, HistoryStore, BiometricsEngine",
+        widgets: "OneRepMaxSummary, WorkoutHistoryList, MascotStatusCard",
+        features: [
+          "ارائه رکوردهای یک تکرار بیشینه (1RM) بر اساس فرمول علمی Brzycki",
+          "محاسبه TDEE و کالری هدف با معادله استاندارد Mifflin-St Jeor",
+          "دسترسی سریع به تنظیمات زبان (فارسی / انگلیسی) و تم تیره",
+          "استفاده متین از مسکات کلم جیم‌برو تنها در جایگاه مناسب پیشرفت"
+        ],
+        code: `// محاسبه ۱ تکرار بیشینه با فرمول دارت:
+final oneRm = StrengthEngine.calculateOneRepMax(weight: 100, reps: 5);
+final percentages = StrengthEngine.getTrainingPercentages(oneRm);`
+      },
+      marketplace: {
+        title: "کاوش مربیان و مکمل‌ها (MarketplaceScreen)",
+        file: "lib/screens/marketplace_screen.dart",
+        desc: "محیط کاوش مکمل‌ها، برنامه‌های تخصصی و مربیان با دسته‌بندی شفاف، بدون شبیه‌سازی دروغین پرداخت یا درگاه جعلی.",
+        role: "کاتالوگ و خدمات ورزشی (Discovery & Gear)",
+        state: "MarketplaceCatalogProvider",
+        widgets: "CategoryChipFilter, ServiceItemCard, DemoNoticeBanner",
+        features: [
+          "طراحی مجزا از داشبورد برای جلوگیری از تحمیل فضای فروشگاهی به تمرین",
+          "تگ‌های مشخص وضعیت دمو (Demo Mode) برای جلوگیری از سردرگمی کاربر",
+          "جستجو و فیلتر سریع بر اساس هدف تمرینی (حجم، چربی‌سوزی، استقامت)",
+          "چیدمان سازگار با کارت‌های استاندارد بدون اسکرول افقی بی‌پایان"
+        ],
+        code: `// سیستم تفکیک سرویس واقعی از دمو:
+class MarketplaceScreen extends StatelessWidget {
+  // نمایش بنر شفاف آزمایشی در بالای لیست
+  final bool isSimulation = true;
+}`
+      },
+      ai_coach: {
+        title: "مربی هوش مصنوعی (AiCoachScreen)",
+        file: "lib/screens/ai_coach_screen.dart",
+        desc: "دستیار و مربی بدنسازی هوشمند جیم‌برو با مرز مشخص بین مد دمو و اتصال به کلیدهای API (Gemini / OpenRouter).",
+        role: "دستیار تمرین هوشمند (AI Workout Assistant)",
+        state: "AppState.aiMode, ChatMessageRepository",
+        widgets: "ChatMessageBubble, SuggestedPromptsRow, ApiKeyConfigSheet",
+        features: [
+          "مرز امن بین کلاینت و سرور؛ بدون لو رفتن یا هاردکد شدن API Keyها",
+          "پشتیبانی از مد آفلاین هوشمند (پاسخ‌های تخصصی از پیش تعیین شده)",
+          "چت‌روم روان و راست‌به‌چپ سازگار با اصطلاحات بدنسازی فارسی و انگلیسی",
+          "پیشنهادات آماده برای طراحی رژیم، تغییر برنامه و رفع خستگی"
+        ],
+        code: `// ارسال پیام به مربی با رعایت فال‌بک دمو:
+if (appState.aiMode == AiCoachMode.demo) {
+  return LocalCoachKnowledge.getResponse(query);
+} else {
+  return RemoteAiService.call(query, apiKey: appState.geminiApiKey);
+}`
+      },
+      meal_scanner: {
+        title: "اسکنر هوشمند غذا (MealScannerScreen)",
+        file: "lib/screens/meal_scanner_screen.dart",
+        desc: "ابزار اسکن تصویری وعده‌ها جهت تشخیص اقلام، برآورد کالری و بازبینی دستی مقادیر توسط خود کاربر قبل از ذخیره.",
+        role: "آنالیز تصویری غذا (Computer Vision Diet Scanner)",
+        state: "ScanSessionState, MacroEstimator",
+        widgets: "ImageUploadPreview, MacroNutrientBreakdown, ConfidenceBadge",
+        features: [
+          "امکان بازبینی و ویرایش وزن غذا و ماکروها قبل از ثبت نهایی",
+          "مشخص کردن درصد اطمینان تخمین (Confidence Level) به کاربر",
+          "بدون ذخیره فیک داده در صورت لود نشدن تصویر",
+          "سینک سریع غذای تایید شده با لیست کالری‌های روزانه"
+        ],
+        code: `// ساختار تایید آیتم شناسایی شده:
+void onConfirmMeal(ScannedMeal meal) {
+  appState.addFoodEntry(meal.toFoodEntry());
+  Navigator.pop(context);
+}`
+      },
+      feature_lab: {
+        title: "آزمایشگاه ویژگی‌ها و بازطراحی بصری (Feature Lab & Bug Fixes)",
+        file: "lib/core/graphics/gymbro_icon.dart & lib/screens/*",
+        desc: "محیط تست زنده تمام تغییرات اخیر: سیستم جدید آیکون‌های وکتور Bold Style (Nike/Fitbod)، ترنزیشن‌های انیمیشنی روان (Smooth Tab Transition، Modal Push، Staggered Cards) و اصلاح باگ‌های چرخش روز تمرین، ریکاوری و برچسب تاریخ هیدراتاسیون.",
+        role: "تست و اعتبارسنجی زنده (Live QA & Visual Testing)",
+        state: "Pure CSS & JS Reactive Simulation with Zero Dependencies",
+        widgets: "GymBroNavIcon, StaggeredFadeSlide, SmoothTabTransition, RotationHeroCard",
+        features: [
+          "آیکون‌های وکتور ترکیبی (Filled + Outline) با گلو و سایه elevation 2.0 در حالت فعال",
+          "انیمیشن تغییر تب با FadeTransition و اسلاید عمودی ۸ پیکسلی (۲۰۰ میلی‌ثانیه Curves.easeOutCubic)",
+          "انیمیشن اسلاید و فید کارت‌های داشبورد با تاخیر آبشاری (۶۰ میلی‌ثانیه ضربدر ایندکس)",
+          "تشخیص هوشمند روز استراحت (Rest Day) و چرخش صحیح برنامه تمرینی بدون فیک‌بودن",
+          "برچسب شفاف تاریخ روی کارت مصرف آب در داشبورد و صفحه تغذیه برای جلوگیری از سردرگمی کاربر"
+        ],
+        code: `// ۱. پیاده‌سازی آیکون ترکیبی بولد در GymBroNavIconPainter:
+final fillPaint = Paint()
+  ..style = PaintingStyle.fill
+  ..color = active ? const Color(0xFFC9F36A) : const Color(0xFF94A3B8);
+final strokePaint = Paint()
+  ..style = PaintingStyle.stroke
+  ..strokeWidth = w * 0.06
+  ..color = active ? const Color(0xFFC9F36A) : const Color(0xFF94A3B8);
+if (active) {
+  canvas.drawShadow(path, const Color(0xFFC9F36A), 2.0, false);
+}
+canvas.drawPath(path, fillPaint);
+canvas.drawPath(path, strokePaint);
+
+// ۲. ترنزیشن انیمیشنی تغییر تب:
+AnimatedSwitcher(
+  duration: const Duration(milliseconds: 200),
+  switchInCurve: Curves.easeOutCubic,
+  transitionBuilder: (child, animation) => FadeTransition(
+    opacity: animation,
+    child: SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0.0, 8.0 / 640.0),
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    ),
+  ),
+  child: _screens[_currentIndex],
+);`
+      }
+    };
+
+    function toggleLabIcon(el) {
+      el.classList.toggle('active');
+      const statusEl = el.querySelector('.icon-status');
+      if (statusEl) {
+        statusEl.innerText = el.classList.contains('active') ? 'فعال (Active)' : 'غیرفعال';
+      }
+    }
+
+    function testTabTransition(title, desc, btn) {
+      const container = document.getElementById('labTabPreviewContainer');
+      const titleEl = document.getElementById('labTabTitle');
+      const descEl = document.getElementById('labTabDesc');
+      if (titleEl) titleEl.innerText = 'صفحه انتخابی: ' + title;
+      if (descEl) descEl.innerText = desc;
+
+      if (container) {
+        container.classList.remove('flutter-tab-enter');
+        void container.offsetWidth; // trigger reflow
+        container.classList.add('flutter-tab-enter');
+      }
+
+      if (btn && btn.parentElement) {
+        btn.parentElement.querySelectorAll('button').forEach(b => {
+          b.style.background = 'transparent';
+          b.style.borderColor = 'transparent';
+          b.style.color = 'var(--text-muted)';
+          b.style.fontWeight = '600';
+        });
+        btn.style.background = 'rgba(201,243,106,0.15)';
+        btn.style.borderColor = 'var(--primary)';
+        btn.style.color = 'var(--primary)';
+        btn.style.fontWeight = '700';
+      }
+    }
+
+    function replayStaggerDemo() {
+      const container = document.getElementById('staggerCardsContainer');
+      if (!container) return;
+      const items = container.children;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        item.classList.remove(`stagger-anim-${i}`);
+      }
+      void container.offsetWidth;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        item.classList.add(`stagger-anim-${i}`);
+      }
+    }
+
+    let isLabRestDay = false;
+    function toggleLabRestDay() {
+      isLabRestDay = !isLabRestDay;
+      const card = document.getElementById('labHeroCard');
+      const tag = document.getElementById('labHeroTag');
+      const badge = document.getElementById('labHeroBadge');
+      const title = document.getElementById('labHeroTitle');
+      const desc = document.getElementById('labHeroDesc');
+      const btn = document.getElementById('labHeroBtn');
+      const toggleBtn = document.getElementById('labRestDayToggleBtn');
+
+      if (isLabRestDay) {
+        card.style.background = 'linear-gradient(135deg, rgba(0, 216, 246, 0.12) 0%, rgba(18, 22, 33, 0.95) 100%)';
+        card.style.borderColor = 'rgba(0, 216, 246, 0.35)';
+        tag.innerText = 'روز ریکاوری';
+        tag.style.color = '#00D8F6';
+        tag.style.background = 'rgba(0, 216, 246, 0.15)';
+        badge.innerText = 'استراحت فعال';
+        badge.style.color = '#38BDF8';
+        title.innerText = 'امروز: روز استراحت و ریکاوری';
+        desc.innerText = 'عضلات در زمان استراحت رشد می‌کنند. روی تغذیه، پروتئین و خواب عمیق تمرکز کنید.';
+        btn.innerText = 'مشاهده راهنمای ریکاوری و موبیلیتی';
+        btn.style.background = '#00D8F6';
+        toggleBtn.innerText = 'تغییر به روز تمرین 🔄';
+      } else {
+        card.style.background = 'linear-gradient(135deg, rgba(201, 243, 106, 0.12) 0%, rgba(18, 22, 33, 0.95) 100%)';
+        card.style.borderColor = 'rgba(201, 243, 106, 0.3)';
+        tag.innerText = 'روز فعال تمرین';
+        tag.style.color = '#C9F36A';
+        tag.style.background = 'rgba(201, 243, 106, 0.15)';
+        badge.innerText = 'چرخش خودکار برنامه‌ها';
+        badge.style.color = '#94A3B8';
+        title.innerText = 'سینه و جلوبازو (Push A)';
+        desc.innerText = '۴ حرکت اصلی • تمرکز بر هایپرتروفی عضلات سینه';
+        btn.innerText = 'شروع تمرین امروز (۴ حرکت)';
+        btn.style.background = '#C9F36A';
+        toggleBtn.innerText = 'تغییر به روز استراحت 🔄';
+      }
+    }
+
+    function switchScreen(screenKey) {
+      // Update Buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = (window.event && window.event.currentTarget) ? 
+        window.event.currentTarget : 
+        document.querySelector(`.tab-btn[onclick*="${screenKey}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Update Screen Image
+      document.querySelectorAll('.screen-img').forEach(img => img.classList.remove('active'));
+      const activeImg = document.getElementById(`img-${screenKey}`);
+      if (activeImg) activeImg.classList.add('active');
+
+      // Update Data Pane
+      const data = screensData[screenKey];
+      if (data) {
+        document.getElementById('screen-title').innerText = data.title;
+        document.getElementById('screen-file').innerText = data.file;
+        document.getElementById('screen-desc').innerText = data.desc;
+        document.getElementById('screen-role').innerText = data.role;
+        document.getElementById('screen-state').innerText = data.state;
+        document.getElementById('screen-widgets').innerText = data.widgets;
+
+        // Features
+        const featList = document.getElementById('screen-features');
+        featList.innerHTML = '';
+        data.features.forEach(feat => {
+          const li = document.createElement('li');
+          li.innerText = feat;
+          featList.appendChild(li);
+        });
+
+        // Code
+        document.getElementById('screen-code').innerText = data.code;
+      }
+    }
+  </script>
+</body>
+</html>

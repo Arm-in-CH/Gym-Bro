@@ -1,0 +1,2621 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      GymBro - آزمایشگاه تخصصی قابلیت‌های دیوایس (Device Features Lab)
+    </title>
+    <style>
+      :root {
+        --lime: #ccff00;
+        --lime-glow: rgba(204, 255, 0, 0.28);
+        --gold: #ffb800;
+        --gold-glow: rgba(255, 184, 0, 0.25);
+        --cyan: #00e5ff;
+        --danger: #ef4444;
+        --dark-bg: #07090e;
+        --surface-dark: #0f141f;
+        --card-dark: #171e2d;
+        --border-dark: #2a364f;
+        --text-main: #ffffff;
+        --text-muted: #8e9aa8;
+        --phone-bezel: #11141e;
+        --hinge-spine: #242d40;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        user-select: none;
+      }
+
+      body {
+        background: radial-gradient(
+          circle at 50% 10%,
+          #151d30 0%,
+          var(--dark-bg) 100%
+        );
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      /* Top Navigation Header */
+      header {
+        background: rgba(15, 20, 31, 0.92);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border-dark);
+        padding: 14px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 200;
+      }
+
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-badge {
+        background: var(--lime);
+        color: #000;
+        font-weight: 900;
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 8px;
+        letter-spacing: 0.5px;
+      }
+
+      .brand-title {
+        font-size: 18px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .brand-title span {
+        color: var(--lime);
+      }
+
+      /* Lab View Switcher Tabs */
+      .lab-tabs {
+        display: flex;
+        background: var(--card-dark);
+        border: 1px solid var(--border-dark);
+        border-radius: 12px;
+        padding: 4px;
+        gap: 4px;
+      }
+
+      .tab-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .tab-btn:hover {
+        color: var(--text-main);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .tab-btn.active {
+        background: var(--lime);
+        color: #000;
+        box-shadow: 0 0 14px var(--lime-glow);
+      }
+
+      /* Main Laboratory Workspace */
+      .lab-container {
+        max-width: 1600px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px 24px 40px;
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 24px;
+        flex: 1;
+      }
+
+      @media (max-width: 1180px) {
+        .lab-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Left Control Sidebar */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .panel-card {
+        background: var(--surface-dark);
+        border: 1px solid var(--border-dark);
+        border-radius: 18px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      }
+
+      .panel-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--lime);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .control-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .control-row label {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      select,
+      input[type="text"],
+      input[type="range"] {
+        width: 100%;
+        background: var(--card-dark);
+        border: 1px solid var(--border-dark);
+        color: var(--text-main);
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      select:focus,
+      input:focus {
+        border-color: var(--lime);
+      }
+
+      /* Button Grids */
+      .btn-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .btn-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+      }
+
+      .btn-grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+      }
+
+      .btn {
+        background: var(--card-dark);
+        border: 1px solid var(--border-dark);
+        color: var(--text-main);
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .btn:hover {
+        background: #252f45;
+        border-color: var(--lime);
+      }
+
+      .btn.active {
+        background: var(--lime);
+        color: #000;
+        border-color: var(--lime);
+        box-shadow: 0 0 12px var(--lime-glow);
+      }
+
+      .btn-lime {
+        background: var(--lime);
+        color: #000;
+        border: none;
+      }
+
+      .btn-lime:hover {
+        background: #b5e600;
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: var(--danger);
+        color: #fca5a5;
+      }
+
+      .btn-danger:hover {
+        background: var(--danger);
+        color: #fff;
+      }
+
+      /* Scenario Run Cards */
+      .scenario-card {
+        background: rgba(23, 30, 45, 0.6);
+        border: 1px solid var(--border-dark);
+        border-radius: 10px;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: right;
+      }
+
+      .scenario-card:hover {
+        border-color: var(--lime);
+        background: var(--card-dark);
+        transform: translateX(-3px);
+      }
+
+      .scenario-card strong {
+        display: block;
+        color: var(--lime);
+        font-size: 12px;
+        margin-bottom: 2px;
+      }
+
+      .scenario-card p {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.4;
+      }
+
+      /* Switch Component */
+      .switch-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: var(--card-dark);
+        border-radius: 10px;
+        border: 1px solid var(--border-dark);
+      }
+
+      .switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .switch-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #334155;
+        transition: 0.3s;
+        border-radius: 24px;
+      }
+
+      .switch-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+      }
+
+      input:checked + .switch-slider {
+        background-color: var(--lime);
+      }
+
+      input:checked + .switch-slider:before {
+        transform: translateX(20px);
+        background-color: #000;
+      }
+
+      /* Right Simulation Stage */
+      .stage {
+        background: rgba(15, 20, 31, 0.45);
+        border: 1px solid var(--border-dark);
+        border-radius: 20px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        position: relative;
+        overflow: hidden;
+        min-height: 820px;
+      }
+
+      /* Live Telemetry Info Bar */
+      .telemetry-bar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 24px;
+        width: 100%;
+      }
+
+      .telemetry-pill {
+        background: var(--card-dark);
+        border: 1px solid var(--border-dark);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .telemetry-pill strong {
+        color: var(--lime);
+      }
+
+      /* Viewport Stage Layouts */
+      .simulation-viewport {
+        display: flex;
+        gap: 32px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
+      /* Phone Device Frame */
+      .device-shell {
+        position: relative;
+        background: var(--phone-bezel);
+        border-radius: 40px;
+        box-shadow:
+          0 25px 60px rgba(0, 0, 0, 0.8),
+          0 0 0 10px #1e273a,
+          0 0 0 12px #323f5a;
+        overflow: hidden;
+        transform-style: preserve-3d;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        max-width: 100%;
+      }
+
+      /* Device Status Bar with Dedicated Notch/Cutout & Dynamic Island Clearance */
+      .device-status-bar {
+        height: 42px;
+        width: 100%;
+        background: #000000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        position: relative;
+        z-index: 100;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        flex-shrink: 0;
+        user-select: none;
+      }
+
+      .status-clock {
+        font-size: 12px;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: 0.5px;
+        font-variant-numeric: tabular-nums;
+        flex-shrink: 0;
+      }
+
+      .status-center-area {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+
+      /* Dynamic Island Notch & Capsule */
+      .camera-cutout {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 11px;
+        height: 11px;
+        background: #000;
+        border-radius: 50%;
+        z-index: 80;
+        box-shadow:
+          inset 0 0 3px rgba(255, 255, 255, 0.3),
+          0 0 0 1px #111;
+        pointer-events: none;
+      }
+
+      /* Xiaomi HyperOS / Dynamic Capsule in Status Bar */
+      .dynamic-capsule {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #000000;
+        border: 1.5px solid rgba(204, 255, 0, 0.6);
+        border-radius: 20px;
+        height: 30px;
+        min-width: 150px;
+        max-width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        z-index: 120;
+        cursor: pointer;
+        box-shadow:
+          0 3px 14px rgba(0, 0, 0, 0.9),
+          0 0 12px var(--lime-glow);
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        white-space: nowrap;
+      }
+
+      .dynamic-capsule.expanded {
+        top: 5px;
+        transform: translateX(-50%);
+        height: 96px;
+        min-width: 280px;
+        max-width: 340px;
+        border-radius: 22px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 16px;
+        z-index: 300;
+        background: rgba(14, 18, 28, 0.98);
+        backdrop-filter: blur(20px);
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.95),
+          0 0 26px var(--lime-glow);
+      }
+
+      .status-icons-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: #ffffff;
+        flex-shrink: 0;
+      }
+
+      .status-badge-net {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--lime);
+        background: rgba(204, 255, 0, 0.12);
+        border: 1px solid rgba(204, 255, 0, 0.25);
+        padding: 1px 4px;
+        border-radius: 4px;
+      }
+
+      .status-battery-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .battery-icon-shape {
+        display: inline-block;
+        width: 18px;
+        height: 9px;
+        border: 1.2px solid rgba(255, 255, 255, 0.8);
+        border-radius: 3px;
+        padding: 1px;
+        position: relative;
+      }
+
+      .battery-icon-shape::before {
+        content: "";
+        display: block;
+        width: 78%;
+        height: 100%;
+        background: var(--lime);
+        border-radius: 1px;
+      }
+
+      .battery-icon-shape::after {
+        content: "";
+        position: absolute;
+        right: -3px;
+        top: 2px;
+        width: 1.5px;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 0 1px 1px 0;
+      }
+
+      .capsule-compact-view {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 10px;
+      }
+
+      .capsule-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--lime);
+      }
+
+      .capsule-pulse {
+        width: 8px;
+        height: 8px;
+        background: var(--lime);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--lime);
+        animation: pulseAnim 1.4s infinite ease-in-out;
+      }
+
+      @keyframes pulseAnim {
+        0% {
+          transform: scale(0.85);
+          opacity: 0.6;
+        }
+        50% {
+          transform: scale(1.25);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(0.85);
+          opacity: 0.6;
+        }
+      }
+
+      .capsule-time {
+        font-family: monospace;
+        font-size: 13px;
+        font-weight: 900;
+        color: #fff;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .capsule-expanded-view {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .dynamic-capsule.expanded .capsule-compact-view {
+        display: none;
+      }
+
+      .dynamic-capsule.expanded .capsule-expanded-view {
+        display: flex;
+      }
+
+      .capsule-exp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .capsule-exp-actions {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+      }
+
+      .capsule-mini-btn {
+        background: #1e273a;
+        border: 1px solid var(--border-dark);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .capsule-mini-btn.lime {
+        background: var(--lime);
+        color: #000;
+        border: none;
+      }
+
+      /* Android Notification Shade Card */
+      .notification-shade {
+        background: rgba(23, 30, 45, 0.95);
+        border: 1px solid rgba(204, 255, 0, 0.3);
+        border-radius: 18px;
+        padding: 14px 16px;
+        width: 100%;
+        margin-top: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .notif-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .notif-header-badge {
+        background: var(--lime);
+        color: #000;
+        font-weight: 900;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+      }
+
+      .notif-body {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .notif-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 2px;
+      }
+
+      .notif-desc {
+        font-size: 12px;
+        color: var(--lime);
+        font-weight: 700;
+        font-family: monospace;
+      }
+
+      .notif-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 4px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 8px;
+      }
+
+      .notif-action-btn {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--border-dark);
+        color: var(--text-main);
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .notif-action-btn:hover {
+        background: var(--lime);
+        color: #000;
+        border-color: var(--lime);
+      }
+
+      /* Foldable Central Hinge Crease */
+      .hinge-line {
+        width: 12px;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.7) 0%,
+          rgba(255, 255, 255, 0.09) 50%,
+          rgba(0, 0, 0, 0.7) 100%
+        );
+        flex-shrink: 0;
+        position: relative;
+        z-index: 40;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hinge-line::before {
+        content: "";
+        width: 2px;
+        height: 85%;
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 1px;
+      }
+
+      /* Screen Panes */
+      .screen-container {
+        width: 100%;
+        flex: 1;
+        height: calc(100% - 48px);
+        display: flex;
+        overflow: hidden;
+        background: #090a0f;
+        padding-top: 8px;
+      }
+
+      .pane {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 12px;
+        gap: 10px;
+        position: relative;
+      }
+
+      /* In-App Gym Workout Widgets - Card-Style Topbar with Zero Overlap */
+      .app-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        min-height: 36px;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .topbar-title-group {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-width: 0;
+      }
+
+      .topbar-title {
+        font-weight: 900;
+        font-size: 11.5px;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        letter-spacing: 0.3px;
+        max-width: 115px;
+      }
+
+      .topbar-bolt {
+        color: var(--lime);
+        font-size: 12px;
+        text-shadow: 0 0 6px var(--lime);
+      }
+
+      .topbar-chip {
+        font-size: 10px;
+        color: var(--text-muted);
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 5px;
+        white-space: nowrap;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .topbar-chip.lime {
+        color: var(--lime);
+        background: rgba(204, 255, 0, 0.1);
+        border: 1px solid rgba(204, 255, 0, 0.3);
+      }
+
+      .topbar-chip.orange {
+        color: #ff6900;
+        background: rgba(255, 105, 0, 0.1);
+        border: 1px solid rgba(255, 105, 0, 0.3);
+      }
+
+      .workout-box {
+        background: radial-gradient(circle at center, #1e273a 0%, #0f141f 100%);
+        border: 1.5px solid var(--lime);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+        box-shadow: 0 0 20px var(--lime-glow);
+      }
+
+      .timer-display {
+        font-size: 34px;
+        font-weight: 900;
+        color: var(--lime);
+        font-family: monospace;
+        margin: 6px 0;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .timer-display.paused {
+        color: var(--gold);
+      }
+
+      .timer-display.completed {
+        color: var(--danger);
+        animation: blink 0.8s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      /* Easter Egg Modal Overlay */
+      .easter-egg-modal {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(10px);
+        z-index: 150;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+      }
+
+      .easter-egg-modal.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .easter-egg-card {
+        background: #0f141f;
+        border: 2px solid var(--lime);
+        box-shadow:
+          0 0 35px var(--lime-glow),
+          0 20px 40px rgba(0, 0, 0, 0.8);
+        border-radius: 22px;
+        padding: 22px 18px;
+        max-width: 360px;
+        width: 100%;
+        text-align: center;
+        transform: scale(0.82);
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+      }
+
+      .easter-egg-modal.visible .easter-egg-card {
+        transform: scale(1);
+      }
+
+      .stickers-cluster {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        font-size: 36px;
+        margin-bottom: 12px;
+      }
+
+      .sticker-anim-1 {
+        display: inline-block;
+        animation: wobbleAnim 1.6s infinite ease-in-out alternate;
+      }
+
+      .sticker-anim-2 {
+        display: inline-block;
+        animation: pumpAnim 1.2s infinite ease-in-out alternate;
+      }
+
+      .sticker-anim-3 {
+        display: inline-block;
+        animation: bounceAnim 1.4s infinite ease-in-out alternate;
+      }
+
+      @keyframes wobbleAnim {
+        0% {
+          transform: rotate(-8deg) scale(1);
+        }
+        100% {
+          transform: rotate(8deg) scale(1.1);
+        }
+      }
+
+      @keyframes pumpAnim {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.22);
+        }
+      }
+
+      @keyframes bounceAnim {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-8px);
+        }
+      }
+
+      .egg-text-main {
+        font-size: 18px;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 6px;
+        line-height: 1.35;
+      }
+
+      .egg-text-sub {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+        line-height: 1.4;
+      }
+
+      .egg-dismiss-btn {
+        width: 100%;
+        background: var(--lime);
+        color: #000;
+        border: none;
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .egg-progress-bar {
+        width: 100%;
+        height: 4px;
+        background: rgba(204, 255, 0, 0.15);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 12px;
+      }
+
+      .egg-progress-fill {
+        height: 100%;
+        background: var(--lime);
+        width: 100%;
+        transition: width 6s linear;
+      }
+
+      /* Confetti Canvas */
+      #confettiOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 140;
+      }
+
+      /* Event Log Terminal */
+      .log-terminal {
+        background: #080b10;
+        border: 1px solid var(--border-dark);
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-family: monospace;
+        font-size: 11px;
+        color: #a3b1c2;
+        max-height: 150px;
+        overflow-y: auto;
+        line-height: 1.5;
+      }
+
+      .log-terminal .entry-time {
+        color: var(--text-muted);
+        margin-left: 6px;
+      }
+
+      .log-terminal .entry-tag {
+        color: var(--lime);
+        font-weight: bold;
+        margin-left: 6px;
+      }
+
+      .log-terminal .entry-warn {
+        color: var(--gold);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Lab Header -->
+    <header>
+      <div class="brand-wrap">
+        <img
+          src="../assets/images/app_logo_small.png"
+          alt="GymBro Logo"
+          style="
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 2px solid var(--lime);
+            box-shadow: 0 0 16px var(--lime-glow);
+            object-fit: cover;
+            flex-shrink: 0;
+          "
+        />
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span class="brand-badge">PHASE 7 - 11</span>
+            <span
+              style="
+                font-size: 11px;
+                color: var(--lime);
+                font-weight: 800;
+                letter-spacing: 0.5px;
+              "
+              >UNIFIED ECOSYSTEM</span
+            >
+          </div>
+          <h1 class="brand-title" style="margin-top: 2px">
+            GymBro <span>Device Features & Android Live Lab</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Mode Selector Tabs -->
+      <div class="lab-tabs">
+        <button
+          class="tab-btn active"
+          id="tabUnified"
+          onclick="switchLabMode('unified')"
+        >
+          <span>🔄</span> لاب یکپارچه (Unified Studio)
+        </button>
+        <button
+          class="tab-btn"
+          id="tabHyper"
+          onclick="switchLabMode('hyperos')"
+        >
+          <span>⚡</span> داینامیک آیلند HyperOS
+        </button>
+        <button
+          class="tab-btn"
+          id="tabFoldable"
+          onclick="switchLabMode('foldable')"
+        >
+          <span>📱</span> شبیه‌ساز 3D تاشو
+        </button>
+        <button class="tab-btn" id="tabSplit" onclick="switchLabMode('split')">
+          <span>⚖</span> نمای دوگانه همزمان
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Laboratory Workspace -->
+    <div class="lab-container">
+      <!-- Controls Sidebar -->
+      <div class="sidebar">
+        <!-- Panel 1: Master Workout Timer -->
+        <div class="panel-card">
+          <div class="panel-title">
+            <span>⏱</span> موتور مرکزی تایمر تمرین (Workout Engine)
+          </div>
+
+          <div class="control-row">
+            <label>حرکت ورزشی فعال:</label>
+            <select id="exerciseSelect" onchange="onExerciseChange()">
+              <option value="پرس بالاسینه هالتر">
+                پرس بالاسینه هالتر (Incline Bench)
+              </option>
+              <option value="اسکوات پا هالتر">
+                اسکوات پا هالتر (Barbell Squat)
+              </option>
+              <option value="پارالل وزنه‌دار">
+                پارالل وزنه‌دار (Weighted Dips)
+              </option>
+              <option value="دیمبل رو دمبل">
+                زیربغل دمبل تک خم (Dumbbell Row)
+              </option>
+            </select>
+          </div>
+
+          <div class="control-row">
+            <label>مدت زمان استراحت پیش‌فرض:</label>
+            <div class="btn-grid-4">
+              <button class="btn" onclick="setTimerDuration(30)">30s</button>
+              <button class="btn" onclick="setTimerDuration(45)">45s</button>
+              <button
+                class="btn active"
+                id="btnDur90"
+                onclick="setTimerDuration(90)"
+              >
+                90s
+              </button>
+              <button class="btn" onclick="setTimerDuration(120)">120s</button>
+            </div>
+          </div>
+
+          <div class="btn-grid-2" style="margin-top: 4px">
+            <button
+              class="btn btn-lime"
+              id="btnMasterPlayPause"
+              onclick="toggleTimer()"
+            >
+              <span>▶</span> شروع تایمر
+            </button>
+            <button class="btn btn-danger" onclick="resetTimer()">
+              <span>⏹</span> ریست
+            </button>
+          </div>
+
+          <div class="btn-grid-2">
+            <button class="btn" onclick="addSeconds(15)">+15 ثانیه</button>
+            <button class="btn" onclick="addSeconds(30)">+30 ثانیه</button>
+          </div>
+        </div>
+
+        <!-- Panel 2: Foldable Hardware & Posture Controls -->
+        <div class="panel-card" id="foldableControlsPanel">
+          <div class="panel-title">
+            <span>📱</span> تنظیمات لولا و سخت‌افزار تاشو
+          </div>
+
+          <div class="control-row">
+            <label>مدل گوشی تاشو / تبلت:</label>
+            <select id="devicePresetSelect" onchange="onDevicePresetChange()">
+              <option value="zfold8manual">
+                Samsung Galaxy Z Fold 8 (کالیبراسیون دستی)
+              </option>
+              <option value="zfold6">Samsung Galaxy Z Fold 6 (کتابی)</option>
+              <option value="pixelfold">Google Pixel Fold (کتابی عریض)</option>
+              <option value="zflip6">
+                Samsung Galaxy Z Flip 6 (صدفی - Clamshell)
+              </option>
+              <option value="tablet">
+                تبلت معمولی (Galaxy Tab S9) - تاشو نیست
+              </option>
+            </select>
+          </div>
+
+          <div class="control-row">
+            <label
+              >ابعاد viewport بر حسب CSS px (روی خود Z Fold 8 اندازه
+              بگیرید):</label
+            >
+            <div class="btn-grid-2">
+              <label
+                >کاور ـ عرض
+                <input
+                  id="coverWidthInput"
+                  type="number"
+                  min="240"
+                  max="1000"
+                  value="340"
+                  oninput="onDeviceDimensionsInput()"
+                />
+              </label>
+              <label
+                >کاور ـ ارتفاع
+                <input
+                  id="coverHeightInput"
+                  type="number"
+                  min="320"
+                  max="1400"
+                  value="680"
+                  oninput="onDeviceDimensionsInput()"
+                />
+              </label>
+              <label
+                >صفحه باز ـ عرض
+                <input
+                  id="innerWidthInput"
+                  type="number"
+                  min="320"
+                  max="1400"
+                  value="580"
+                  oninput="onDeviceDimensionsInput()"
+                />
+              </label>
+              <label
+                >صفحه باز ـ ارتفاع
+                <input
+                  id="innerHeightInput"
+                  type="number"
+                  min="320"
+                  max="1400"
+                  value="680"
+                  oninput="onDeviceDimensionsInput()"
+                />
+              </label>
+            </div>
+            <div
+              id="deviceCalibrationNote"
+              style="font-size: 11px; color: var(--amber); line-height: 1.45"
+            >
+              مقدارهای شروع نمونه‌اند، نه مشخصات رسمی Z Fold 8. با
+              window.innerWidth/innerHeight در حالت کاور و باز جایگزین کنید.
+            </div>
+          </div>
+
+          <div class="control-row">
+            <label>حالت قرارگیری (Posture):</label>
+            <div class="btn-grid-3">
+              <button
+                class="btn"
+                id="btnPostureFolded"
+                onclick="setDevicePosture('folded')"
+              >
+                بسته (Cover)
+              </button>
+              <button
+                class="btn"
+                id="btnPostureFlex"
+                onclick="setDevicePosture('tabletop')"
+              >
+                فلکس (90°)
+              </button>
+              <button
+                class="btn active"
+                id="btnPostureFlat"
+                onclick="setDevicePosture('flat')"
+              >
+                تخت (180°)
+              </button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div style="display: flex; justify-content: space-between">
+              <label>زاویه سنسور لولا (Hinge Angle):</label>
+              <strong
+                id="angleLabel"
+                style="color: var(--lime); font-size: 12px"
+                >180°</strong
+              >
+            </div>
+            <input
+              type="range"
+              id="hingeAngleInput"
+              min="0"
+              max="180"
+              value="180"
+              oninput="onHingeSliderInput(this.value)"
+            />
+          </div>
+
+          <!-- Scenario Runners -->
+          <div class="control-row" style="margin-top: 6px">
+            <label>اجرای سناریوهای استاندارد (A تا E):</label>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div class="scenario-card" onclick="runScenario('A')">
+                <strong>سناریو A: باز شدن در حالت Unfolded</strong>
+                <p>نمایش ایستر اگ پس از آماده‌سازی صفحه عریض داخلی</p>
+              </div>
+              <div class="scenario-card" onclick="runScenario('B')">
+                <strong>سناریو B: باز شدن روی کاور بسته</strong>
+                <p>عدم نمایش روی صفحه بیرونی تا زمان باز شدن کامل</p>
+              </div>
+              <div class="scenario-card" onclick="runScenario('C')">
+                <strong>سناریو C: ترنزیشن باز شدن لولا</strong>
+                <p>تشخیص عبور از حالت بسته به باز و تریگر ایستر اگ</p>
+              </div>
+              <div class="scenario-card" onclick="runScenario('D')">
+                <strong>سناریو D: بستن و باز کردن مجدد</strong>
+                <p>جلوگیری از پاپ‌آپ‌های تکراری در یک نشست (Deduplication)</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scenario E Protection -->
+          <div class="switch-wrap">
+            <div>
+              <div style="font-size: 12px; font-weight: 700">
+                محافظت جلسه تمرین فعال
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted)">
+                عدم قطع تایمر با ایستر اگ
+              </div>
+            </div>
+            <label class="switch">
+              <input
+                type="checkbox"
+                id="workoutProtectionToggle"
+                checked
+                onchange="toggleWorkoutProtection(this.checked)"
+              />
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <button
+            class="btn"
+            style="background: #242e42"
+            onclick="resetEasterEggSession()"
+          >
+            🔄 ریست سشن ایستر اگ (تست مجدد)
+          </button>
+        </div>
+
+        <!-- Panel 3: Diagnostics & Event Log -->
+        <div class="panel-card">
+          <div class="panel-title">
+            <span>📋</span> وقایع‌نگاری زنده (Live Event Log)
+          </div>
+          <div class="log-terminal" id="logTerminal">
+            <div>
+              <span class="entry-time">00:00:00</span>
+              <span class="entry-tag">[SYSTEM_INIT]</span> آزمایشگاه تخصصی
+              دیوایس GymBro آماده است.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Simulation Stage -->
+      <div class="stage">
+        <!-- Telemetry Info Bar -->
+        <div class="telemetry-bar">
+          <div class="telemetry-pill">
+            وضعیت تایمر: <strong id="telTimerStatus">آماده (Idle)</strong>
+          </div>
+          <div class="telemetry-pill">
+            زمان باقیمانده: <strong id="telTimerRemaining">01:30</strong>
+          </div>
+          <div class="telemetry-pill">
+            دیوایس شبیه‌سازی:
+            <strong id="telDeviceModel">Z Fold 8 (manual CSS viewport)</strong>
+          </div>
+          <div class="telemetry-pill">
+            پوسچر لولا: <strong id="telPosture">Flat (180°)</strong>
+          </div>
+          <div class="telemetry-pill">
+            وضعیت ایستر اگ: <strong id="telEggStatus">در انتظار</strong>
+          </div>
+        </div>
+
+        <!-- Device Viewport Container -->
+        <div class="simulation-viewport" id="viewportContainer">
+          <!-- DEVICE 1: Foldable Phone Simulator Frame -->
+          <div
+            class="device-shell"
+            id="foldableDeviceShell"
+            style="width: 580px; height: 680px"
+          >
+            <!-- Device Status Bar & Notch Safe Area -->
+            <div class="device-status-bar" id="foldableStatusBar">
+              <div class="status-clock" id="statusClockFoldable">09:41</div>
+
+              <div class="status-center-area">
+                <!-- Camera Cutout -->
+                <div class="camera-cutout"></div>
+
+                <!-- Dynamic Island Capsule in Foldable Screen -->
+                <div
+                  class="dynamic-capsule"
+                  id="foldableDynamicCapsule"
+                  onclick="toggleCapsuleExpand('foldable')"
+                >
+                  <div class="capsule-compact-view">
+                    <div class="capsule-left">
+                      <div
+                        class="capsule-pulse"
+                        id="capsulePulseFoldable"
+                      ></div>
+                      <span>GymBro Live</span>
+                    </div>
+                    <div class="capsule-time" id="capsuleTimeFoldable">
+                      01:30
+                    </div>
+                  </div>
+                  <div class="capsule-expanded-view">
+                    <div class="capsule-exp-header">
+                      <span id="capsuleExpExFoldable">پرس بالاسینه هالتر</span>
+                      <span id="capsuleExpTimeFoldable">01:30 remaining</span>
+                    </div>
+                    <div class="capsule-exp-actions">
+                      <button
+                        class="capsule-mini-btn lime"
+                        onclick="
+                          toggleTimer();
+                          event.stopPropagation();
+                        "
+                      >
+                        مکث/ادامه
+                      </button>
+                      <button
+                        class="capsule-mini-btn"
+                        onclick="
+                          addSeconds(15);
+                          event.stopPropagation();
+                        "
+                      >
+                        +15s
+                      </button>
+                      <button
+                        class="capsule-mini-btn"
+                        onclick="
+                          resetTimer();
+                          event.stopPropagation();
+                        "
+                      >
+                        پایان
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="status-icons-group">
+                <span class="status-badge-net">5G</span>
+                <svg
+                  viewBox="0 0 24 24"
+                  width="13"
+                  height="13"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4z"
+                  />
+                </svg>
+                <span class="status-battery-pill"
+                  ><span>92%</span><span class="battery-icon-shape"></span
+                ></span>
+              </div>
+            </div>
+
+            <!-- Screen Container (Left Pane, Hinge, Right Pane) -->
+            <div class="screen-container" id="foldableScreenContainer">
+              <!-- Pane 1 (Left / Top) -->
+              <div class="pane" id="foldablePane1">
+                <div class="app-topbar">
+                  <div class="topbar-title-group" style="direction: ltr">
+                    <img
+                      src="../assets/images/app_logo_small.png"
+                      alt="logo"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        border-radius: 4px;
+                        border: 1px solid var(--lime);
+                        object-fit: cover;
+                      "
+                    />
+                    <span class="topbar-title" style="color: var(--lime)"
+                      >GYMBRO ATHLETIC</span
+                    >
+                  </div>
+                  <div class="topbar-chip">PPL • سینه</div>
+                </div>
+
+                <div class="workout-box">
+                  <div
+                    style="font-size: 12px; color: var(--text-muted)"
+                    id="activeExerciseLabel"
+                  >
+                    پرس بالاسینه هالتر (ست ۲ از ۴)
+                  </div>
+                  <div class="timer-display" id="workoutTimerDisplay">
+                    01:30
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-muted)">
+                    زمان استراحت تنفسی
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      gap: 8px;
+                      margin-top: 8px;
+                    "
+                  >
+                    <button
+                      class="btn btn-lime"
+                      style="padding: 6px 14px; font-size: 12px"
+                      onclick="toggleTimer()"
+                    >
+                      مکث / ادامه
+                    </button>
+                    <button
+                      class="btn"
+                      style="padding: 6px 10px; font-size: 12px"
+                      onclick="addSeconds(30)"
+                    >
+                      +30s
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Android Ongoing Notification Representation -->
+                <div class="notification-shade">
+                  <div class="notif-header">
+                    <span class="notif-header-badge">LIVE WORKOUT</span>
+                    <span>کانال نوتیفیکیشن اختصاصی اندروید ۱۴ (ID: 772)</span>
+                  </div>
+                  <div class="notif-body">
+                    <div>
+                      <div class="notif-title" id="notifExerciseTitle">
+                        GymBro Rest: پرس بالاسینه هالتر
+                      </div>
+                      <div class="notif-desc" id="notifTimeCountdown">
+                        01:30 remaining | استراحت بین ست‌ها
+                      </div>
+                    </div>
+                  </div>
+                  <div class="notif-actions">
+                    <button class="notif-action-btn" onclick="toggleTimer()">
+                      مکث/ادامه
+                    </button>
+                    <button class="notif-action-btn" onclick="addSeconds(15)">
+                      +15 ثانیه
+                    </button>
+                    <button class="notif-action-btn" onclick="resetTimer()">
+                      پایان استراحت
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Central Physical Hinge Crease -->
+              <div class="hinge-line" id="foldableHinge"></div>
+
+              <!-- Pane 2 (Right / Bottom) -->
+              <div class="pane" id="foldablePane2">
+                <div class="app-topbar">
+                  <div class="topbar-title-group">
+                    <span class="topbar-bolt">📋</span>
+                    <span class="topbar-title">ثبت ست‌ها و تکرارها</span>
+                  </div>
+                  <div class="topbar-chip lime">RPE 8.5</div>
+                </div>
+
+                <div
+                  style="
+                    background: var(--card-dark);
+                    border: 1px solid var(--border-dark);
+                    border-radius: 12px;
+                    padding: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <div>
+                    <div style="font-weight: 700; font-size: 12px">
+                      ست ۱: ۸۰ کیلوگرم × ۱۰
+                    </div>
+                    <div style="font-size: 11px; color: var(--lime)">
+                      انجام شد ✔
+                    </div>
+                  </div>
+                  <button class="btn" style="padding: 4px 8px; font-size: 11px">
+                    ویرایش
+                  </button>
+                </div>
+
+                <div
+                  style="
+                    background: var(--card-dark);
+                    border: 1.5px solid var(--lime);
+                    border-radius: 12px;
+                    padding: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <div>
+                    <div style="font-weight: 700; font-size: 12px">
+                      ست ۲: ۸۵ کیلوگرم × ۸
+                    </div>
+                    <div style="font-size: 11px; color: var(--gold)">
+                      در حال استراحت...
+                    </div>
+                  </div>
+                  <button
+                    class="btn btn-lime"
+                    style="padding: 4px 10px; font-size: 11px"
+                  >
+                    ثبت ست
+                  </button>
+                </div>
+
+                <div
+                  style="
+                    background: var(--card-dark);
+                    border: 1px solid var(--border-dark);
+                    border-radius: 12px;
+                    padding: 10px;
+                  "
+                >
+                  <div
+                    style="
+                      font-weight: 700;
+                      font-size: 12px;
+                      margin-bottom: 4px;
+                    "
+                  >
+                    توصیه هوش مصنوعی GymBro:
+                  </div>
+                  <div
+                    style="
+                      font-size: 11px;
+                      color: var(--text-muted);
+                      line-height: 1.4;
+                    "
+                  >
+                    در ست بعدی وزنه‌ی ۸۵ کیلوگرم را با تمرکز بر دامنه منفی آهسته
+                    (۳ ثانیه) اجرا کن.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Secret Easter Egg Modal -->
+            <div class="easter-egg-modal" id="easterEggModal">
+              <canvas id="confettiOverlay"></canvas>
+              <div class="easter-egg-card">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <span
+                    style="
+                      background: var(--lime);
+                      color: #000;
+                      font-weight: 900;
+                      font-size: 10px;
+                      padding: 2px 8px;
+                      border-radius: 6px;
+                    "
+                    >GYMBRO FOLD EASTER EGG</span
+                  >
+                  <span
+                    onclick="dismissEasterEgg()"
+                    style="color: #aaa; cursor: pointer; font-size: 18px"
+                    >✕</span
+                  >
+                </div>
+
+                <div class="egg-text-main">
+                  اوه، ببین کی داره پُز می‌ده بابا!
+                </div>
+                <div class="egg-text-sub">حالا برو تمرینتو بکن.</div>
+
+                <button class="egg-dismiss-btn" onclick="dismissEasterEgg()">
+                  باشه، بریم تمرین
+                </button>
+
+                <div class="egg-progress-bar">
+                  <div class="egg-progress-fill" id="eggProgressFill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DEVICE 2: Xiaomi 14 Pro Candybar (Visible in Split or HyperOS Mode) -->
+          <div
+            class="device-shell"
+            id="xiaomiDeviceShell"
+            style="width: 360px; height: 680px; display: none"
+          >
+            <!-- Device Status Bar & Notch Safe Area -->
+            <div class="device-status-bar" id="xiaomiStatusBar">
+              <div class="status-clock" id="statusClockXiaomi">09:41</div>
+
+              <div class="status-center-area">
+                <div class="camera-cutout"></div>
+
+                <!-- Xiaomi HyperOS Dynamic Capsule -->
+                <div
+                  class="dynamic-capsule"
+                  id="xiaomiDynamicCapsule"
+                  onclick="toggleCapsuleExpand('xiaomi')"
+                >
+                  <div class="capsule-compact-view">
+                    <div class="capsule-left">
+                      <div class="capsule-pulse"></div>
+                      <span>HyperIsland</span>
+                    </div>
+                    <div class="capsule-time" id="capsuleTimeXiaomi">01:30</div>
+                  </div>
+                  <div class="capsule-expanded-view">
+                    <div class="capsule-exp-header">
+                      <span>Xiaomi Focus Capsule</span>
+                      <span id="capsuleExpTimeXiaomi">01:30 remaining</span>
+                    </div>
+                    <div class="capsule-exp-actions">
+                      <button
+                        class="capsule-mini-btn lime"
+                        onclick="
+                          toggleTimer();
+                          event.stopPropagation();
+                        "
+                      >
+                        مکث/ادامه
+                      </button>
+                      <button
+                        class="capsule-mini-btn"
+                        onclick="
+                          addSeconds(15);
+                          event.stopPropagation();
+                        "
+                      >
+                        +15s
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="status-icons-group">
+                <span
+                  class="status-badge-net"
+                  style="
+                    color: #ff6900;
+                    background: rgba(255, 105, 0, 0.15);
+                    border-color: rgba(255, 105, 0, 0.3);
+                  "
+                  >5G</span
+                >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="13"
+                  height="13"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4z"
+                  />
+                </svg>
+                <span class="status-battery-pill"
+                  ><span>88%</span><span class="battery-icon-shape"></span
+                ></span>
+              </div>
+            </div>
+
+            <div
+              class="pane"
+              style="
+                background: #090a0f;
+                padding: 12px;
+                flex: 1;
+                height: calc(100% - 42px);
+              "
+            >
+              <div class="app-topbar">
+                <div class="topbar-title-group" style="direction: ltr">
+                  <img
+                    src="../assets/images/app_logo_small.png"
+                    alt="logo"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      border-radius: 4px;
+                      border: 1px solid var(--lime);
+                      object-fit: cover;
+                    "
+                  />
+                  <span class="topbar-title" style="color: var(--lime)"
+                    >GYMBRO ATHLETIC</span
+                  >
+                </div>
+                <div class="topbar-chip orange">Xiaomi HyperOS</div>
+              </div>
+
+              <div class="workout-box">
+                <div style="font-size: 12px; color: var(--text-muted)">
+                  پرس بالاسینه هالتر
+                </div>
+                <div class="timer-display" id="xiaomiTimerDisplay">01:30</div>
+                <div style="font-size: 11px; color: var(--text-muted)">
+                  تایمر متصل به سرویس پس‌زمینه
+                </div>
+              </div>
+
+              <!-- Xiaomi Ongoing Workout Notification -->
+              <div class="notification-shade">
+                <div class="notif-header">
+                  <span
+                    class="notif-header-badge"
+                    style="background: #ff6900; color: #fff"
+                    >HyperOS</span
+                  >
+                  <span>CATEGORY_WORKOUT Ongoing</span>
+                </div>
+                <div class="notif-body">
+                  <div>
+                    <div class="notif-title" id="notifXiaomiTitle">
+                      GymBro Rest: پرس بالاسینه
+                    </div>
+                    <div class="notif-desc" id="notifXiaomiDesc">
+                      01:30 remaining
+                    </div>
+                  </div>
+                </div>
+                <div class="notif-actions">
+                  <button class="notif-action-btn" onclick="toggleTimer()">
+                    مکث/ادامه
+                  </button>
+                  <button class="notif-action-btn" onclick="addSeconds(30)">
+                    +30s
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Audio Synthesizer via Web Audio API (Zero external assets needed)
+      let audioCtx = null;
+      function playBeep(freq = 880, duration = 0.15) {
+        try {
+          if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (audioCtx.state === "suspended") {
+            audioCtx.resume();
+          }
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            audioCtx.currentTime + duration,
+          );
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {
+          console.warn("Audio play restricted until user gesture");
+        }
+      }
+
+      // Master Timer State
+      let timerState = {
+        totalSeconds: 90,
+        remainingSeconds: 90,
+        status: "idle", // 'idle', 'running', 'paused', 'completed'
+        exerciseName: "پرس بالاسینه هالتر",
+        tickerInterval: null,
+        targetEndTime: null,
+      };
+
+      // Foldable & Easter Egg State
+      let currentLabMode = "unified"; // 'unified', 'hyperos', 'foldable', 'split'
+      let currentPreset = "zfold8manual";
+      let currentPosture = "flat"; // 'folded', 'tabletop', 'flat'
+      let currentAngle = 180;
+      let workoutProtectionActive = true;
+      let hasShownEasterEggInSession = false;
+      let autoDismissTimeout = null;
+
+      const devicePresets = {
+        zfold8manual: {
+          name: "Galaxy Z Fold 8 (manual CSS viewport)",
+          isFoldable: true,
+          type: "book",
+          coverW: 340,
+          coverH: 680,
+          innerW: 580,
+          innerH: 680,
+          requiresCalibration: true,
+        },
+        zfold6: {
+          name: "Galaxy Z Fold 6",
+          isFoldable: true,
+          type: "book",
+          coverW: 340,
+          coverH: 680,
+          innerW: 580,
+          innerH: 680,
+        },
+        pixelfold: {
+          name: "Pixel Fold",
+          isFoldable: true,
+          type: "book",
+          coverW: 360,
+          coverH: 620,
+          innerW: 660,
+          innerH: 620,
+        },
+        zflip6: {
+          name: "Galaxy Z Flip 6",
+          isFoldable: true,
+          type: "clamshell",
+          coverW: 320,
+          coverH: 320,
+          innerW: 350,
+          innerH: 700,
+        },
+        tablet: {
+          name: "Galaxy Tab S9",
+          isFoldable: false,
+          type: "none",
+          coverW: 680,
+          coverH: 520,
+          innerW: 680,
+          innerH: 520,
+        },
+      };
+
+      // Logger
+      function logEvent(tag, message, isWarn = false) {
+        const term = document.getElementById("logTerminal");
+        const now = new Date();
+        const timeStr = now.toTimeString().split(" ")[0];
+        const div = document.createElement("div");
+        div.className = isWarn ? "entry-warn" : "";
+        div.innerHTML = `<span class="entry-time">${timeStr}</span> <span class="entry-tag">[${tag}]</span> ${message}`;
+        term.appendChild(div);
+        term.scrollTop = term.scrollHeight;
+      }
+
+      // Format Seconds to MM:SS
+      function formatTime(sec) {
+        const m = Math.floor(sec / 60)
+          .toString()
+          .padStart(2, "0");
+        const s = (sec % 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+      }
+
+      // Update UI Across All Devices and Simulators
+      function syncUI() {
+        const timeStr = formatTime(timerState.remainingSeconds);
+
+        // Foldable screen elements
+        document.getElementById("workoutTimerDisplay").innerText = timeStr;
+        document.getElementById("capsuleTimeFoldable").innerText = timeStr;
+        document.getElementById("capsuleExpTimeFoldable").innerText =
+          `${timeStr} remaining`;
+        document.getElementById("notifTimeCountdown").innerText =
+          `${timeStr} remaining | استراحت بین ست‌ها`;
+
+        // Xiaomi screen elements
+        document.getElementById("xiaomiTimerDisplay").innerText = timeStr;
+        document.getElementById("capsuleTimeXiaomi").innerText = timeStr;
+        document.getElementById("capsuleExpTimeXiaomi").innerText =
+          `${timeStr} remaining`;
+        document.getElementById("notifXiaomiDesc").innerText =
+          `${timeStr} remaining`;
+
+        // Telemetry
+        document.getElementById("telTimerRemaining").innerText = timeStr;
+
+        const playBtn = document.getElementById("btnMasterPlayPause");
+        const timerDisplay = document.getElementById("workoutTimerDisplay");
+        const xiaomiTimerDisplay =
+          document.getElementById("xiaomiTimerDisplay");
+
+        timerDisplay.classList.remove("paused", "completed");
+        xiaomiTimerDisplay.classList.remove("paused", "completed");
+
+        if (timerState.status === "running") {
+          document.getElementById("telTimerStatus").innerText =
+            "در حال شمارش (Running)";
+          playBtn.innerHTML = "<span>⏸</span> مکث تایمر";
+          playBtn.className = "btn";
+        } else if (timerState.status === "paused") {
+          document.getElementById("telTimerStatus").innerText =
+            "متوقف شده (Paused)";
+          playBtn.innerHTML = "<span>▶</span> ادامه تایمر";
+          playBtn.className = "btn btn-lime";
+          timerDisplay.classList.add("paused");
+          xiaomiTimerDisplay.classList.add("paused");
+        } else if (timerState.status === "completed") {
+          document.getElementById("telTimerStatus").innerText =
+            "به اتمام رسیده (Alarm Rings)";
+          playBtn.innerHTML = "<span>🔄</span> شروع مجدد";
+          playBtn.className = "btn btn-lime";
+          timerDisplay.classList.add("completed");
+          xiaomiTimerDisplay.classList.add("completed");
+        } else {
+          document.getElementById("telTimerStatus").innerText = "آماده (Idle)";
+          playBtn.innerHTML = "<span>▶</span> شروع تایمر";
+          playBtn.className = "btn btn-lime";
+        }
+      }
+
+      // Timer Logic
+      function toggleTimer() {
+        if (timerState.status === "running") {
+          pauseTimer();
+        } else {
+          startTimer();
+        }
+      }
+
+      function startTimer() {
+        if (timerState.status === "completed") {
+          timerState.remainingSeconds = timerState.totalSeconds;
+        }
+        timerState.status = "running";
+        timerState.targetEndTime =
+          Date.now() + timerState.remainingSeconds * 1000;
+        playBeep(640, 0.1);
+
+        logEvent(
+          "TIMER_START",
+          `حرکت: ${timerState.exerciseName} | زمان: ${timerState.remainingSeconds}s`,
+        );
+
+        clearInterval(timerState.tickerInterval);
+        timerState.tickerInterval = setInterval(() => {
+          const diffMs = timerState.targetEndTime - Date.now();
+          const sec = Math.ceil(diffMs / 1000);
+
+          if (sec <= 0) {
+            timerState.remainingSeconds = 0;
+            timerState.status = "completed";
+            clearInterval(timerState.tickerInterval);
+            onTimerExpire();
+          } else {
+            timerState.remainingSeconds = sec;
+          }
+          syncUI();
+        }, 250);
+
+        syncUI();
+      }
+
+      function pauseTimer() {
+        if (timerState.status !== "running") return;
+        clearInterval(timerState.tickerInterval);
+        timerState.status = "paused";
+        playBeep(440, 0.1);
+        logEvent(
+          "TIMER_PAUSE",
+          `تایمر در ثانیه ${timerState.remainingSeconds} مکث کرد.`,
+        );
+        syncUI();
+      }
+
+      function resetTimer() {
+        clearInterval(timerState.tickerInterval);
+        timerState.status = "idle";
+        timerState.remainingSeconds = timerState.totalSeconds;
+        logEvent("TIMER_RESET", `تایمر ریست شد (${timerState.totalSeconds}s).`);
+        syncUI();
+      }
+
+      function addSeconds(extra) {
+        timerState.remainingSeconds += extra;
+        if (timerState.status === "running") {
+          timerState.targetEndTime += extra * 1000;
+        }
+        playBeep(720, 0.08);
+        logEvent(
+          "TIMER_ADD",
+          `+${extra} ثانیه به تایمر اضافه شد (${timerState.remainingSeconds}s باقیمانده).`,
+        );
+        syncUI();
+      }
+
+      function setTimerDuration(sec) {
+        timerState.totalSeconds = sec;
+        resetTimer();
+        logEvent("DURATION_PRESET", `زمان استراحت روی ${sec} ثانیه تنظیم شد.`);
+      }
+
+      function onExerciseChange() {
+        timerState.exerciseName =
+          document.getElementById("exerciseSelect").value;
+        document.getElementById("activeExerciseLabel").innerText =
+          `${timerState.exerciseName} (ست ۲ از ۴)`;
+        document.getElementById("capsuleExpExFoldable").innerText =
+          timerState.exerciseName;
+        document.getElementById("notifExerciseTitle").innerText =
+          `GymBro Rest: ${timerState.exerciseName}`;
+        document.getElementById("notifXiaomiTitle").innerText =
+          `GymBro Rest: ${timerState.exerciseName}`;
+        logEvent(
+          "EXERCISE_CHANGE",
+          `حرکت فعال تغییر کرد به: ${timerState.exerciseName}`,
+        );
+      }
+
+      function onTimerExpire() {
+        logEvent(
+          "ALARM_TRIGGER",
+          "آلارم پایان استراحت فعال شد! ست بعدی را شروع کنید.",
+          true,
+        );
+        // Play 3 audible beeps
+        playBeep(980, 0.18);
+        setTimeout(() => playBeep(980, 0.18), 240);
+        setTimeout(() => playBeep(1200, 0.35), 480);
+      }
+
+      // Dynamic Capsule Expand / Collapse
+      function toggleCapsuleExpand(dev) {
+        const cap =
+          dev === "foldable"
+            ? document.getElementById("foldableDynamicCapsule")
+            : document.getElementById("xiaomiDynamicCapsule");
+        cap.classList.toggle("expanded");
+      }
+
+      // Foldable Device & Posture Management
+      function setDevicePosture(posture) {
+        const prevPosture = currentPosture;
+        currentPosture = posture;
+
+        document
+          .getElementById("btnPostureFolded")
+          .classList.toggle("active", posture === "folded");
+        document
+          .getElementById("btnPostureFlex")
+          .classList.toggle("active", posture === "tabletop");
+        document
+          .getElementById("btnPostureFlat")
+          .classList.toggle("active", posture === "flat");
+
+        const dev = devicePresets[currentPreset];
+        const shell = document.getElementById("foldableDeviceShell");
+        const screenContainer = document.getElementById(
+          "foldableScreenContainer",
+        );
+        const pane2 = document.getElementById("foldablePane2");
+        const hinge = document.getElementById("foldableHinge");
+
+        if (!dev.isFoldable) {
+          shell.style.width = dev.innerW + "px";
+          shell.style.height = dev.innerH + "px";
+          hinge.style.display = "none";
+          pane2.style.display = "flex";
+          document.getElementById("telPosture").innerText = "تبلت (غیر تاشو)";
+          logEvent("POSTURE_UPDATE", "دستگاه تبلت معمولی است و لولا ندارد.");
+          return;
+        }
+
+        if (posture === "folded") {
+          currentAngle = 0;
+          document.getElementById("hingeAngleInput").value = 0;
+          document.getElementById("angleLabel").innerText = "0° (بسته)";
+          shell.style.width = dev.coverW + "px";
+          shell.style.height = dev.coverH + "px";
+          screenContainer.style.flexDirection = "row";
+          pane2.style.display = "none";
+          hinge.style.display = "none";
+          shell.style.transform = "rotateX(0deg) rotateY(0deg)";
+          document.getElementById("telPosture").innerText =
+            "بسته (Cover Screen)";
+          logEvent("POSTURE_CHANGE", `گوشی بسته شد (0°) -> صفحه بیرونی فعال.`);
+        } else if (posture === "tabletop") {
+          currentAngle = 90;
+          document.getElementById("hingeAngleInput").value = 90;
+          document.getElementById("angleLabel").innerText =
+            "90° (Flex/Tabletop)";
+
+          if (dev.type === "clamshell") {
+            shell.style.width = dev.innerW + "px";
+            shell.style.height = dev.innerH + "px";
+            screenContainer.style.flexDirection = "column";
+            hinge.style.width = "100%";
+            hinge.style.height = "12px";
+            shell.style.transform = "perspective(1000px) rotateX(24deg)";
+          } else {
+            shell.style.width = dev.innerW + "px";
+            shell.style.height = dev.innerH + "px";
+            screenContainer.style.flexDirection = "row";
+            hinge.style.width = "12px";
+            hinge.style.height = "100%";
+            shell.style.transform = "perspective(1000px) rotateY(-20deg)";
+          }
+
+          pane2.style.display = "flex";
+          hinge.style.display = "flex";
+          document.getElementById("telPosture").innerText =
+            "حالت فلکس میزکار (90°)";
+          logEvent(
+            "POSTURE_CHANGE",
+            `گوشی در حالت فلکس ۹۰ درجه قرار گرفت (Tabletop).`,
+          );
+          evaluateEasterEggCheck(prevPosture);
+        } else {
+          // Flat (180°)
+          currentAngle = 180;
+          document.getElementById("hingeAngleInput").value = 180;
+          document.getElementById("angleLabel").innerText = "180° (کاملاً باز)";
+
+          shell.style.width = dev.innerW + "px";
+          shell.style.height = dev.innerH + "px";
+          screenContainer.style.flexDirection =
+            dev.type === "clamshell" ? "column" : "row";
+
+          if (dev.type === "clamshell") {
+            hinge.style.width = "100%";
+            hinge.style.height = "10px";
+          } else {
+            hinge.style.width = "12px";
+            hinge.style.height = "100%";
+          }
+
+          pane2.style.display = "flex";
+          hinge.style.display = "flex";
+          shell.style.transform = "rotateX(0deg) rotateY(0deg)";
+          document.getElementById("telPosture").innerText =
+            "کاملاً باز (Flat - 180°)";
+          logEvent(
+            "POSTURE_CHANGE",
+            `گوشی کاملاً باز شد (180°) -> صفحه اصلی عریض فعال.`,
+          );
+          evaluateEasterEggCheck(prevPosture);
+        }
+      }
+
+      function onHingeSliderInput(val) {
+        currentAngle = parseInt(val);
+        document.getElementById("angleLabel").innerText = currentAngle + "°";
+
+        if (currentAngle <= 25) {
+          setDevicePosture("folded");
+        } else if (currentAngle > 25 && currentAngle < 145) {
+          setDevicePosture("tabletop");
+        } else {
+          setDevicePosture("flat");
+        }
+      }
+
+      function onDevicePresetChange() {
+        currentPreset = document.getElementById("devicePresetSelect").value;
+        const dev = devicePresets[currentPreset];
+        document.getElementById("coverWidthInput").value = dev.coverW;
+        document.getElementById("coverHeightInput").value = dev.coverH;
+        document.getElementById("innerWidthInput").value = dev.innerW;
+        document.getElementById("innerHeightInput").value = dev.innerH;
+        document.getElementById("deviceCalibrationNote").innerText =
+          dev.requiresCalibration
+            ? "ابعاد شروع تقریبی‌اند، نه مشخصات رسمی. با window.innerWidth/innerHeight دستگاه خودتان جایگزین کنید."
+            : "این ابعاد CSS فقط برای پیش‌نمایش هستند؛ نتیجه تست سخت‌افزار واقعی نیست.";
+        document.getElementById("telDeviceModel").innerText = dev.name;
+        logEvent("DEVICE_SWITCH", `دستگاه انتخاب شده: ${dev.name}`);
+        setDevicePosture(currentPosture);
+      }
+
+      function onDeviceDimensionsInput() {
+        const dev = devicePresets[currentPreset];
+        const dimensions = {
+          coverW: Number(document.getElementById("coverWidthInput").value),
+          coverH: Number(document.getElementById("coverHeightInput").value),
+          innerW: Number(document.getElementById("innerWidthInput").value),
+          innerH: Number(document.getElementById("innerHeightInput").value),
+        };
+        if (
+          Object.values(dimensions).some(
+            (value) => !Number.isFinite(value) || value <= 0,
+          )
+        )
+          return;
+        Object.assign(dev, dimensions);
+        logEvent(
+          "DEVICE_CALIBRATION",
+          `viewport CSS به‌روزرسانی شد: کاور ${dimensions.coverW}×${dimensions.coverH}، باز ${dimensions.innerW}×${dimensions.innerH}.`,
+        );
+        setDevicePosture(currentPosture);
+      }
+
+      function toggleWorkoutProtection(checked) {
+        workoutProtectionActive = checked;
+        logEvent(
+          "PROTECTION_TOGGLE",
+          `محافظت سناریو E تمرین فعال: ${checked ? "روشن" : "خاموش"}`,
+        );
+      }
+
+      // Easter Egg Evaluation
+      function evaluateEasterEggCheck(prevPosture) {
+        const dev = devicePresets[currentPreset];
+
+        // Rule 1: Non-foldable device / tablet -> NEVER triggers
+        if (!dev.isFoldable) {
+          logEvent(
+            "EGG_DENIED",
+            "ایستر اگ نمایش داده نشد: این دستگاه تبلت معمولی است و قابلیت تاشو ندارد.",
+          );
+          return;
+        }
+
+        // Rule 2: Cover screen -> NEVER triggers on cover screen
+        if (currentPosture === "folded") {
+          return;
+        }
+
+        // Rule 3: Session Deduplication -> Do not show twice in same session
+        if (hasShownEasterEggInSession) {
+          logEvent(
+            "EGG_DEDUPLICATED",
+            "ایستر اگ در این سشن قبلاً نمایش داده شده است (سناریو D).",
+          );
+          return;
+        }
+
+        // Rule 4: Active Workout -> NEVER interrupt active workout!
+        if (workoutProtectionActive && timerState.status === "running") {
+          logEvent(
+            "EGG_BLOCKED_WORKOUT",
+            "ایستر اگ متوقف شد: تمرین یا تایمر فعال است (سناریو E).",
+            true,
+          );
+          return;
+        }
+
+        // Trigger condition met!
+        triggerEasterEgg();
+      }
+
+      function triggerEasterEgg() {
+        hasShownEasterEggInSession = true;
+        document.getElementById("telEggStatus").innerText = "نمایش داده شد ✔";
+
+        const modal = document.getElementById("easterEggModal");
+        modal.classList.add("visible");
+        playBeep(880, 0.15);
+
+        logEvent(
+          "EASTER_EGG_SHOWN",
+          "ایستر اگ مخفی GymBro با موفقیت نمایش داده شد!",
+          false,
+        );
+
+        // Animate progress bar
+        const fill = document.getElementById("eggProgressFill");
+        fill.style.transition = "none";
+        fill.style.width = "100%";
+        setTimeout(() => {
+          fill.style.transition = "width 6s linear";
+          fill.style.width = "0%";
+        }, 50);
+
+        // Launch Confetti
+        fireConfetti();
+
+        // Auto dismiss after 6 seconds
+        clearTimeout(autoDismissTimeout);
+        autoDismissTimeout = setTimeout(() => {
+          dismissEasterEgg();
+        }, 6000);
+      }
+
+      function dismissEasterEgg() {
+        clearTimeout(autoDismissTimeout);
+        const modal = document.getElementById("easterEggModal");
+        modal.classList.remove("visible");
+        logEvent("EGG_DISMISS", "ایستر اگ بسته شد.");
+      }
+
+      function resetEasterEggSession() {
+        hasShownEasterEggInSession = false;
+        document.getElementById("telEggStatus").innerText = "آماده (Reset)";
+        dismissEasterEgg();
+        logEvent(
+          "SESSION_RESET",
+          "سشن ایستر اگ ریست شد؛ اکنون سناریوها می‌توانند دوباره تریگر شوند.",
+        );
+      }
+
+      // Scenario Runners
+      function runScenario(s) {
+        if (s === "A") {
+          // Launch unfolded
+          resetEasterEggSession();
+          document.getElementById("devicePresetSelect").value = "zfold6";
+          onDevicePresetChange();
+          setDevicePosture("flat");
+          setTimeout(() => triggerEasterEgg(), 450);
+        } else if (s === "B") {
+          // Launch folded
+          resetEasterEggSession();
+          setDevicePosture("folded");
+        } else if (s === "C") {
+          // Transition from folded to unfolded
+          resetEasterEggSession();
+          setDevicePosture("folded");
+          setTimeout(() => {
+            setDevicePosture("flat");
+          }, 1200);
+        } else if (s === "D") {
+          // Fold and re-open
+          setDevicePosture("folded");
+          setTimeout(() => {
+            setDevicePosture("flat");
+          }, 1200);
+        }
+      }
+
+      // Confetti Physics Simulation
+      function fireConfetti() {
+        const canvas = document.getElementById("confettiOverlay");
+        const ctx = canvas.getContext("2d");
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+
+        const particles = [];
+        const colors = ["#CCFF00", "#FFB800", "#00E5FF", "#EC4899", "#FFFFFF"];
+
+        for (let i = 0; i < 45; i++) {
+          particles.push({
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            vx: (Math.random() - 0.5) * 14,
+            vy: (Math.random() - 0.7) * 15,
+            size: 4 + Math.random() * 6,
+            color: colors[i % colors.length],
+            rotation: Math.random() * 360,
+            rotSpeed: (Math.random() - 0.5) * 12,
+            alpha: 1,
+          });
+        }
+
+        function update() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          let alive = false;
+
+          particles.forEach((p) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.38; // gravity
+            p.rotation += p.rotSpeed;
+            p.alpha -= 0.012;
+
+            if (p.alpha > 0) {
+              alive = true;
+              ctx.save();
+              ctx.globalAlpha = p.alpha;
+              ctx.translate(p.x, p.y);
+              ctx.rotate((p.rotation * Math.PI) / 180);
+              ctx.fillStyle = p.color;
+              ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+              ctx.restore();
+            }
+          });
+
+          if (
+            alive &&
+            document
+              .getElementById("easterEggModal")
+              .classList.contains("visible")
+          ) {
+            requestAnimationFrame(update);
+          }
+        }
+
+        requestAnimationFrame(update);
+      }
+
+      // Lab View Mode Switcher
+      function switchLabMode(mode) {
+        currentLabMode = mode;
+
+        document
+          .getElementById("tabUnified")
+          .classList.toggle("active", mode === "unified");
+        document
+          .getElementById("tabHyper")
+          .classList.toggle("active", mode === "hyperos");
+        document
+          .getElementById("tabFoldable")
+          .classList.toggle("active", mode === "foldable");
+        document
+          .getElementById("tabSplit")
+          .classList.toggle("active", mode === "split");
+
+        const foldableShell = document.getElementById("foldableDeviceShell");
+        const xiaomiShell = document.getElementById("xiaomiDeviceShell");
+        const foldablePanel = document.getElementById("foldableControlsPanel");
+
+        if (mode === "unified") {
+          foldableShell.style.display = "flex";
+          xiaomiShell.style.display = "none";
+          foldablePanel.style.display = "flex";
+        } else if (mode === "hyperos") {
+          foldableShell.style.display = "none";
+          xiaomiShell.style.display = "flex";
+          foldablePanel.style.display = "none";
+        } else if (mode === "foldable") {
+          foldableShell.style.display = "flex";
+          xiaomiShell.style.display = "none";
+          foldablePanel.style.display = "flex";
+        } else if (mode === "split") {
+          foldableShell.style.display = "flex";
+          xiaomiShell.style.display = "flex";
+          foldablePanel.style.display = "flex";
+        }
+
+        logEvent(
+          "VIEW_MODE",
+          `نمای آزمایشگاه به حالت ${mode.toUpperCase()} تغییر یافت.`,
+        );
+      }
+
+      // Status Bar Live Clock
+      function updateStatusClocks() {
+        const now = new Date();
+        const h = now.getHours().toString().padStart(2, "0");
+        const m = now.getMinutes().toString().padStart(2, "0");
+        const timeStr = `${h}:${m}`;
+        const f = document.getElementById("statusClockFoldable");
+        const x = document.getElementById("statusClockXiaomi");
+        if (f) f.innerText = timeStr;
+        if (x) x.innerText = timeStr;
+      }
+
+      // Init on Load
+      window.onload = () => {
+        syncUI();
+        const params = new URLSearchParams(window.location.search);
+        const initialPosture = params.get("posture") || "flat";
+        const initialMode = params.get("mode") || "unified";
+        setDevicePosture(initialPosture);
+        if (initialMode !== "unified") switchLabMode(initialMode);
+        updateStatusClocks();
+        setInterval(updateStatusClocks, 1000);
+      };
+    </script>
+  </body>
+</html>
