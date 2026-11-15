@@ -20,7 +20,7 @@ class GymBroBrandLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = customAccent ?? const Color(0xFFCCFF00);
+    final accent = customAccent ?? const Color(0xFFC9F36A);
 
     Widget mark = SizedBox(
       width: size,

@@ -3,6 +3,7 @@ import '../core/localization/persian_utils.dart';
 import '../core/storage/database_seeder.dart';
 import '../models/exercise.dart';
 import '../state/app_state.dart';
+import '../widgets/body_muscle_map.dart';
 import '../widgets/common/gymbro_design_system.dart';
 import '../widgets/exercise_detail_sheet.dart';
 
@@ -250,53 +251,45 @@ class _ExerciseBankScreenState extends State<ExerciseBankScreen> {
             // 2. Interactive Body Map (Collapsible)
             if (_showBodyMap)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base, vertical: AppSpacing.sm),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base, vertical: AppSpacing.xs),
                 color: tokens.cardBackground,
-                child: Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.background,
-                    borderRadius: AppRadii.lgRadius,
-                    border: Border.all(color: tokens.lime.withOpacity(0.4)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'انتخاب ناحیه آناتومیک هدف:',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: tokens.lime,
-                            ),
-                          ),
-                          Text(
-                            'نقشه آناتومی GymBro',
-                            style: TextStyle(fontSize: 10, color: tokens.textMuted),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 6,
-                        children: [
-                          _buildAnatomyChip('سینه', 'chest'),
-                          _buildAnatomyChip('پشت و زیربغل', 'back'),
-                          _buildAnatomyChip('چهارسر ران', 'quads'),
-                          _buildAnatomyChip('همسترینگ', 'hamstrings'),
-                          _buildAnatomyChip('سرشانه', 'shoulders'),
-                          _buildAnatomyChip('جلوبازو', 'biceps'),
-                          _buildAnatomyChip('پشت‌بازو', 'triceps'),
-                          _buildAnatomyChip('شکم و مرکز', 'core'),
-                          _buildAnatomyChip('ساق پا', 'calves'),
-                        ],
-                      ),
-                    ],
-                  ),
+                child: BodyMuscleMap(
+                  compact: true,
+                  exercises: widget.state.exercises,
+                  onRegionSelected: (region) {
+                    setState(() {
+                      switch (region) {
+                        case BodyMuscleRegion.chest:
+                          _selectedMuscleGroup = 'سینه';
+                          break;
+                        case BodyMuscleRegion.upperBack:
+                        case BodyMuscleRegion.lats:
+                        case BodyMuscleRegion.lowerBack:
+                          _selectedMuscleGroup = 'پشت و زیربغل';
+                          break;
+                        case BodyMuscleRegion.quadriceps:
+                        case BodyMuscleRegion.hamstrings:
+                        case BodyMuscleRegion.frontCalves:
+                        case BodyMuscleRegion.backCalves:
+                        case BodyMuscleRegion.glutes:
+                          _selectedMuscleGroup = 'پا و باسن';
+                          break;
+                        case BodyMuscleRegion.shoulders:
+                        case BodyMuscleRegion.rearShoulders:
+                          _selectedMuscleGroup = 'سرشانه';
+                          break;
+                        case BodyMuscleRegion.biceps:
+                        case BodyMuscleRegion.triceps:
+                        case BodyMuscleRegion.forearms:
+                        case BodyMuscleRegion.rearForearms:
+                          _selectedMuscleGroup = 'جلو و پشت بازو';
+                          break;
+                        case BodyMuscleRegion.abs:
+                          _selectedMuscleGroup = 'عضلات مرکزی و شکم';
+                          break;
+                      }
+                    });
+                  },
                 ),
               ),
 
@@ -425,36 +418,6 @@ class _ExerciseBankScreenState extends State<ExerciseBankScreen> {
                     ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnatomyChip(String label, String keyword) {
-    final tokens = context.appTokens;
-    final isSelected = _selectedMuscleGroup?.contains(label) == true;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedMuscleGroup = label;
-          _showBodyMap = false;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: isSelected ? tokens.lime : tokens.cardElevated,
-          borderRadius: AppRadii.pillRadius,
-          border: Border.all(color: isSelected ? tokens.lime : tokens.borderColor),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? tokens.textOnLime : AppColors.textPrimary,
-          ),
         ),
       ),
     );

@@ -68,7 +68,7 @@ class _NutritionRecommendationCardState
         carbsG: 34,
         fatG: 18,
         icon: Icons.egg_alt_outlined,
-        accentColor: Color(0xFFCCFF00),
+        accentColor: Color(0xFFC9F36A),
       ),
       MealRecommendationItem(
         category: 'صبحانه',
@@ -94,7 +94,7 @@ class _NutritionRecommendationCardState
         carbsG: 62,
         fatG: 12,
         icon: Icons.restaurant_outlined,
-        accentColor: Color(0xFFCCFF00),
+        accentColor: Color(0xFFC9F36A),
       ),
       MealRecommendationItem(
         category: 'ناهار',
@@ -146,7 +146,7 @@ class _NutritionRecommendationCardState
         carbsG: 36,
         fatG: 16,
         icon: Icons.dinner_dining_outlined,
-        accentColor: Color(0xFFCCFF00),
+        accentColor: Color(0xFFC9F36A),
       ),
       MealRecommendationItem(
         category: 'شام',

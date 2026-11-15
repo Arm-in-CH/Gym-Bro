@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 /// Centralized Persian & English Typography System for GymBro Design System
-/// Aligned with GYMBRO_RULES: Disciplined typographic hierarchy with balanced weights.
+/// Aligned with GYMBRO_RULES: High-contrast athletic hierarchy with massive tabular display numbers
+/// matching professional fitness engineering (Nike Training Club, Whoop, Hevy).
 class AppTypography {
   AppTypography._();
 
@@ -10,17 +11,61 @@ class AppTypography {
   static const String fontMonospace = 'monospace';
   static const List<String> fallbackFonts = ['Vazirmatn', 'Tahoma', 'Arial', 'sans-serif'];
 
-  // 1. Display Headings (Hero metrics, stopwatch countdowns, large score readouts)
+  // 1. Athletic Hero Display Figures (Timer countdowns, tonnage readouts, massive calories)
+  // Sizes: 40sp to 56sp with FontFeature.tabularFigures()
+  static TextStyle athleticHero(BuildContext context, {Color? color}) {
+    final baseColor = color ?? Theme.of(context).colorScheme.onSurface;
+    return TextStyle(
+      fontSize: 52,
+      fontWeight: FontWeight.w900,
+      fontFamily: fontMonospace,
+      fontFamilyFallback: const ['Roboto', 'Courier New', 'monospace'],
+      color: baseColor,
+      letterSpacing: -1.2,
+      height: 1.05,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
+  }
+
+  static TextStyle athleticLarge(BuildContext context, {Color? color}) {
+    final baseColor = color ?? Theme.of(context).colorScheme.onSurface;
+    return TextStyle(
+      fontSize: 42,
+      fontWeight: FontWeight.w800,
+      fontFamily: fontMonospace,
+      fontFamilyFallback: const ['Roboto', 'Courier New', 'monospace'],
+      color: baseColor,
+      letterSpacing: -0.8,
+      height: 1.1,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
+  }
+
+  static TextStyle athleticMedium(BuildContext context, {Color? color}) {
+    final baseColor = color ?? Theme.of(context).colorScheme.onSurface;
+    return TextStyle(
+      fontSize: 32,
+      fontWeight: FontWeight.w800,
+      fontFamily: fontMonospace,
+      fontFamilyFallback: const ['Roboto', 'Courier New', 'monospace'],
+      color: baseColor,
+      letterSpacing: -0.5,
+      height: 1.15,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
+  }
+
+  // 2. Display Headings (Hero section titles, score readouts)
   static TextStyle displayLarge(BuildContext context, {Color? color}) {
     final baseColor = color ?? Theme.of(context).colorScheme.onSurface;
     return TextStyle(
       fontFamily: fontFaPrimary,
       fontFamilyFallback: fallbackFonts,
-      fontSize: 32,
-      fontWeight: FontWeight.w800,
+      fontSize: 40,
+      fontWeight: FontWeight.w900,
       color: baseColor,
-      letterSpacing: -0.6,
-      height: 1.2,
+      letterSpacing: -0.8,
+      height: 1.15,
     );
   }
 
@@ -29,15 +74,15 @@ class AppTypography {
     return TextStyle(
       fontFamily: fontFaPrimary,
       fontFamilyFallback: fallbackFonts,
-      fontSize: 26,
-      fontWeight: FontWeight.w700,
+      fontSize: 28,
+      fontWeight: FontWeight.w800,
       color: baseColor,
       letterSpacing: -0.4,
       height: 1.25,
     );
   }
 
-  // 2. Page & Screen Headings (AppBar titles, Modal titles)
+  // 3. Page & Screen Headings (AppBar titles, Modal titles)
   static TextStyle pageTitle(BuildContext context, {Color? color}) {
     final baseColor = color ?? Theme.of(context).colorScheme.onSurface;
     return TextStyle(
@@ -51,7 +96,7 @@ class AppTypography {
     );
   }
 
-  // 3. Section & Card Headings (Card headers, group titles)
+  // 4. Section & Card Headings (Card headers, group titles)
   static TextStyle sectionTitle(BuildContext context, {Color? color}) {
     final baseColor = color ?? Theme.of(context).colorScheme.onSurface;
     return TextStyle(
@@ -76,7 +121,7 @@ class AppTypography {
     );
   }
 
-  // 4. Body Text (Descriptions, instructions, workout directives)
+  // 5. Body Text (Descriptions, instructions, workout directives)
   static TextStyle body(BuildContext context, {Color? color}) {
     final baseColor = color ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.9);
     return TextStyle(
@@ -101,7 +146,7 @@ class AppTypography {
     );
   }
 
-  // 5. Captions & Metadata (Timestamps, micro badges, secondary details)
+  // 6. Captions & Metadata (Timestamps, micro badges, secondary details)
   static TextStyle caption(BuildContext context, {Color? color}) {
     final baseColor = color ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6);
     return TextStyle(
@@ -114,16 +159,16 @@ class AppTypography {
     );
   }
 
-  // 6. Numeric Statistics & High-Tech Digits (Weights, Reps, Calories, Water)
-  static TextStyle metricValue(BuildContext context, {Color? color, double size = 22}) {
+  // 7. Numeric Statistics & High-Tech Digits (Weights, Reps, Calories, Water)
+  static TextStyle metricValue(BuildContext context, {Color? color, double size = 30}) {
     final baseColor = color ?? Theme.of(context).colorScheme.onSurface;
     return TextStyle(
       fontSize: size,
       fontWeight: FontWeight.w800,
       fontFamily: fontMonospace,
-      fontFamilyFallback: const ['Courier New', 'monospace'],
+      fontFamilyFallback: const ['Roboto', 'Courier New', 'monospace'],
       color: baseColor,
-      letterSpacing: -0.2,
+      letterSpacing: -0.3,
       fontFeatures: const [FontFeature.tabularFigures()],
     );
   }
@@ -139,7 +184,7 @@ class AppTypography {
     );
   }
 
-  // 7. Button & Interactive Action Labels
+  // 8. Button & Interactive Action Labels
   static TextStyle buttonLabel(BuildContext context, {Color? color, bool isLarge = true}) {
     final baseColor = color ?? Theme.of(context).colorScheme.onSurface;
     return TextStyle(

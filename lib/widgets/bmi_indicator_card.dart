@@ -155,7 +155,7 @@ class BmiIndicatorCard extends StatelessWidget {
                           // Normal (18.5 - 24.9) -> (25-18.5)/25 = 26%
                           Expanded(
                             flex: 26,
-                            child: Container(color: const Color(0xFFCCFF00)),
+                            child: Container(color: const Color(0xFFC9F36A)),
                           ),
                           const SizedBox(width: 2),
                           // Overweight (25.0 - 29.9) -> (30-25)/25 = 20%

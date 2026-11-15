@@ -11,7 +11,6 @@ import 'home_workout_mode_screen.dart';
 import 'meal_scanner_screen.dart';
 import 'ai_coach_screen.dart';
 import '../widgets/floating_timer_bar.dart';
-import '../widgets/foldable_easter_egg.dart';
 import '../core/graphics/graphics.dart';
 import '../core/navigation/page_transitions.dart';
 
@@ -139,8 +138,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           setState(() => _currentIndex = 0);
         }
       },
-      child: FoldableEasterEggOverlay(
-        child: Scaffold(
+      child: Scaffold(
           body: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             switchInCurve: Curves.easeOutCubic,
@@ -269,7 +267,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 }

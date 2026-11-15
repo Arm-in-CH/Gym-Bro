@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../core/theme/app_typography.dart';
 
-/// Standard Premium Card Surface for GymBro Design System
-/// Warm Graphite surface (#171D27) with subtle structural border and tactile Material Ink ripple.
+/// Anti-Boxy Athletic Card Surface for GymBro Design System
+/// Uses pure tonal depth (#171D27 over #0B0E13) eliminating rigid 1.2px bright borders around every component.
+/// Provides optional flush/borderless styling and tactile Material ink response.
 class GymBroCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -13,6 +15,7 @@ class GymBroCard extends StatelessWidget {
   final double? width;
   final double? height;
   final BorderRadius? borderRadius;
+  final bool hasBorder;
 
   const GymBroCard({
     super.key,
@@ -25,20 +28,21 @@ class GymBroCard extends StatelessWidget {
     this.width,
     this.height,
     this.borderRadius,
+    this.hasBorder = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTokens;
     final effectiveRadius = borderRadius ?? AppRadii.lgRadius;
-    final effectiveBorder = borderColor ?? tokens.borderColor.withOpacity(0.5);
+    final effectiveBorder = borderColor ?? tokens.borderColor.withOpacity(0.35);
     final effectiveBg = backgroundColor ?? tokens.cardBackground;
 
     final decoration = BoxDecoration(
       color: gradient == null ? effectiveBg : null,
       gradient: gradient,
       borderRadius: effectiveRadius,
-      border: Border.all(color: effectiveBorder, width: 1.0),
+      border: hasBorder ? Border.all(color: effectiveBorder, width: 1.0) : null,
       boxShadow: AppShadows.subtle,
     );
 
@@ -49,8 +53,8 @@ class GymBroCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: effectiveRadius,
-          splashColor: tokens.lime.withOpacity(0.10),
-          highlightColor: tokens.lime.withOpacity(0.04),
+          splashColor: tokens.lime.withOpacity(0.08),
+          highlightColor: tokens.lime.withOpacity(0.03),
           child: Ink(
             width: width,
             height: height,
@@ -72,12 +76,97 @@ class GymBroCard extends StatelessWidget {
   }
 }
 
+/// Seamless, borderless flush card container for break-away athletic lists and blocks.
+/// Replaces generic nested card boxes with organic whitespace and subtle surface elevation.
+class GymBroFlushCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final VoidCallback? onTap;
+  final Color? backgroundColor;
+  final BorderRadius? borderRadius;
+
+  const GymBroFlushCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: AppSpacing.base,
+      vertical: AppSpacing.md,
+    ),
+    this.onTap,
+    this.backgroundColor,
+    this.borderRadius,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.appTokens;
+    final effectiveBg = backgroundColor ?? tokens.cardBackground;
+    final effectiveRadius = borderRadius ?? AppRadii.mdRadius;
+
+    final content = Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: effectiveBg,
+        borderRadius: effectiveRadius,
+      ),
+      child: child,
+    );
+
+    if (onTap != null) {
+      return Material(
+        color: Colors.transparent,
+        borderRadius: effectiveRadius,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: effectiveRadius,
+          splashColor: tokens.lime.withOpacity(0.08),
+          child: content,
+        ),
+      );
+    }
+
+    return content;
+  }
+}
+
+/// Ultra-subtle hairline linear separator for grouping content without nested box enclosures.
+class GymBroHairlineDivider extends StatelessWidget {
+  final double height;
+  final double thickness;
+  final Color? color;
+  final EdgeInsetsGeometry margin;
+
+  const GymBroHairlineDivider({
+    super.key,
+    this.height = 1.0,
+    this.thickness = 0.5,
+    this.color,
+    this.margin = EdgeInsets.zero,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.appTokens;
+    final effectiveColor = color ?? tokens.borderColor.withOpacity(0.20);
+
+    return Padding(
+      padding: margin,
+      child: Divider(
+        height: height,
+        thickness: thickness,
+        color: effectiveColor,
+      ),
+    );
+  }
+}
+
 /// Elevated Card Treatment (Layered surface #202A37 with subtle depth)
 class GymBroElevatedCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
   final VoidCallback? onTap;
   final BorderRadius? borderRadius;
+  final bool hasBorder;
 
   const GymBroElevatedCard({
     super.key,
@@ -85,6 +174,7 @@ class GymBroElevatedCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(AppSpacing.base),
     this.onTap,
     this.borderRadius,
+    this.hasBorder = false,
   });
 
   @override
@@ -95,7 +185,7 @@ class GymBroElevatedCard extends StatelessWidget {
     final decoration = BoxDecoration(
       color: tokens.cardElevated,
       borderRadius: effectiveRadius,
-      border: Border.all(color: tokens.borderColor.withOpacity(0.4), width: 1.0),
+      border: hasBorder ? Border.all(color: tokens.borderColor.withOpacity(0.35), width: 1.0) : null,
       boxShadow: AppShadows.card,
     );
 
@@ -106,7 +196,7 @@ class GymBroElevatedCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: effectiveRadius,
-          splashColor: tokens.lime.withOpacity(0.10),
+          splashColor: tokens.lime.withOpacity(0.08),
           child: Ink(
             padding: padding,
             decoration: decoration,
@@ -124,7 +214,7 @@ class GymBroElevatedCard extends StatelessWidget {
   }
 }
 
-/// Compact Metric Stat Card (for Heart Rate 123 bpm, Calories 824, etc.)
+/// Compact Metric Stat Card with High-Impact Tabular Figures (Whoop / Nike Training Club style)
 class GymBroMetricCard extends StatelessWidget {
   final String title;
   final String value;
@@ -133,6 +223,7 @@ class GymBroMetricCard extends StatelessWidget {
   final String? delta;
   final Color? accentColor;
   final VoidCallback? onTap;
+  final bool hasBorder;
 
   const GymBroMetricCard({
     super.key,
@@ -143,6 +234,7 @@ class GymBroMetricCard extends StatelessWidget {
     this.delta,
     this.accentColor,
     this.onTap,
+    this.hasBorder = false,
   });
 
   @override
@@ -153,6 +245,7 @@ class GymBroMetricCard extends StatelessWidget {
 
     return GymBroCard(
       onTap: onTap,
+      hasBorder: hasBorder,
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,10 +295,9 @@ class GymBroMetricCard extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  fontFamily: 'monospace',
+                style: AppTypography.metricValue(
+                  context,
+                  size: 28,
                   color: theme.colorScheme.onSurface,
                 ),
               ),
@@ -214,7 +306,7 @@ class GymBroMetricCard extends StatelessWidget {
                 Text(
                   unit!,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.w600,
                     color: tokens.textMuted,
                   ),
@@ -270,13 +362,21 @@ class GymBroHeroCard extends StatelessWidget {
               ),
             ),
           ),
-          GymBroCard(
-            onTap: onTap,
-            backgroundColor: Colors.transparent,
-            borderColor: tokens.borderColor.withOpacity(0.35),
-            borderRadius: radius,
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: content,
           ),
+          if (onTap != null)
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTap,
+                  splashColor: tokens.lime.withOpacity(0.12),
+                  highlightColor: tokens.lime.withOpacity(0.05),
+                ),
+              ),
+            ),
         ],
       ),
     );

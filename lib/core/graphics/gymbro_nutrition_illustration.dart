@@ -118,7 +118,7 @@ class _NutritionPainter extends CustomPainter {
         ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFCCFF00), Color(0xFF65A30D)],
+          colors: [Color(0xFFC9F36A), Color(0xFF65A30D)],
         ).createShader(const Rect.fromLTWH(24, 38, 52, 34)),
     );
 

@@ -6,7 +6,6 @@ import 'core/services/workout_timer_service.dart';
 import 'core/services/foldable_device_service.dart';
 import 'state/app_state.dart';
 import 'screens/main_navigation_screen.dart';
-import 'widgets/foldable_easter_egg.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,9 +66,7 @@ class _GymBroAppState extends State<GymBroApp> {
         final isRtl = locale?.languageCode != 'en';
         return Directionality(
           textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-          child: FoldableEasterEggOverlay(
-            child: child ?? const SizedBox.shrink(),
-          ),
+          child: child ?? const SizedBox.shrink(),
         );
       },
       home: MainNavigationScreen(state: widget.appState),

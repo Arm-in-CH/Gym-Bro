@@ -182,7 +182,7 @@ class AppGradients {
   );
 
   static const LinearGradient limeHero = LinearGradient(
-    colors: [Color(0xFFCCFF00), Color(0xFFA6D600)],
+    colors: [Color(0xFFC9F36A), Color(0xFFA6D600)],
     begin: AlignmentDirectional.topStart,
     end: AlignmentDirectional.bottomEnd,
   );

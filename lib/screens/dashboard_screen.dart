@@ -10,7 +10,6 @@ import '../widgets/level_badge.dart';
 import '../widgets/calorie_budget_card.dart';
 import '../widgets/adaptive_container.dart';
 import '../widgets/common/gymbro_design_system.dart';
-import '../widgets/staggered_fade_slide.dart';
 import 'focused_training_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -159,98 +158,77 @@ class DashboardScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 1. Premium Header: Greeting, Date, Streak & Coins
-                  StaggeredFadeSlide(
-                    index: 0,
-                    child: DashboardHeader(
-                      profile: profile,
-                      tokens: tokens,
-                      onOpenAiCoach: onOpenAiCoach,
-                      onOpenProfile: onOpenProfile,
-                    ),
+                  DashboardHeader(
+                    profile: profile,
+                    tokens: tokens,
+                    onOpenAiCoach: onOpenAiCoach,
+                    onOpenProfile: onOpenProfile,
                   ),
                   AppSpacing.hLg,
 
                   // 2. Weekly Workout Calendar Strip
-                  StaggeredFadeSlide(
-                    index: 1,
-                    child: WeeklyWorkoutStrip(
-                      tokens: tokens,
-                      selectedPlan: todayPlan,
-                      state: state,
-                    ),
+                  WeeklyWorkoutStrip(
+                    tokens: tokens,
+                    selectedPlan: todayPlan,
+                    state: state,
                   ),
                   AppSpacing.hLg,
 
                   // 3. Hero Today Workout Card (Live Draft Detection & High-Impact CTA)
-                  StaggeredFadeSlide(
-                    index: 2,
-                    child: TodayWorkoutCard(
-                      todayPlan: todayPlan,
-                      isRestDay: isScheduledRestDay,
-                      onStartWorkout: onStartWorkout,
-                      onOpenWorkouts: onOpenWorkouts,
-                      tokens: tokens,
-                      state: state,
-                    ),
+                  TodayWorkoutCard(
+                    todayPlan: todayPlan,
+                    isRestDay: isScheduledRestDay,
+                    onStartWorkout: onStartWorkout,
+                    onOpenWorkouts: onOpenWorkouts,
+                    tokens: tokens,
+                    state: state,
                   ),
                   AppSpacing.hBase,
 
                   // 4. Daily Progress: Calories & Nutrition Budget
-                  StaggeredFadeSlide(
-                    index: 3,
-                    child: CalorieBudgetCard(
-                      consumedCalories: state.todayConsumedCalories,
-                      targetCalories: state.nutritionPlan.dailyCalories,
-                      consumedProtein: state.todayConsumedProtein,
-                      targetProtein: state.nutritionPlan.targetProteinG,
-                      consumedCarbs: state.todayConsumedCarbs,
-                      targetCarbs: state.nutritionPlan.targetCarbsG,
-                      consumedFat: state.todayConsumedFat,
-                      targetFat: state.nutritionPlan.targetFatG,
-                      isOverLimit: state.isOverCalorieLimit,
-                      overdraftCalories: state.calorieOverdraft,
-                    ),
+                  CalorieBudgetCard(
+                    consumedCalories: state.todayConsumedCalories,
+                    targetCalories: state.nutritionPlan.dailyCalories,
+                    consumedProtein: state.todayConsumedProtein,
+                    targetProtein: state.nutritionPlan.targetProteinG,
+                    consumedCarbs: state.todayConsumedCarbs,
+                    targetCarbs: state.nutritionPlan.targetCarbsG,
+                    consumedFat: state.todayConsumedFat,
+                    targetFat: state.nutritionPlan.targetFatG,
+                    isOverLimit: state.isOverCalorieLimit,
+                    overdraftCalories: state.calorieOverdraft,
                   ),
                   AppSpacing.hBase,
 
                   // 5. Daily Progress: Hydration Tracker
-                  StaggeredFadeSlide(
-                    index: 4,
-                    child: _DailyHydrationCard(state: state, tokens: tokens),
-                  ),
+                  _DailyHydrationCard(state: state, tokens: tokens),
                   AppSpacing.hLg,
 
                   // 6. Signature Feature: Home Workout Fallback Banner
-                  StaggeredFadeSlide(
-                    index: 5,
-                    child: HomeWorkoutFallbackCard(
-                      state: state,
-                      todayPlan: todayPlan,
-                      onOpenHomeMode: onOpenHomeMode,
-                      tokens: tokens,
-                    ),
+                  HomeWorkoutFallbackCard(
+                    state: state,
+                    todayPlan: todayPlan,
+                    onOpenHomeMode: onOpenHomeMode,
+                    tokens: tokens,
                   ),
                   AppSpacing.hLg,
 
                   // 7. Tactical Athletic Tools
-                  StaggeredFadeSlide(
-                    index: 6,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const GymBroSectionHeader(
-                          title: 'ابزارهای سریع',
-                          subtitle: 'اسکنر غذا و همراه هوشمند ورزشی',
-                        ),
-                        AppSpacing.hSm,
-                        _QuickToolsBar(
-                          tokens: tokens,
-                          onOpenMealScanner: onOpenMealScanner,
-                          onOpenHomeMode: onOpenHomeMode,
-                          onOpenAiCoach: onOpenAiCoach,
-                        ),
-                      ],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const GymBroSectionHeader(
+                        title: 'ابزارهای سریع',
+                        subtitle: 'اسکنر غذا و همراه هوشمند ورزشی',
+                      ),
+                      AppSpacing.hSm,
+                      _QuickToolsBar(
+                        tokens: tokens,
+                        onOpenMealScanner: onOpenMealScanner,
+                        onOpenHomeMode: onOpenHomeMode,
+                        onOpenAiCoach: onOpenAiCoach,
+                      ),
+                    ],
                   ),
                   AppSpacing.hLg,
                 ],

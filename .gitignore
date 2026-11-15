@@ -46,3 +46,10 @@ app.*.map.json
 *.apk
 *.aab
 GymBro_AI_Context_Pack.zip
+
+# AI context / brain / misc
+.obsidian/
+GymBro-Brain/
+*.zip
+*.py
+ai_context/

@@ -23,7 +23,7 @@ class GymBroIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveActiveColor = activeColor ?? const Color(0xFFCCFF00);
+    final effectiveActiveColor = activeColor ?? const Color(0xFFC9F36A);
     final effectiveInactiveColor = inactiveColor ?? const Color(0xFF94A3B8);
 
     return Semantics(

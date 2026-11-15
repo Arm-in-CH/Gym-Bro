@@ -1,7 +1,10 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../core/graphics/gymbro_anatomy_vector_data.dart';
 import '../core/theme/app_tokens.dart';
 import '../core/localization/persian_utils.dart';
 import '../models/body_analytics_models.dart';
+import 'body_muscle_map.dart';
 
 enum BodyPartFocus {
   chest,
@@ -47,7 +50,8 @@ enum BodyPartFocus {
   }
 }
 
-/// Interactive 3D Wireframe Anthropometric Body Visualizer inspired by professional body scanning systems.
+/// Interactive Biometric Anatomical Body Visualizer integrated with GymBro vector anatomy.
+/// Replaces primitive geometric approximations with precision Bézier contours and active biometric scan overlays.
 class Body3dWireframeVisualizer extends StatefulWidget {
   final BodyMeasurementRecord? latestMeasurement;
   final BodyMeasurementRecord? previousMeasurement;
@@ -143,11 +147,22 @@ class _Body3dWireframeVisualizerState extends State<Body3dWireframeVisualizer> {
                 ),
                 child: Row(
                   children: [
-                    Container(width: 6, height: 6, decoration: BoxDecoration(color: tokens.lime, shape: BoxShape.circle)),
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: tokens.lime,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Live Metrics',
-                      style: TextStyle(fontSize: 10, color: tokens.lime, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: tokens.lime,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -156,16 +171,16 @@ class _Body3dWireframeVisualizerState extends State<Body3dWireframeVisualizer> {
           ),
           const SizedBox(height: AppSpacing.base),
 
-          // Central Wireframe Silhouette & Quick Stats Layout
+          // Central Anatomical Model & Metrics Layout
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 3D Mesh Wireframe Canvas
+              // High-Precision Vector Anatomical Scan Canvas
               SizedBox(
                 width: 130,
                 height: 240,
                 child: CustomPaint(
-                  painter: _BodyWireframePainter(
+                  painter: _AnatomyMeshVisualizerPainter(
                     selectedPart: _selectedPart,
                     tokens: tokens,
                   ),
@@ -312,268 +327,103 @@ class _Body3dWireframeVisualizerState extends State<Body3dWireframeVisualizer> {
   }
 }
 
-class _BodyWireframePainter extends CustomPainter {
+/// Precision Vector Anatomy Painter that highlights the anthropometric target.
+class _AnatomyMeshVisualizerPainter extends CustomPainter {
   final BodyPartFocus selectedPart;
   final AppThemeExtension tokens;
 
-  _BodyWireframePainter({
+  _AnatomyMeshVisualizerPainter({
     required this.selectedPart,
     required this.tokens,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final cx = w * 0.5;
+    canvas.save();
 
-    // High-tech Neon Cyan & Deep Space Blue Palette
-    final meshContourPaint = Paint()
-      ..color = const Color(0xFF38BDF8)
-      ..strokeWidth = 1.4
-      ..style = PaintingStyle.stroke
-      ..strokeJoin = StrokeJoin.round;
+    final scale = math.min(size.width / GymBroAnatomyVectorData.viewBoxWidth,
+                           size.height / GymBroAnatomyVectorData.viewBoxHeight);
+    final dx = (size.width - GymBroAnatomyVectorData.viewBoxWidth * scale) / 2.0;
+    final dy = (size.height - GymBroAnatomyVectorData.viewBoxHeight * scale) / 2.0;
 
-    final meshFillPaint = Paint()
-      ..color = const Color(0xFF0369A1).withOpacity(0.16)
+    canvas.translate(dx, dy);
+    canvas.scale(scale, scale);
+
+    final isBackView = selectedPart == BodyPartFocus.hip;
+
+    // 1. Draw Authentic Base Silhouette
+    final silhouette = isBackView
+        ? GymBroAnatomyVectorData.getPosteriorSilhouette()
+        : GymBroAnatomyVectorData.getAnteriorSilhouette();
+
+    final basePaint = Paint()
+      ..color = const Color(0xFF0F172A)
       ..style = PaintingStyle.fill;
+    canvas.drawPath(silhouette, basePaint);
 
-    final internalGuidePaint = Paint()
-      ..color = const Color(0xFF38BDF8).withOpacity(0.65)
-      ..strokeWidth = 1.1
-      ..style = PaintingStyle.stroke;
-
-    final crossSectionPaint = Paint()
+    final borderPaint = Paint()
       ..color = const Color(0xFF38BDF8).withOpacity(0.35)
-      ..strokeWidth = 0.9
-      ..style = PaintingStyle.stroke;
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+    canvas.drawPath(silhouette, borderPaint);
 
-    final activeScanPaint = Paint()
-      ..color = tokens.lime
-      ..strokeWidth = 2.4
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
+    // 2. Draw Subtle Biometric Grid / Scanning Guides
+    final scanGuidePaint = Paint()
+      ..color = const Color(0xFF38BDF8).withOpacity(0.15)
+      ..strokeWidth = 0.8;
+    for (double y = 40; y <= 350; y += 30) {
+      canvas.drawLine(Offset(50, y), Offset(190, y), scanGuidePaint);
+    }
 
-    final activeGlowPaint = Paint()
-      ..color = tokens.lime.withOpacity(0.28)
-      ..style = PaintingStyle.fill;
-
-    // 1. Head & Athletic Jawline
-    final headRect = Rect.fromCenter(
-      center: Offset(cx, h * 0.10),
-      width: w * 0.22,
-      height: h * 0.11,
-    );
-    canvas.drawOval(headRect, meshFillPaint);
-    canvas.drawOval(headRect, meshContourPaint);
-
-    // 2. Full Athletic Muscular Body Contour (Smooth Anatomical Silhouette)
-    final bodyPath = Path();
-    // Neck starts at base of head
-    bodyPath.moveTo(cx - w * 0.06, h * 0.15);
-    // Trapezius and left shoulder / deltoid cap
-    bodyPath.quadraticBezierTo(cx - w * 0.18, h * 0.17, cx - w * 0.32, h * 0.21);
-    bodyPath.quadraticBezierTo(cx - w * 0.38, h * 0.25, cx - w * 0.37, h * 0.30);
-    // Left arm: bicep swell, elbow, forearm, wrist, hand
-    bodyPath.lineTo(cx - w * 0.40, h * 0.38);
-    bodyPath.quadraticBezierTo(cx - w * 0.43, h * 0.46, cx - w * 0.40, h * 0.54);
-    bodyPath.lineTo(cx - w * 0.36, h * 0.57); // Hand tip
-    bodyPath.lineTo(cx - w * 0.33, h * 0.52); // Inner wrist
-    bodyPath.lineTo(cx - w * 0.33, h * 0.44); // Inner forearm
-    bodyPath.lineTo(cx - w * 0.31, h * 0.36); // Inner elbow
-    bodyPath.lineTo(cx - w * 0.23, h * 0.27); // Armpit
-    // Left torso: chest swell, V-taper waist, iliac flare
-    bodyPath.quadraticBezierTo(cx - w * 0.25, h * 0.32, cx - w * 0.16, h * 0.40);
-    bodyPath.quadraticBezierTo(cx - w * 0.20, h * 0.47, cx - w * 0.21, h * 0.51); // Left hip
-    // Left leg: vastus lateralis, outer knee, calf bulge, outer ankle, foot
-    bodyPath.quadraticBezierTo(cx - w * 0.25, h * 0.60, cx - w * 0.20, h * 0.70); // Knee
-    bodyPath.quadraticBezierTo(cx - w * 0.24, h * 0.79, cx - w * 0.16, h * 0.89); // Ankle
-    bodyPath.lineTo(cx - w * 0.19, h * 0.94); // Foot
-    bodyPath.lineTo(cx - w * 0.11, h * 0.94);
-    bodyPath.lineTo(cx - w * 0.10, h * 0.89); // Inner ankle
-    bodyPath.quadraticBezierTo(cx - w * 0.08, h * 0.79, cx - w * 0.08, h * 0.70); // Inner knee
-    bodyPath.quadraticBezierTo(cx - w * 0.07, h * 0.62, cx - w * 0.03, h * 0.53); // Groin base
-    // Groin center to right leg
-    bodyPath.lineTo(cx + w * 0.03, h * 0.53);
-    // Right leg: inner thigh, knee, calf, ankle, foot
-    bodyPath.quadraticBezierTo(cx + w * 0.07, h * 0.62, cx + w * 0.08, h * 0.70);
-    bodyPath.quadraticBezierTo(cx + w * 0.08, h * 0.79, cx + w * 0.10, h * 0.89);
-    bodyPath.lineTo(cx + w * 0.11, h * 0.94);
-    bodyPath.lineTo(cx + w * 0.19, h * 0.94);
-    bodyPath.lineTo(cx + w * 0.16, h * 0.89);
-    bodyPath.quadraticBezierTo(cx + w * 0.24, h * 0.79, cx + w * 0.20, h * 0.70);
-    bodyPath.quadraticBezierTo(cx + w * 0.25, h * 0.60, cx + w * 0.21, h * 0.51); // Right hip
-    // Right torso: waist, chest swell, armpit
-    bodyPath.quadraticBezierTo(cx + w * 0.20, h * 0.47, cx + w * 0.16, h * 0.40);
-    bodyPath.quadraticBezierTo(cx + w * 0.25, h * 0.32, cx + w * 0.23, h * 0.27);
-    // Right arm
-    bodyPath.lineTo(cx + w * 0.31, h * 0.36);
-    bodyPath.lineTo(cx + w * 0.33, h * 0.44);
-    bodyPath.lineTo(cx + w * 0.33, h * 0.52);
-    bodyPath.lineTo(cx + w * 0.36, h * 0.57);
-    bodyPath.lineTo(cx + w * 0.40, h * 0.54);
-    bodyPath.quadraticBezierTo(cx + w * 0.43, h * 0.46, cx + w * 0.40, h * 0.38);
-    bodyPath.lineTo(cx + w * 0.37, h * 0.30);
-    bodyPath.quadraticBezierTo(cx + w * 0.38, h * 0.25, cx + w * 0.32, h * 0.21);
-    // Right trapezius to neck
-    bodyPath.quadraticBezierTo(cx + w * 0.18, h * 0.17, cx + w * 0.06, h * 0.15);
-    bodyPath.close();
-
-    canvas.drawPath(bodyPath, meshFillPaint);
-    canvas.drawPath(bodyPath, meshContourPaint);
-
-    // 3. Anatomical Internal Structure Guides
-    // Clavicle (Collarbones)
-    final clavicle = Path();
-    clavicle.moveTo(cx - w * 0.20, h * 0.20);
-    clavicle.quadraticBezierTo(cx - w * 0.08, h * 0.215, cx, h * 0.205);
-    clavicle.quadraticBezierTo(cx + w * 0.08, h * 0.215, cx + w * 0.20, h * 0.20);
-    canvas.drawPath(clavicle, internalGuidePaint);
-
-    // Pectoralis Major (Chest Contours)
-    final leftPec = Path();
-    leftPec.moveTo(cx - w * 0.21, h * 0.26);
-    leftPec.quadraticBezierTo(cx - w * 0.10, h * 0.31, cx - w * 0.01, h * 0.29);
-    canvas.drawPath(leftPec, internalGuidePaint);
-
-    final rightPec = Path();
-    rightPec.moveTo(cx + w * 0.21, h * 0.26);
-    rightPec.quadraticBezierTo(cx + w * 0.10, h * 0.31, cx + w * 0.01, h * 0.29);
-    canvas.drawPath(rightPec, internalGuidePaint);
-
-    // Abdominal guidelines (6-pack)
-    canvas.drawLine(Offset(cx, h * 0.29), Offset(cx, h * 0.43), internalGuidePaint);
-    canvas.drawLine(Offset(cx - w * 0.08, h * 0.34), Offset(cx + w * 0.08, h * 0.34), crossSectionPaint);
-    canvas.drawLine(Offset(cx - w * 0.07, h * 0.38), Offset(cx + w * 0.07, h * 0.38), crossSectionPaint);
-    canvas.drawLine(Offset(cx - w * 0.07, h * 0.42), Offset(cx + w * 0.07, h * 0.42), crossSectionPaint);
-
-    // Kneecaps (Patellas)
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx - w * 0.14, h * 0.70), width: w * 0.07, height: h * 0.035),
-      internalGuidePaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx + w * 0.14, h * 0.70), width: w * 0.07, height: h * 0.035),
-      internalGuidePaint,
-    );
-
-    // 4. Volumetric 3D Cylinder Cross-Section Rings
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, h * 0.29), width: w * 0.38, height: h * 0.04),
-      crossSectionPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, h * 0.40), width: w * 0.30, height: h * 0.036),
-      crossSectionPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, h * 0.49), width: w * 0.36, height: h * 0.04),
-      crossSectionPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx - w * 0.14, h * 0.61), width: w * 0.17, height: h * 0.03),
-      crossSectionPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx + w * 0.14, h * 0.61), width: w * 0.17, height: h * 0.03),
-      crossSectionPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx - w * 0.13, h * 0.79), width: w * 0.14, height: h * 0.026),
-      crossSectionPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx + w * 0.13, h * 0.79), width: w * 0.14, height: h * 0.026),
-      crossSectionPaint,
-    );
-
-    // 5. Highlight Active Anthropometric Zone with Glowing Hologram Ring
+    // 3. Highlight Selected Anthropometric Muscle Region
+    final highlightPath = Path();
     switch (selectedPart) {
       case BodyPartFocus.chest:
-        final chestRing = Rect.fromCenter(
-          center: Offset(cx, h * 0.29),
-          width: w * 0.42,
-          height: h * 0.048,
-        );
-        canvas.drawOval(chestRing, activeGlowPaint);
-        canvas.drawOval(chestRing, activeScanPaint);
+        highlightPath.addPath(GymBroAnatomyVectorData.getRegionPath(BodyMuscleRegion.chest), Offset.zero);
         break;
-
       case BodyPartFocus.waist:
-        final waistRing = Rect.fromCenter(
-          center: Offset(cx, h * 0.40),
-          width: w * 0.34,
-          height: h * 0.044,
-        );
-        canvas.drawOval(waistRing, activeGlowPaint);
-        canvas.drawOval(waistRing, activeScanPaint);
+        highlightPath.addPath(GymBroAnatomyVectorData.getRegionPath(BodyMuscleRegion.abs), Offset.zero);
         break;
-
       case BodyPartFocus.hip:
-        final hipRing = Rect.fromCenter(
-          center: Offset(cx, h * 0.49),
-          width: w * 0.40,
-          height: h * 0.048,
-        );
-        canvas.drawOval(hipRing, activeGlowPaint);
-        canvas.drawOval(hipRing, activeScanPaint);
+        highlightPath.addPath(GymBroAnatomyVectorData.getRegionPath(BodyMuscleRegion.glutes), Offset.zero);
         break;
-
       case BodyPartFocus.arm:
-        final leftBicep = Rect.fromCenter(
-          center: Offset(cx - w * 0.35, h * 0.35),
-          width: w * 0.14,
-          height: h * 0.05,
-        );
-        final rightBicep = Rect.fromCenter(
-          center: Offset(cx + w * 0.35, h * 0.35),
-          width: w * 0.14,
-          height: h * 0.05,
-        );
-        canvas.drawOval(leftBicep, activeGlowPaint);
-        canvas.drawOval(leftBicep, activeScanPaint);
-        canvas.drawOval(rightBicep, activeGlowPaint);
-        canvas.drawOval(rightBicep, activeScanPaint);
+        highlightPath.addPath(GymBroAnatomyVectorData.getRegionPath(BodyMuscleRegion.biceps), Offset.zero);
+        highlightPath.addPath(GymBroAnatomyVectorData.getRegionPath(BodyMuscleRegion.shoulders), Offset.zero);
         break;
-
       case BodyPartFocus.thigh:
-        final leftThigh = Rect.fromCenter(
-          center: Offset(cx - w * 0.14, h * 0.61),
-          width: w * 0.19,
-          height: h * 0.04,
-        );
-        final rightThigh = Rect.fromCenter(
-          center: Offset(cx + w * 0.14, h * 0.61),
-          width: w * 0.19,
-          height: h * 0.04,
-        );
-        canvas.drawOval(leftThigh, activeGlowPaint);
-        canvas.drawOval(leftThigh, activeScanPaint);
-        canvas.drawOval(rightThigh, activeGlowPaint);
-        canvas.drawOval(rightThigh, activeScanPaint);
+        highlightPath.addPath(GymBroAnatomyVectorData.getRegionPath(BodyMuscleRegion.quadriceps), Offset.zero);
         break;
-
       case BodyPartFocus.calf:
-        final leftCalf = Rect.fromCenter(
-          center: Offset(cx - w * 0.13, h * 0.79),
-          width: w * 0.15,
-          height: h * 0.035,
-        );
-        final rightCalf = Rect.fromCenter(
-          center: Offset(cx + w * 0.13, h * 0.79),
-          width: w * 0.15,
-          height: h * 0.035,
-        );
-        canvas.drawOval(leftCalf, activeGlowPaint);
-        canvas.drawOval(leftCalf, activeScanPaint);
-        canvas.drawOval(rightCalf, activeGlowPaint);
-        canvas.drawOval(rightCalf, activeScanPaint);
+        highlightPath.addPath(GymBroAnatomyVectorData.getRegionPath(BodyMuscleRegion.frontCalves), Offset.zero);
         break;
     }
+
+    // Neon Glow
+    final glowPaint = Paint()
+      ..color = tokens.lime.withOpacity(0.35)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 4.0)
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(highlightPath, glowPaint);
+
+    // Solid Lime Fill
+    final fillPaint = Paint()
+      ..color = tokens.lime
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(highlightPath, fillPaint);
+
+    final strokePaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4;
+    canvas.drawPath(highlightPath, strokePaint);
+
+    canvas.restore();
   }
 
   @override
-  bool shouldRepaint(covariant _BodyWireframePainter oldDelegate) {
-    return oldDelegate.selectedPart != selectedPart;
+  bool shouldRepaint(covariant _AnatomyMeshVisualizerPainter oldDelegate) {
+    return oldDelegate.selectedPart != selectedPart ||
+        oldDelegate.tokens != tokens;
   }
 }

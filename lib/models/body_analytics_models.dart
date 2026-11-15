@@ -161,7 +161,7 @@ enum BmiCategory {
       case BmiCategory.underweight:
         return const Color(0xFF38BDF8); // Cyan
       case BmiCategory.normal:
-        return const Color(0xFFCCFF00); // Lime
+        return const Color(0xFFC9F36A); // Lime
       case BmiCategory.overweight:
         return const Color(0xFFFBBF24); // Amber
       case BmiCategory.obeseClass1:

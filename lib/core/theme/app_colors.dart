@@ -20,7 +20,7 @@ class AppColors {
 
   // 3. Primary Athletic Identity
   static const Color lime = Color(0xFFC9F36A); // Balanced Human-Crafted Athletic Lime
-  static const Color limeElectric = Color(0xFFCCFF00); // Signature glow & active badge
+  static const Color limeElectric = Color(0xFFC9F36A); // Signature glow & active badge
   static const Color limeLight = Color(0xFFDDFB88); // Hover state on dark
   static const Color limeDark = Color(0xFFA5D142); // Active pressed state
   static const Color limeGlow = Color(0x29C9F36A); // Soft ambient aura (used sparingly)
