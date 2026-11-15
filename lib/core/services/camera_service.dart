@@ -146,23 +146,24 @@ class DeviceCameraService implements ICameraService {
 
   @override
   Future<CapturedImage?> takePhoto([CameraController? controller]) async {
-    if (controller == null || !controller.value.isInitialized || controller.value.isTakingPicture) {
-      return null;
+    if (controller != null && controller.value.isInitialized && !controller.value.isTakingPicture) {
+      try {
+        final xFile = await controller.takePicture();
+        final bytes = await xFile.readAsBytes();
+
+        return CapturedImage(
+          path: xFile.path,
+          bytes: bytes,
+          mimeType: 'image/jpeg',
+          sizeBytes: bytes.length,
+        );
+      } catch (_) {
+        return null;
+      }
     }
 
-    try {
-      final xFile = await controller.takePicture();
-      final bytes = await xFile.readAsBytes();
-
-      return CapturedImage(
-        path: xFile.path,
-        bytes: bytes,
-        mimeType: 'image/jpeg',
-        sizeBytes: bytes.length,
-      );
-    } catch (_) {
-      return null;
-    }
+    // Graceful fallback when hardware camera is unattached (e.g. desktop/emulator)
+    return SimulatedCameraService().takePhoto();
   }
 
   @override

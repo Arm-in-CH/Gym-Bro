@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_tokens.dart';
+import '../core/theme/app_typography.dart';
 import '../core/localization/persian_utils.dart';
 import '../state/app_state.dart';
 import '../models/marketplace_models.dart';
@@ -48,9 +49,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(trainer.name,
-                style: theme.textTheme.titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              trainer.name,
+              style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               trainer.title,
@@ -60,9 +62,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
             Text(
               'تعرفه هر جلسه: ${PersianUtils.formatToman(trainer.hourlyRateToman)}',
               style: TextStyle(
-                  color: tokens.lime,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13),
+                color: tokens.lime,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
@@ -177,169 +180,261 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     final theme = Theme.of(context);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.md),
-      padding: const EdgeInsets.all(AppSpacing.base),
       decoration: BoxDecoration(
         color: tokens.cardBackground,
-        borderRadius: AppRadii.lgRadius,
-        border: Border.all(color: tokens.borderColor),
+        borderRadius: AppRadii.roundedLg,
+        border: Border.all(color: tokens.borderColor.withOpacity(0.8)),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  gym.name,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              Semantics(
-                label: 'امتیاز باشگاه',
-                value:
-                    '${PersianUtils.toPersianDigits(gym.rating.toString())} از ۵ ستاره',
-                child: Row(
-                  children: [
-                    ExcludeSemantics(
-                      child: Icon(Icons.star, color: tokens.gold, size: 16),
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Text(
-                      PersianUtils.toPersianDigits(gym.rating.toString()),
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Row(
-            children: [
-              ExcludeSemantics(
-                child: Icon(Icons.location_on_outlined,
-                    color: tokens.textMuted, size: 14),
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: Text(
-                  gym.address,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: tokens.textMuted,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-
-          // Amenities
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: gym.amenities.take(3).map((amenity) {
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
-                decoration: BoxDecoration(
-                  color: tokens.cardElevated,
-                  borderRadius: AppRadii.xsRadius,
-                ),
-                child: Text(
-                  amenity,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: tokens.lime,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: AppSpacing.md),
-
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.xs,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'شهریه ماهانه (نمونه):',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: tokens.textMuted,
-                    ),
-                  ),
-                  Text(
-                    PersianUtils.formatToman(gym.monthlyFeeToman),
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: tokens.lime,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                'مبلغ نمونه؛ پرداخت آنلاین فعال نیست',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: tokens.textMuted,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          SizedBox(
+          // Graphic Header / VIP Showcase Banner
+          Container(
+            height: 48,
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (dialogContext) => AlertDialog(
-                  backgroundColor: tokens.cardBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppRadii.lgRadius,
-                    side: BorderSide(color: tokens.borderColor),
-                  ),
-                  title: const Text('عضویت آنلاین در دسترس نیست'),
-                  content: Text(
-                    'این فهرست و قیمت‌ها نمونه‌اند. رزرو سانس، بررسی ظرفیت و پرداخت در این نسخه انجام نمی‌شود و ثبت‌نام به صورت حضوری در پذیرش باشگاه صورت می‌پذیرد.',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: tokens.textMuted,
-                      height: 1.5,
-                    ),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(dialogContext),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: tokens.lime,
-                        foregroundColor: tokens.textOnLime,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: AppRadii.roundedSm,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  tokens.cardElevated,
+                  tokens.cardBackground,
+                ],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              ),
+              border: Border(
+                bottom: BorderSide(color: tokens.borderColor.withOpacity(0.5)),
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: tokens.lime.withOpacity(0.15),
+                          borderRadius: AppRadii.roundedXs,
+                        ),
+                        child: Icon(Icons.fitness_center_rounded, color: tokens.lime, size: 16),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          gym.name,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      child: const Text('متوجه شدم', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: tokens.lime.withOpacity(0.18),
+                    borderRadius: AppRadii.pillRadius,
+                    border: Border.all(color: tokens.lime.withOpacity(0.4)),
+                  ),
+                  child: Text(
+                    'VIP CLUB',
+                    style: TextStyle(
+                      color: tokens.lime,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 9,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Rating and Address Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          ExcludeSemantics(
+                            child: Icon(Icons.location_on_outlined,
+                                color: tokens.textMuted, size: 14),
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Expanded(
+                            child: Text(
+                              gym.address,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: tokens.textMuted,
+                                fontSize: 11,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Semantics(
+                      label: 'امتیاز باشگاه',
+                      value:
+                          '${PersianUtils.toPersianDigits(gym.rating.toString())} از ۵ ستاره',
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: tokens.gold.withOpacity(0.14),
+                          borderRadius: AppRadii.roundedXs,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ExcludeSemantics(
+                              child: Icon(Icons.star_rounded, color: tokens.gold, size: 14),
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              PersianUtils.toPersianDigits(gym.rating.toString()),
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: tokens.gold,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              icon: Icon(Icons.check_circle_outline, size: 16, color: tokens.textOnLime),
-              label: Text('عضویت آنلاین در دسترس نیست',
-                  style: TextStyle(color: tokens.textOnLime, fontWeight: FontWeight.bold)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: tokens.lime,
-                shape: const RoundedRectangleBorder(borderRadius: AppRadii.smRadius),
-                padding: const EdgeInsets.symmetric(vertical: 10),
-              ),
+                const SizedBox(height: AppSpacing.sm),
+
+                // Amenities Badges (Clean capsules without repetitive icons)
+                Wrap(
+                  spacing: 5,
+                  runSpacing: 4,
+                  children: gym.amenities.take(3).map((amenity) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                      decoration: BoxDecoration(
+                        color: tokens.cardElevated.withOpacity(0.8),
+                        borderRadius: AppRadii.roundedSm,
+                        border: Border.all(color: tokens.borderColor.withOpacity(0.6)),
+                      ),
+                      child: Text(
+                        amenity,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+
+                // Tuition / Monthly Fee Showcase with Bold Athletic Typography
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'شهریه ماهانه (نمونه):',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: tokens.textMuted,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const SizedBox(height: 1),
+                        Text(
+                          PersianUtils.formatToman(gym.monthlyFeeToman),
+                          style: AppTypography.athleticLarge(context).copyWith(
+                            fontSize: 16,
+                            color: tokens.lime,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'مبلغ نمونه؛ پرداخت آنلاین فعال نیست',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: tokens.textMuted,
+                        fontSize: 9,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+
+                // Action Button (Maintains exact strings for backward compatibility)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      builder: (dialogContext) => AlertDialog(
+                        backgroundColor: tokens.cardBackground,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: AppRadii.lgRadius,
+                          side: BorderSide(color: tokens.borderColor),
+                        ),
+                        title: const Text('عضویت آنلاین در دسترس نیست'),
+                        content: Text(
+                          'این فهرست و قیمت‌ها نمونه‌اند. رزرو سانس، بررسی ظرفیت و پرداخت در این نسخه انجام نمی‌شود و ثبت‌نام به صورت حضوری در پذیرش باشگاه صورت می‌پذیرد.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: tokens.textMuted,
+                            height: 1.5,
+                          ),
+                        ),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () => Navigator.pop(dialogContext),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: tokens.lime,
+                              foregroundColor: tokens.textOnLime,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: AppRadii.roundedSm,
+                              ),
+                            ),
+                            child: const Text('متوجه شدم', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    icon: Icon(Icons.check_circle_outline, size: 15, color: tokens.textOnLime),
+                    label: Text(
+                      'عضویت آنلاین در دسترس نیست',
+                      style: TextStyle(color: tokens.textOnLime, fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: tokens.lime,
+                      shape: const RoundedRectangleBorder(borderRadius: AppRadii.smRadius),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -395,22 +490,27 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
       padding: const EdgeInsets.all(AppSpacing.base),
       decoration: BoxDecoration(
         color: tokens.cardBackground,
-        borderRadius: AppRadii.lgRadius,
-        border: Border.all(color: tokens.borderColor),
+        borderRadius: AppRadii.roundedLg,
+        border: Border.all(color: tokens.borderColor.withOpacity(0.8)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ExcludeSemantics(
                 child: Container(
-                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: tokens.cardElevated,
+                    border: Border.all(color: tokens.lime.withOpacity(0.5), width: 1.5),
                   ),
-                  child: Icon(Icons.person, color: tokens.lime, size: 24),
+                  child: Center(
+                    child: Icon(Icons.sports_gymnastics_rounded, color: tokens.lime, size: 24),
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -425,8 +525,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                       children: [
                         Text(
                           trainer.name,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
                             color: theme.colorScheme.onSurface,
                           ),
                           maxLines: 1,
@@ -449,6 +549,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         ),
                       ],
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       trainer.title,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -463,20 +564,28 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                 label: 'امتیاز مربی',
                 value:
                     '${PersianUtils.toPersianDigits(trainer.rating.toString())} از ۵ ستاره',
-                child: Row(
-                  children: [
-                    ExcludeSemantics(
-                      child: Icon(Icons.star, color: tokens.gold, size: 15),
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Text(
-                      PersianUtils.toPersianDigits(trainer.rating.toString()),
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: tokens.gold.withOpacity(0.14),
+                    borderRadius: AppRadii.roundedXs,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ExcludeSemantics(
+                        child: Icon(Icons.star_rounded, color: tokens.gold, size: 15),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 3),
+                      Text(
+                        PersianUtils.toPersianDigits(trainer.rating.toString()),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: tokens.gold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -490,41 +599,57 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.xs,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'تعرفه هر جلسه (نمونه):',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: tokens.textMuted,
+
+          // Hourly Rate Showcase with Athletic Bold Numbers
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: tokens.cardElevated.withOpacity(0.5),
+              borderRadius: AppRadii.roundedMd,
+            ),
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'تعرفه هر جلسه (نمونه):',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: tokens.textMuted,
+                      ),
                     ),
-                  ),
-                  Text(
-                    PersianUtils.formatToman(trainer.hourlyRateToman),
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: tokens.lime,
+                    const SizedBox(height: 2),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Text(
+                        PersianUtils.formatToman(trainer.hourlyRateToman),
+                        style: AppTypography.athleticLarge(context).copyWith(
+                          fontSize: 18,
+                          color: tokens.lime,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () => _showBookingDialog(trainer),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: tokens.lime,
-                  foregroundColor: tokens.textOnLime,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.base, vertical: AppSpacing.sm),
+                  ],
                 ),
-                child: const Text('بررسی امکان رزرو'),
-              ),
-            ],
+                ElevatedButton(
+                  onPressed: () => _showBookingDialog(trainer),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: tokens.lime,
+                    foregroundColor: tokens.textOnLime,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.base, vertical: AppSpacing.sm),
+                    shape: const RoundedRectangleBorder(borderRadius: AppRadii.smRadius),
+                  ),
+                  child: const Text('بررسی امکان رزرو', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -592,8 +717,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                     padding: const EdgeInsets.all(AppSpacing.base),
                     decoration: BoxDecoration(
                       color: tokens.cardBackground,
-                      borderRadius: AppRadii.baseRadius,
-                      border: Border.all(color: tokens.borderColor),
+                      borderRadius: AppRadii.roundedMd,
+                      border: Border.all(color: tokens.borderColor.withOpacity(0.8)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -673,7 +798,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                    onPressed: null,
+                                  onPressed: null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: tokens.cyan,
                                     foregroundColor: Colors.black,
@@ -699,7 +824,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                                onPressed: null,
+                              onPressed: null,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: tokens.lime,
                                 foregroundColor: tokens.textOnLime,

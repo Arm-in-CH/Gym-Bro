@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../core/theme/app_tokens.dart';
 import '../core/localization/persian_utils.dart';
@@ -381,14 +382,14 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                 decoration: BoxDecoration(
-                  color: tokens.lime.withOpacity(0.18),
+                  color: tokens.cardElevated.withOpacity(0.85),
                   borderRadius: const BorderRadiusDirectional.only(
                     topStart: Radius.circular(AppRadii.base),
                     topEnd: Radius.circular(AppRadii.xs),
                     bottomStart: Radius.circular(AppRadii.base),
                     bottomEnd: Radius.circular(AppRadii.base),
                   ),
-                  border: Border.all(color: tokens.lime.withOpacity(0.4)),
+                  border: Border.all(color: tokens.borderColor.withOpacity(0.6)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -405,6 +406,7 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
                       timeStr,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: tokens.textMuted,
+                        fontSize: 10,
                       ),
                     ),
                   ],
@@ -418,14 +420,15 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
               decoration: BoxDecoration(
                 color: tokens.cardElevated,
                 shape: BoxShape.circle,
+                border: Border.all(color: tokens.lime.withOpacity(0.4)),
               ),
               child: Icon(Icons.person, color: tokens.lime, size: 18),
             ),
           ],
         ),
       );
-    } else {
-      // AI or Error Message
+    } else if (msg.isError) {
+      // Error Message (Maintains exact test assertions like 'تلاش مجدد')
       return Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.md),
         child: Row(
@@ -436,20 +439,11 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
               width: 34,
               height: 34,
               decoration: BoxDecoration(
-                color: msg.isError
-                    ? tokens.red.withOpacity(0.2)
-                    : tokens.lime.withOpacity(0.15),
+                color: tokens.red.withOpacity(0.2),
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color:
-                      msg.isError ? tokens.red : tokens.lime.withOpacity(0.4),
-                ),
+                border: Border.all(color: tokens.red),
               ),
-              child: Icon(
-                msg.isError ? Icons.error_outline : Icons.smart_toy,
-                color: msg.isError ? tokens.red : tokens.lime,
-                size: 20,
-              ),
+              child: Icon(Icons.error_outline, color: tokens.red, size: 20),
             ),
             const SizedBox(width: AppSpacing.sm),
             Flexible(
@@ -457,20 +451,14 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                 decoration: BoxDecoration(
-                  color: msg.isError
-                      ? tokens.red.withOpacity(0.1)
-                      : tokens.cardBackground,
+                  color: tokens.red.withOpacity(0.1),
                   borderRadius: const BorderRadiusDirectional.only(
                     topStart: Radius.circular(AppRadii.xs),
                     topEnd: Radius.circular(AppRadii.base),
                     bottomStart: Radius.circular(AppRadii.base),
                     bottomEnd: Radius.circular(AppRadii.base),
                   ),
-                  border: Border.all(
-                    color: msg.isError
-                        ? tokens.red.withOpacity(0.5)
-                        : tokens.borderColor,
-                  ),
+                  border: Border.all(color: tokens.red.withOpacity(0.5)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,12 +468,10 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            msg.isError
-                                ? 'خطا در ارتباط'
-                                : 'مربی هوشمند جیم‌برو',
+                            'خطا در ارتباط',
                             style: theme.textTheme.labelMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: msg.isError ? tokens.red : tokens.lime,
+                              color: tokens.red,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -495,6 +481,7 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
                           timeStr,
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: tokens.textMuted,
+                            fontSize: 10,
                           ),
                         ),
                       ],
@@ -507,40 +494,38 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
                         height: 1.55,
                       ),
                     ),
-                    if (msg.isError) ...[
-                      const SizedBox(height: AppSpacing.sm),
-                      OutlinedButton.icon(
-                        onPressed: widget.state.isAiLoading
-                            ? null
-                            : () {
-                                final messages = widget.state.chatMessages;
-                                final msgIndex = messages.indexOf(msg);
-                                String? retryText;
-                                if (msgIndex > 0) {
-                                  for (int i = msgIndex - 1; i >= 0; i--) {
-                                    if (messages[i].isUser) {
-                                      retryText = messages[i].text;
-                                      break;
-                                    }
+                    const SizedBox(height: AppSpacing.sm),
+                    OutlinedButton.icon(
+                      onPressed: widget.state.isAiLoading
+                          ? null
+                          : () {
+                              final messages = widget.state.chatMessages;
+                              final msgIndex = messages.indexOf(msg);
+                              String? retryText;
+                              if (msgIndex > 0) {
+                                for (int i = msgIndex - 1; i >= 0; i--) {
+                                  if (messages[i].isUser) {
+                                    retryText = messages[i].text;
+                                    break;
                                   }
                                 }
-                                if (retryText != null && retryText.isNotEmpty) {
-                                  _handleSendMessage(retryText);
-                                }
-                              },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: tokens.red,
-                          side: BorderSide(color: tokens.red.withOpacity(0.5)),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                            vertical: AppSpacing.xs,
-                          ),
-                          visualDensity: VisualDensity.compact,
+                              }
+                              if (retryText != null && retryText.isNotEmpty) {
+                                _handleSendMessage(retryText);
+                              }
+                            },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: tokens.red,
+                        side: BorderSide(color: tokens.red.withOpacity(0.5)),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.xs,
                         ),
-                        icon: const Icon(Icons.refresh, size: 16),
-                        label: const Text('تلاش مجدد'),
+                        visualDensity: VisualDensity.compact,
                       ),
-                    ],
+                      icon: const Icon(Icons.refresh, size: 16),
+                      label: const Text('تلاش مجدد'),
+                    ),
                   ],
                 ),
               ),
@@ -548,7 +533,173 @@ class _AiCoachScreenState extends State<AiCoachScreen> {
           ],
         ),
       );
+    } else {
+      // Modern Chat-First AI Message (Border-free canvas layout like Claude/ChatGPT)
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: tokens.lime.withOpacity(0.15),
+                shape: BoxShape.circle,
+                border: Border.all(color: tokens.lime.withOpacity(0.5)),
+              ),
+              child: Center(
+                child: Icon(Icons.smart_toy_rounded, color: tokens.lime, size: 18),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'مربی هوشمند جیم‌برو',
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: tokens.lime,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text(
+                        timeStr,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: tokens.textMuted,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  _buildAiResponseContent(context, msg.text, tokens, theme),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: msg.text));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('متن پاسخ کپی شد.', style: TextStyle(fontFamily: 'Vazirmatn')),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        borderRadius: AppRadii.roundedXs,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.copy_rounded, size: 12, color: tokens.textMuted),
+                              const SizedBox(width: 4),
+                              Text(
+                                'کپی',
+                                style: TextStyle(fontSize: 10, color: tokens.textMuted),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     }
+  }
+
+  Widget _buildAiResponseContent(
+    BuildContext context,
+    String text,
+    AppThemeExtension tokens,
+    ThemeData theme,
+  ) {
+    // Check if the response contains markdown tables or structured macro breakdown
+    final lines = text.split('\n');
+    final tableLines = lines.where((l) => l.trim().startsWith('|') && l.trim().endsWith('|')).toList();
+
+    if (tableLines.length >= 2) {
+      // Parse markdown table rows
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SelectableText(
+            lines.where((l) => !tableLines.contains(l)).join('\n').trim(),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+              height: 1.55,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: tokens.cardElevated.withOpacity(0.6),
+              borderRadius: AppRadii.roundedMd,
+              border: Border.all(color: tokens.borderColor.withOpacity(0.7)),
+            ),
+            padding: const EdgeInsets.all(8),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                defaultColumnWidth: const IntrinsicColumnWidth(),
+                children: tableLines
+                    .where((l) => !l.contains('---'))
+                    .map((rowStr) {
+                  final cells = rowStr
+                      .split('|')
+                      .map((c) => c.trim())
+                      .where((c) => c.isNotEmpty)
+                      .toList();
+                  final isHeader = rowStr == tableLines.first;
+                  return TableRow(
+                    decoration: isHeader
+                        ? BoxDecoration(color: tokens.lime.withOpacity(0.12))
+                        : null,
+                    children: cells.map((cell) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        child: Text(
+                          cell,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+                            color: isHeader ? tokens.lime : theme.colorScheme.onSurface,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return SelectableText(
+      text,
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: theme.colorScheme.onSurface,
+        height: 1.6,
+      ),
+    );
   }
 
   Widget _buildLoadingBubble(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_tokens.dart';
 import '../core/localization/persian_utils.dart';
+import '../core/storage/id_generator.dart';
 import '../state/app_state.dart';
 import '../models/calorie_scan_log.dart';
 import '../widgets/adaptive_container.dart';
@@ -165,7 +166,8 @@ class _NutritionScreenState extends State<NutritionScreen> {
                   ),
                   const SizedBox(height: AppSpacing.sm),
 
-                  ..._mealCategories.map((cat) => _buildMealCategorySection(context, cat)),
+                  // 8. Vertical Meals Timeline (Anti-Boxy Timeline Layout)
+                  _buildMealsTimeline(context),
 
                   const SizedBox(height: AppSpacing.lg),
 
@@ -609,7 +611,73 @@ class _NutritionScreenState extends State<NutritionScreen> {
     );
   }
 
-  Widget _buildMealCategorySection(BuildContext context, String category) {
+  Future<void> _repeatYesterdayMeal(String category) async {
+    final state = widget.state;
+    final tokens = context.appTokens;
+    final yesterdayDate = state.selectedNutritionDate.subtract(const Duration(days: 1));
+    final yesterdayDateString = PersianUtils.toDateString(yesterdayDate);
+
+    final yesterdayMeals = state.calorieLogs
+        .where((l) => l.dateString == yesterdayDateString && l.mealType == category)
+        .toList();
+
+    if (yesterdayMeals.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'موردی در وعده $category دیروز (${PersianUtils.toPersianDigits(yesterdayDateString)}) یافت نشد.',
+            style: const TextStyle(fontFamily: 'Vazirmatn'),
+          ),
+          backgroundColor: tokens.cardElevated,
+        ),
+      );
+      return;
+    }
+
+    for (final meal in yesterdayMeals) {
+      final copy = CalorieScanLog(
+        id: IdGenerator.generate('scan'),
+        foodName: meal.foodName,
+        mealType: category,
+        calories: meal.calories,
+        proteinG: meal.proteinG,
+        carbsG: meal.carbsG,
+        fatG: meal.fatG,
+        portionG: meal.portionG,
+        dateString: state.selectedNutritionDateString,
+        timestamp: DateTime.now().millisecondsSinceEpoch,
+        note: meal.note,
+        isAiScanned: meal.isAiScanned,
+      );
+      await state.addFoodEntry(copy);
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'وعده $category دیروز (${PersianUtils.toPersianDigits(yesterdayMeals.length)} مورد) با موفقیت به امروز افزوده شد.',
+            style: const TextStyle(fontFamily: 'Vazirmatn'),
+          ),
+          backgroundColor: tokens.lime,
+        ),
+      );
+    }
+  }
+
+  Widget _buildMealsTimeline(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _mealCategories.asMap().entries.map((entry) {
+        final index = entry.key;
+        final category = entry.value;
+        final isLast = index == _mealCategories.length - 1;
+        return _buildTimelineNode(context, category, isLast: isLast);
+      }).toList(),
+    );
+  }
+
+  Widget _buildTimelineNode(BuildContext context, String category, {required bool isLast}) {
     final tokens = context.appTokens;
     final theme = Theme.of(context);
     final state = widget.state;
@@ -617,96 +685,158 @@ class _NutritionScreenState extends State<NutritionScreen> {
     final meals = state.getMealsByCategory(category);
     final categoryCalories = state.getCategoryCalories(category);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.md),
-      decoration: BoxDecoration(
-        color: tokens.cardBackground,
-        borderRadius: AppRadii.baseRadius,
-        border: Border.all(color: tokens.borderColor),
-      ),
-      child: Column(
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Category Header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(_getCategoryIcon(category), size: 18, color: tokens.lime),
-                      const SizedBox(width: AppSpacing.xs),
-                      Text(
-                        category,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
+          // Timeline Spine & Node Indicator
+          Column(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: tokens.cardElevated,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: tokens.lime.withOpacity(0.5), width: 1.5),
+                ),
+                child: Center(
+                  child: Icon(_getCategoryIcon(category), size: 16, color: tokens.lime),
+                ),
+              ),
+              if (!isLast)
+                Expanded(
+                  child: Container(
+                    width: 2,
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          tokens.lime.withOpacity(0.4),
+                          tokens.borderColor.withOpacity(0.4),
+                        ],
                       ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Text(
-                        '(${PersianUtils.formatCalories(categoryCalories)})',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: tokens.lime,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: AppSpacing.sm),
+
+          // Milestone Content
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: isLast ? 0 : AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Category Milestone Header Row
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.xs,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            category,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text(
+                            '(${PersianUtils.formatCalories(categoryCalories)})',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: tokens.lime,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Action Buttons: Quick 1-tap yesterday duplicate & Add Food
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // 1-Tap Repeat Yesterday's Meal Button
+                          Tooltip(
+                            message: 'تکرار وعده دیروز با ۱ لمس',
+                            child: InkWell(
+                              onTap: () => _repeatYesterdayMeal(category),
+                              borderRadius: AppRadii.roundedXs,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
+                                decoration: BoxDecoration(
+                                  color: tokens.cardElevated.withOpacity(0.8),
+                                  borderRadius: AppRadii.roundedXs,
+                                  border: Border.all(color: tokens.borderColor.withOpacity(0.6)),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.history_rounded, size: 13, color: tokens.cyan),
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      'تکرار دیروز',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: tokens.cyan,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+
+                          TextButton(
+                            onPressed: () => AddFoodDialog.show(
+                              context,
+                              state: state,
+                              initialMealType: category,
+                              initialDateString: state.selectedNutritionDateString,
+                            ),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                            child: Text(
+                              '+ ثبت غذا',
+                              style: TextStyle(color: tokens.lime, fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(width: AppSpacing.md),
-                  IconButton(
-                    tooltip: 'افزودن غذا به $category',
-                    icon: Icon(Icons.add_circle_outline, color: tokens.lime, size: 20),
-                    visualDensity: VisualDensity.compact,
-                    onPressed: () => AddFoodDialog.show(
-                      context,
-                      state: state,
-                      initialMealType: category,
-                      initialDateString: state.selectedNutritionDateString,
-                    ),
-                  ),
+                  const SizedBox(height: AppSpacing.xs),
+
+                  // Items List or Muted Empty State
+                  if (meals.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        'موردی برای $category ثبت نشده',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: tokens.textMuted.withOpacity(0.8),
+                          fontSize: 11,
+                        ),
+                      ),
+                    )
+                  else
+                    ...meals.map((meal) => _buildMealEntryRow(context, meal)),
                 ],
               ),
             ),
           ),
-          const Divider(height: 1),
-
-          // Items List or Empty state with immediate action button
-          if (meals.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'موردی برای $category ثبت نشده',
-                      style: theme.textTheme.bodySmall?.copyWith(color: tokens.textMuted),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => AddFoodDialog.show(
-                      context,
-                      state: state,
-                      initialMealType: category,
-                      initialDateString: state.selectedNutritionDateString,
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                    child: Text('+ ثبت غذا', style: TextStyle(color: tokens.lime, fontSize: 12, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-            )
-          else
-            ...meals.map((meal) => _buildMealEntryRow(context, meal)),
         ],
       ),
     );
