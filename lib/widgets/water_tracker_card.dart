@@ -7,6 +7,7 @@ class WaterTrackerCard extends StatelessWidget {
   final int consumedMl;
   final int targetMl;
   final String? dateLabel;
+  final int? lastLoggedAmount;
   final Function(int amount) onAddWater;
   final Function(int amount) onUndoWater;
 
@@ -15,6 +16,7 @@ class WaterTrackerCard extends StatelessWidget {
     required this.consumedMl,
     required this.targetMl,
     this.dateLabel,
+    this.lastLoggedAmount,
     required this.onAddWater,
     required this.onUndoWater,
   });
@@ -218,8 +220,10 @@ class WaterTrackerCard extends StatelessWidget {
               if (consumedMl > 0) ...[
                 const SizedBox(width: AppSpacing.xs),
                 IconButton(
-                  tooltip: 'کاهش ۲۵۰ میلی‌لیتر',
-                  onPressed: () => onUndoWater(250),
+                  tooltip: lastLoggedAmount != null && lastLoggedAmount! > 0
+                      ? 'کاهش ${PersianUtils.toPersianDigits(lastLoggedAmount!)} میلی‌لیتر (آخرین ثبت)'
+                      : 'کاهش آخرین ثبت',
+                  onPressed: () => onUndoWater(lastLoggedAmount ?? 250),
                   icon: Icon(Icons.remove_circle_outline, color: tokens.textMuted, size: 22),
                   constraints: const BoxConstraints(
                     minWidth: AppSpacing.minTouchTarget,

@@ -40,6 +40,13 @@ class HydrationState extends ChangeNotifier {
     return (target - consumed) > 0 ? (target - consumed) : 0;
   }
 
+  WaterLog? getLastWaterLogForDate(String dateString) {
+    final dayLogs = waterLogs.where((w) => w.dateString == dateString).toList();
+    if (dayLogs.isEmpty) return null;
+    dayLogs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return dayLogs.first;
+  }
+
   Future<void> logWater(int amountMl, {required String dateString}) async {
     final log = WaterLog(
       id: 'water_${DateTime.now().millisecondsSinceEpoch}',
@@ -52,14 +59,17 @@ class HydrationState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> undoWater(int amountMl, {required String dateString}) async {
-    final dayLogs = waterLogs.where((w) => w.dateString == dateString).toList();
+  Future<void> undoWater(int? amountMl, {String? dateString}) async {
+    final targetDate = dateString ?? todayDateString;
+    final dayLogs = waterLogs.where((w) => w.dateString == targetDate).toList();
     if (dayLogs.isNotEmpty) {
+      dayLogs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       final lastLog = dayLogs.first;
-      if (lastLog.amountMl <= amountMl) {
+      final effectiveAmount = (amountMl != null && amountMl > 0) ? amountMl : lastLog.amountMl;
+      if (lastLog.amountMl <= effectiveAmount) {
         await repository.deleteWaterLog(lastLog.id);
       } else {
-        final updated = lastLog.copyWith(amountMl: lastLog.amountMl - amountMl);
+        final updated = lastLog.copyWith(amountMl: lastLog.amountMl - effectiveAmount);
         final all = await repository.getWaterLogs();
         final idx = all.indexWhere((w) => w.id == lastLog.id);
         if (idx != -1) all[idx] = updated;

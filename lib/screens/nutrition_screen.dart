@@ -117,6 +117,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
                   WaterTrackerCard(
                     consumedMl: state.selectedConsumedWaterMl,
                     targetMl: state.nutritionPlan.targetWaterMl,
+                    lastLoggedAmount: state.getLastWaterLog(dateString: state.selectedNutritionDateString)?.amountMl,
                     dateLabel: state.selectedNutritionDateString == state.todayDateString
                         ? 'امروز'
                         : PersianUtils.toPersianDigits(state.selectedNutritionDateString),

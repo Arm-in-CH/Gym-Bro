@@ -63,6 +63,17 @@ class _FocusedTrainingScreenState extends State<FocusedTrainingScreen>
 
   DateTime get _now => widget.clock?.call() ?? DateTime.now();
 
+  WorkoutSetLog? _getPreviousLogForSet(String exerciseName, int setNumber) {
+    for (final log in widget.state.workoutLogs) {
+      final matchingSets = log.sets.where((s) => s.exerciseName == exerciseName);
+      if (matchingSets.isNotEmpty) {
+        final matchingSet = matchingSets.where((s) => s.setNumber == setNumber).firstOrNull ?? matchingSets.first;
+        return matchingSet;
+      }
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -1471,12 +1482,17 @@ class _FocusedTrainingScreenState extends State<FocusedTrainingScreen>
                       ...List.generate(currentSets.length, (sIdx) {
                         final s = currentSets[sIdx];
                         final prevSet = sIdx > 0 ? currentSets[sIdx - 1] : null;
+                        final isCurrent = !s.isCompleted && (sIdx == 0 || currentSets[sIdx - 1].isCompleted);
+                        final prevLog = _getPreviousLogForSet(currentEx.nameFa, s.setNumber);
                         return ActiveSetRow(
                           key: ValueKey(
                               'focus_set_${currentPe.id}_${s.setNumber}'),
                           workoutSet: s,
                           restSeconds: currentRestSec,
                           previousSet: prevSet,
+                          isCurrent: isCurrent,
+                          previousRecordWeightKg: prevLog?.weightKg,
+                          previousRecordReps: prevLog?.reps,
                           onToggleComplete: (done) => _handleSetToggle(
                             currentPe.id,
                             s,

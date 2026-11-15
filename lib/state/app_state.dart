@@ -554,11 +554,14 @@ class AppState extends ChangeNotifier {
         dateString: dateString ?? selectedNutritionDateString,
       );
 
-  Future<void> undoWater(int amountMl, {String? dateString}) =>
+  Future<void> undoWater(int? amountMl, {String? dateString}) =>
       hydrationState.undoWater(
         amountMl,
         dateString: dateString ?? selectedNutritionDateString,
       );
+
+  WaterLog? getLastWaterLog({String? dateString}) =>
+      hydrationState.getLastWaterLogForDate(dateString ?? selectedNutritionDateString);
 
   // --- PROFILE STATE DELEGATES ---
 

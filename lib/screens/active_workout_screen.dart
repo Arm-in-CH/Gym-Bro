@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/theme/app_tokens.dart';
 import '../core/localization/persian_utils.dart';
 import '../state/app_state.dart';
@@ -17,7 +18,6 @@ import '../widgets/adaptive_container.dart';
 import '../widgets/active_set_row.dart';
 import '../widgets/exercise_rest_selector_sheet.dart';
 import '../widgets/workout_session_progress_header.dart';
-import 'focused_training_screen.dart';
 import '../core/graphics/graphics.dart';
 import '../core/error/app_exceptions.dart';
 
@@ -26,6 +26,7 @@ class ActiveWorkoutScreen extends StatefulWidget {
   final AppState state;
   final int initialDay;
   final DateTime Function()? clock;
+  final bool initialFocusMode;
 
   const ActiveWorkoutScreen({
     super.key,
@@ -33,6 +34,7 @@ class ActiveWorkoutScreen extends StatefulWidget {
     required this.state,
     this.initialDay = 1,
     this.clock,
+    this.initialFocusMode = false,
   });
 
   @override
@@ -53,10 +55,66 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
   bool _isFinishing = false;
   bool _isPaused = false;
   int _pausedElapsedSeconds = 0;
+  bool _isFocusMode = false;
+  int _currentExerciseIndex = 0;
   final ValueNotifier<int> _elapsedSeconds = ValueNotifier<int>(0);
   Timer? _elapsedTicker;
 
   DateTime get _now => widget.clock?.call() ?? DateTime.now();
+
+  WorkoutSetLog? _getPreviousLogForSet(String exerciseName, int setNumber) {
+    for (final log in widget.state.workoutLogs) {
+      final matchingSets = log.sets.where((s) => s.exerciseName == exerciseName);
+      if (matchingSets.isNotEmpty) {
+        final matchingSet = matchingSets.where((s) => s.setNumber == setNumber).firstOrNull ?? matchingSets.first;
+        return matchingSet;
+      }
+    }
+    return null;
+  }
+
+  void _quickAdjustWeight(ActiveWorkoutSet s, double delta) {
+    HapticFeedback.selectionClick();
+    setState(() {
+      s.actualWeightKg = (s.actualWeightKg + delta).clamp(0.0, 500.0);
+    });
+    _persistDraft();
+  }
+
+  void _quickAdjustReps(ActiveWorkoutSet s, int delta) {
+    HapticFeedback.selectionClick();
+    setState(() {
+      s.actualReps = (s.actualReps + delta).clamp(1, 100);
+    });
+    _persistDraft();
+  }
+
+  Widget _buildAdjustButton({
+    required String label,
+    required VoidCallback onTap,
+    required AppThemeExtension tokens,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: AppRadii.roundedSm,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: tokens.cardElevated,
+          borderRadius: AppRadii.roundedSm,
+          border: Border.all(color: tokens.borderColor.withOpacity(0.6)),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: tokens.lime,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -81,6 +139,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
     }
 
     _restoreOrInitSession();
+    _isFocusMode = widget.initialFocusMode;
   }
 
   @override
@@ -587,21 +646,14 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
                 icon: GymBroDashboardIconType.focusedTraining,
                 size: 22,
                 active: true,
-                activeColor: tokens.gold,
+                activeColor: _isFocusMode ? tokens.lime : tokens.gold,
               ),
-              tooltip: 'ورود به تمرین متمرکز (Focus Mode)',
+              tooltip: _isFocusMode ? 'تغییر به نمای کلی حرکات' : 'ورود به تمرین متمرکز (Focus Mode)',
               onPressed: () {
+                setState(() {
+                  _isFocusMode = !_isFocusMode;
+                });
                 _persistDraft();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => FocusedTrainingScreen(
-                      planId: _plan.id,
-                      state: widget.state,
-                      initialDay: _selectedDay,
-                    ),
-                  ),
-                );
               },
             ),
             IconButton(
@@ -712,165 +764,169 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
                 _buildElapsedControls(theme, tokens),
                 AppSpacing.hBase,
 
-                // Warmup Protocol Card
-                Container(
-                  padding: AppSpacing.paddingBase,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainer,
-                    borderRadius: AppRadii.roundedBase,
-                    border: Border.all(color: tokens.borderColor),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          ExcludeSemantics(
-                            child: Icon(Icons.directions_run_rounded,
-                                color: tokens.gold, size: 20),
-                          ),
-                          AppSpacing.wSm,
-                          Expanded(
-                            child: Text(
-                              'پروتکل اختصاصی گرم کردن (پیش از شروع وزنه‌ها)',
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
+                if (_isFocusMode) ...[
+                  _buildFocusModeBody(dayExercises, tokens, theme),
+                ] else ...[
+                  // Warmup Protocol Card
+                  Container(
+                    padding: AppSpacing.paddingBase,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainer,
+                      borderRadius: AppRadii.roundedBase,
+                      border: Border.all(color: tokens.borderColor),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            ExcludeSemantics(
+                              child: Icon(Icons.directions_run_rounded,
+                                  color: tokens.gold, size: 20),
+                            ),
+                            AppSpacing.wSm,
+                            Expanded(
+                              child: Text(
+                                'پروتکل اختصاصی گرم کردن (پیش از شروع وزنه‌ها)',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
+                          ],
+                        ),
+                        AppSpacing.hSm,
+                        CheckboxListTile(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          activeColor: tokens.gold,
+                          checkColor: tokens.textOnLime,
+                          value: _warmupTreadmillDone,
+                          onChanged: (val) {
+                            setState(() => _warmupTreadmillDone = val ?? false);
+                            _persistDraft();
+                          },
+                          title: Text(
+                            '۱۰ دقیقه تردمیل برای افزایش ضربان قلب و دمای بدن',
+                            style: theme.textTheme.bodySmall,
                           ),
-                        ],
-                      ),
-                      AppSpacing.hSm,
-                      CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        activeColor: tokens.gold,
-                        checkColor: tokens.textOnLime,
-                        value: _warmupTreadmillDone,
-                        onChanged: (val) {
-                          setState(() => _warmupTreadmillDone = val ?? false);
-                          _persistDraft();
-                        },
-                        title: Text(
-                          '۱۰ دقیقه تردمیل برای افزایش ضربان قلب و دمای بدن',
-                          style: theme.textTheme.bodySmall,
                         ),
-                      ),
-                      CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        activeColor: tokens.gold,
-                        checkColor: tokens.textOnLime,
-                        value: _warmupJointsDone,
-                        onChanged: (val) {
-                          setState(() => _warmupJointsDone = val ?? false);
-                          _persistDraft();
-                        },
-                        title: Text(
-                          '۵ دقیقه گرم کردن و چرخش مفاصل + گرم کردن اختصاصی عضلات',
-                          style: theme.textTheme.bodySmall,
+                        CheckboxListTile(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          activeColor: tokens.gold,
+                          checkColor: tokens.textOnLime,
+                          value: _warmupJointsDone,
+                          onChanged: (val) {
+                            setState(() => _warmupJointsDone = val ?? false);
+                            _persistDraft();
+                          },
+                          title: Text(
+                            '۵ دقیقه گرم کردن و چرخش مفاصل + گرم کردن اختصاصی عضلات',
+                            style: theme.textTheme.bodySmall,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                AppSpacing.hBase,
-
-                // Exercise Cards
-                ...List.generate(dayExercises.length, (index) {
-                  final pe = dayExercises[index];
-                  final ex = widget.state.exercises.firstWhere(
-                    (e) => e.id == pe.exerciseId,
-                    orElse: () => widget.state.exercises.first,
-                  );
-                  final sets = _exerciseSets[pe.id] ?? [];
-                  final nextPe = index + 1 < dayExercises.length
-                      ? dayExercises[index + 1]
-                      : null;
-                  final nextEx = nextPe != null
-                      ? widget.state.exercises.firstWhere(
-                          (e) => e.id == nextPe.exerciseId,
-                          orElse: () => widget.state.exercises.first,
-                        )
-                      : null;
-
-                  return Padding(
-                    key: ValueKey('card_${pe.id}'),
-                    padding: const EdgeInsets.only(bottom: AppSpacing.base),
-                    child: _buildExerciseCard(
-                      pe,
-                      ex,
-                      sets,
-                      tokens,
-                      theme,
-                      index: index,
-                      totalExercises: dayExercises.length,
-                      nextExercise: nextEx,
+                      ],
                     ),
-                  );
-                }),
+                  ),
+                  AppSpacing.hBase,
 
-                // Cooldown Protocol Card
-                Container(
-                  padding: AppSpacing.paddingBase,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainer,
-                    borderRadius: AppRadii.roundedBase,
-                    border: Border.all(color: tokens.borderColor),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          ExcludeSemantics(
-                            child: Icon(Icons.self_improvement,
-                                color: tokens.cyan, size: 20),
-                          ),
-                          AppSpacing.wSm,
-                          Expanded(
-                            child: Text(
-                              'پروتکل اختصاصی سرد کردن (انتهای تمرین)',
-                              style: theme.textTheme.titleSmall,
+                  // Exercise Cards
+                  ...List.generate(dayExercises.length, (index) {
+                    final pe = dayExercises[index];
+                    final ex = widget.state.exercises.firstWhere(
+                      (e) => e.id == pe.exerciseId,
+                      orElse: () => widget.state.exercises.first,
+                    );
+                    final sets = _exerciseSets[pe.id] ?? [];
+                    final nextPe = index + 1 < dayExercises.length
+                        ? dayExercises[index + 1]
+                        : null;
+                    final nextEx = nextPe != null
+                        ? widget.state.exercises.firstWhere(
+                            (e) => e.id == nextPe.exerciseId,
+                            orElse: () => widget.state.exercises.first,
+                          )
+                        : null;
+
+                    return Padding(
+                      key: ValueKey('card_${pe.id}'),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.base),
+                      child: _buildExerciseCard(
+                        pe,
+                        ex,
+                        sets,
+                        tokens,
+                        theme,
+                        index: index,
+                        totalExercises: dayExercises.length,
+                        nextExercise: nextEx,
+                      ),
+                    );
+                  }),
+
+                  // Cooldown Protocol Card
+                  Container(
+                    padding: AppSpacing.paddingBase,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainer,
+                      borderRadius: AppRadii.roundedBase,
+                      border: Border.all(color: tokens.borderColor),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            ExcludeSemantics(
+                              child: Icon(Icons.self_improvement,
+                                  color: tokens.cyan, size: 20),
                             ),
+                            AppSpacing.wSm,
+                            Expanded(
+                              child: Text(
+                                'پروتکل اختصاصی سرد کردن (انتهای تمرین)',
+                                style: theme.textTheme.titleSmall,
+                              ),
+                            ),
+                          ],
+                        ),
+                        AppSpacing.hSm,
+                        CheckboxListTile(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          activeColor: tokens.cyan,
+                          checkColor: Colors.black,
+                          value: _cooldownTreadmillDone,
+                          onChanged: (val) {
+                            setState(() => _cooldownTreadmillDone = val ?? false);
+                            _persistDraft();
+                          },
+                          title: Text(
+                            '۱۵ دقیقه تردمیل با شیب ملایم جهت دفع اسید لاکتیک',
+                            style: theme.textTheme.bodySmall,
                           ),
-                        ],
-                      ),
-                      AppSpacing.hSm,
-                      CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        activeColor: tokens.cyan,
-                        checkColor: Colors.black,
-                        value: _cooldownTreadmillDone,
-                        onChanged: (val) {
-                          setState(() => _cooldownTreadmillDone = val ?? false);
-                          _persistDraft();
-                        },
-                        title: Text(
-                          '۱۵ دقیقه تردمیل با شیب ملایم جهت دفع اسید لاکتیک',
-                          style: theme.textTheme.bodySmall,
                         ),
-                      ),
-                      CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        activeColor: tokens.cyan,
-                        checkColor: Colors.black,
-                        value: _cooldownStretchingDone,
-                        onChanged: (val) {
-                          setState(
-                              () => _cooldownStretchingDone = val ?? false);
-                          _persistDraft();
-                        },
-                        title: Text(
-                          '۵ دقیقه حرکات کششی ایستا برای بازگشت طول عضله',
-                          style: theme.textTheme.bodySmall,
+                        CheckboxListTile(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          activeColor: tokens.cyan,
+                          checkColor: Colors.black,
+                          value: _cooldownStretchingDone,
+                          onChanged: (val) {
+                            setState(
+                                () => _cooldownStretchingDone = val ?? false);
+                            _persistDraft();
+                          },
+                          title: Text(
+                            '۵ دقیقه حرکات کششی ایستا برای بازگشت طول عضله',
+                            style: theme.textTheme.bodySmall,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                ],
                 AppSpacing.hLg,
               ],
             ),
@@ -980,6 +1036,255 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFocusModeBody(
+    List<WorkoutPlanExercise> dayExercises,
+    AppThemeExtension tokens,
+    ThemeData theme,
+  ) {
+    if (dayExercises.isEmpty) {
+      return Center(
+        child: Text(
+          'حرکتی در این برنامه یافت نشد.',
+          style: theme.textTheme.bodyMedium,
+        ),
+      );
+    }
+    if (_currentExerciseIndex >= dayExercises.length) {
+      _currentExerciseIndex = 0;
+    }
+    final pe = dayExercises[_currentExerciseIndex];
+    final ex = widget.state.exercises.firstWhere(
+      (e) => e.id == pe.exerciseId,
+      orElse: () => widget.state.exercises.first,
+    );
+    final sets = _exerciseSets[pe.id] ?? [];
+    final restSec = _exerciseRestSeconds[pe.id] ?? pe.restSeconds;
+    final nextIncompleteSet = sets.where((s) => !s.isCompleted).firstOrNull;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Focus Mode Stepper
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: tokens.cardElevated.withOpacity(0.7),
+            borderRadius: AppRadii.roundedMd,
+            border: Border.all(color: tokens.lime.withOpacity(0.3)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                tooltip: 'حرکت قبلی',
+                onPressed: _currentExerciseIndex > 0
+                    ? () => setState(() => _currentExerciseIndex--)
+                    : null,
+              ),
+              Expanded(
+                child: Text(
+                  'تمرین متمرکز (Focus Mode) • حرکت ${PersianUtils.toPersianDigits(_currentExerciseIndex + 1)} از ${PersianUtils.toPersianDigits(dayExercises.length)}',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: tokens.lime,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+                tooltip: 'حرکت بعدی',
+                onPressed: _currentExerciseIndex < dayExercises.length - 1
+                    ? () => setState(() => _currentExerciseIndex++)
+                    : null,
+              ),
+            ],
+          ),
+        ),
+        AppSpacing.hSm,
+
+        // Quick Adjustment Panel for Active Set
+        if (nextIncompleteSet != null) ...[
+          Container(
+            padding: AppSpacing.paddingBase,
+            decoration: BoxDecoration(
+              color: tokens.cardElevated,
+              borderRadius: AppRadii.roundedMd,
+              border: Border.all(color: tokens.lime.withOpacity(0.35)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'تنظیم سریع ست فعال (ست ${PersianUtils.toPersianDigits(nextIncompleteSet.setNumber)})',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: tokens.lime,
+                      ),
+                    ),
+                    Text(
+                      'هدف: ${PersianUtils.toPersianDigits(nextIncompleteSet.targetWeightKg.toInt())}kg × ${PersianUtils.toPersianDigits(nextIncompleteSet.targetReps)}',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: tokens.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+
+                // Weight quick modifiers
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('وزنه: ', style: theme.textTheme.bodySmall?.copyWith(color: tokens.textMuted)),
+                        Text(
+                          PersianUtils.formatWeight(nextIncompleteSet.actualWeightKg, decimalDigits: 1),
+                          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildAdjustButton(label: '-۵', onTap: () => _quickAdjustWeight(nextIncompleteSet, -5.0), tokens: tokens),
+                        const SizedBox(width: AppSpacing.xs),
+                        _buildAdjustButton(label: '-۲.۵', onTap: () => _quickAdjustWeight(nextIncompleteSet, -2.5), tokens: tokens),
+                        const SizedBox(width: AppSpacing.xs),
+                        _buildAdjustButton(label: '+۲.۵', onTap: () => _quickAdjustWeight(nextIncompleteSet, 2.5), tokens: tokens),
+                        const SizedBox(width: AppSpacing.xs),
+                        _buildAdjustButton(label: '+۵', onTap: () => _quickAdjustWeight(nextIncompleteSet, 5.0), tokens: tokens),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xs),
+
+                // Reps quick modifiers
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('تکرار: ', style: theme.textTheme.bodySmall?.copyWith(color: tokens.textMuted)),
+                        Text(
+                          '${PersianUtils.toPersianDigits(nextIncompleteSet.actualReps)} تکرار',
+                          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildAdjustButton(label: '-۲', onTap: () => _quickAdjustReps(nextIncompleteSet, -2), tokens: tokens),
+                        const SizedBox(width: AppSpacing.xs),
+                        _buildAdjustButton(label: '-۱', onTap: () => _quickAdjustReps(nextIncompleteSet, -1), tokens: tokens),
+                        const SizedBox(width: AppSpacing.xs),
+                        _buildAdjustButton(label: '+۱', onTap: () => _quickAdjustReps(nextIncompleteSet, 1), tokens: tokens),
+                        const SizedBox(width: AppSpacing.xs),
+                        _buildAdjustButton(label: '+۲', onTap: () => _quickAdjustReps(nextIncompleteSet, 2), tokens: tokens),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+
+                // Big single-tap complete set button
+                SizedBox(
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: tokens.lime,
+                      foregroundColor: tokens.textOnLime,
+                      shape: const RoundedRectangleBorder(borderRadius: AppRadii.roundedMd),
+                    ),
+                    icon: const Icon(Icons.check_circle_outline, size: 20),
+                    label: Text(
+                      'ثبت ست ${PersianUtils.toPersianDigits(nextIncompleteSet.setNumber)} (تکمیل شد)',
+                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                    ),
+                    onPressed: () {
+                      _handleSetToggle(pe.id, nextIncompleteSet, true, restSec);
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          AppSpacing.hSm,
+        ],
+
+        // The exercise card with active sets
+        _buildExerciseCard(
+          pe,
+          ex,
+          sets,
+          tokens,
+          theme,
+          index: _currentExerciseIndex,
+          totalExercises: dayExercises.length,
+          nextExercise: _currentExerciseIndex + 1 < dayExercises.length
+              ? widget.state.exercises.firstWhere(
+                  (e) => e.id == dayExercises[_currentExerciseIndex + 1].exerciseId,
+                  orElse: () => widget.state.exercises.first,
+                )
+              : null,
+        ),
+        AppSpacing.hSm,
+
+        // Stepper Navigation Buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (_currentExerciseIndex > 0)
+              OutlinedButton.icon(
+                icon: const Icon(Icons.arrow_forward_rounded, size: 16),
+                label: const Text('حرکت قبلی'),
+                onPressed: () => setState(() => _currentExerciseIndex--),
+              )
+            else
+              const SizedBox.shrink(),
+            if (_currentExerciseIndex < dayExercises.length - 1)
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: tokens.cardElevated,
+                  foregroundColor: tokens.lime,
+                  side: BorderSide(color: tokens.lime.withOpacity(0.5)),
+                ),
+                icon: const Icon(Icons.arrow_back_rounded, size: 16),
+                label: const Text('حرکت بعدی'),
+                onPressed: () => setState(() => _currentExerciseIndex++),
+              )
+            else
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: tokens.lime,
+                  foregroundColor: tokens.textOnLime,
+                ),
+                icon: const Icon(Icons.check_circle, size: 16),
+                label: const Text('پایان تمام حرکات'),
+                onPressed: _finishSession,
+              ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -1278,11 +1583,16 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
           ...List.generate(sets.length, (sIdx) {
             final s = sets[sIdx];
             final prevSet = sIdx > 0 ? sets[sIdx - 1] : null;
+            final isCurrent = !s.isCompleted && (sIdx == 0 || sets[sIdx - 1].isCompleted);
+            final prevLog = _getPreviousLogForSet(ex.nameFa, s.setNumber);
             return ActiveSetRow(
               key: ValueKey('set_${pe.id}_${s.setNumber}'),
               workoutSet: s,
               restSeconds: restSec,
               previousSet: prevSet,
+              isCurrent: isCurrent,
+              previousRecordWeightKg: prevLog?.weightKg,
+              previousRecordReps: prevLog?.reps,
               onToggleComplete: (done) =>
                   _handleSetToggle(pe.id, s, done, restSec),
               onDataChanged: () {
